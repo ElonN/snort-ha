@@ -95,6 +95,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <sys/stat.h>
+
 #include "sfxhash.h"
 #include "sfprimetable.h"
 #include "sfhashfcn.h"
@@ -1239,6 +1241,211 @@ int sfxhash_add_return_data_ptr(SFXHASH* t, const void* key, void** data)
     *data = NULL;
 
     return sfxhash_add_ex(t, key, NULL, data);
+}
+
+
+int sfxhash_calcsize(SFXHASH* t) {
+    return sizeof(SFXHASH) + t->count * (t->keysize + t->datasize);
+}
+
+int sfxhash_serialize(SFXHASH* t, void* buf, int* buf_size) {
+    unsigned i = 0;
+    unsigned char *pos = (unsigned char*) buf;
+
+    SFXHASH_NODE* hnode;
+
+    if (!t->datasize) {
+        // currently supports only trees with constant data size...
+        return -1;
+    }
+
+    if (!buf) {
+        if (buf_size) {
+            *buf_size = sfxhash_calcsize(t);
+            return 0;
+        }
+        return -1;
+    }
+
+    if (sfxhash_calcsize(t) > *buf_size) {
+        return -1;
+    }
+
+    memcpy(pos, t, sizeof(SFXHASH));
+    pos += sizeof(SFXHASH);
+
+    for ( hnode=t->gtail; hnode; hnode=hnode->gprev)
+    //for ( hnode=sfxhash_findfirst(); hnode; hnode=sfxhash_findnext())
+    {
+        memcpy(pos, hnode->key, t->keysize);
+        pos += t->keysize;
+        memcpy(pos, hnode->data, t->datasize);
+        pos += t->datasize;
+        i++;
+    }
+
+    if (i != t->count) {
+        // we have a serious problem
+        return -2;
+    }
+
+    return 0;
+}
+
+int check_blob(SFXHASH* t, void* buf, int buf_size) {
+    SFXHASH* tmp_tree = (SFXHASH*) buf;
+
+
+    if (sizeof(SFXHASH) > buf_size) {
+        return -1;
+    }
+
+    if (tmp_tree->count == 0) {
+        return 0;
+    }
+
+    if (tmp_tree->keysize + tmp_tree->datasize > (buf_size - sizeof(SFXHASH)) / tmp_tree->count) {
+        return -1;
+    }
+
+    if (tmp_tree->keysize != t->keysize || tmp_tree->datasize != t->datasize
+        || tmp_tree->anr_flag != t->anr_flag) {
+        // This is not the same tree...
+        return -1;
+    }
+    
+    return 0;
+
+}
+
+int sfxhash_deserialize(SFXHASH* t, void* buf, int buf_size) {
+    unsigned int i;
+    SFXHASH* tmp_tree = (SFXHASH*) buf;
+    unsigned char* cur = (unsigned char*) buf + sizeof(SFXHASH);
+
+    if (check_blob(t, buf, buf_size)) {
+        return -1;
+    }
+    printf("blob ok..\n");
+
+    printf("blob has %d entries..\n", tmp_tree->count);
+
+    for (i=0; i < tmp_tree->count; i++) {
+        printf("adding %d..\n", i);
+        sfxhash_add(t, cur, cur + tmp_tree->keysize);
+        cur += tmp_tree->keysize + tmp_tree->datasize;
+    }
+
+    
+}
+
+int sfxhash_load_from_file(SFXHASH* t, const char* filename) {
+    FILE* repo_file = NULL;
+    struct stat sbuf;
+    char* repo_data; 
+    printf("loading...\n");
+
+    repo_file = fopen(filename, "r");
+
+    if (repo_file)
+    {
+        if(stat(filename, &sbuf)) {
+            fclose(repo_file);
+            return -1;
+        }
+        printf("file ok...\n");
+        
+        repo_data = (char*)malloc(sbuf.st_size);
+        
+        if (!repo_data) {
+            fclose(repo_file);
+            return -1;
+        }
+
+        printf("reading...\n");
+        
+        int has_read = 0, newly_read;
+        char* cur = repo_data;
+        while (has_read < sbuf.st_size) {
+            newly_read = fread(repo_data + has_read, 1, sbuf.st_size - has_read, repo_file);
+            has_read += newly_read;
+
+            if (newly_read == 0 && has_read < sbuf.st_size) {
+                fclose(repo_file);
+                free(repo_data);
+                return -1;
+            }
+        }
+
+        printf("deserializing...\n");
+
+        sfxhash_deserialize(t, repo_data, sbuf.st_size);
+        free(repo_data);
+        fclose(repo_file);
+    }
+
+}
+
+
+int sfxhash_save_to_file(SFXHASH* t, const char* filename) {
+    char* copy;
+    int copy_size;
+    FILE* f_out;
+
+    copy_size = sfxhash_calcsize(t);
+    copy = (char*)malloc(copy_size);
+    if (!copy) {
+        return -1;
+    }
+
+    sfxhash_serialize(t, copy, &copy_size);
+
+    f_out = fopen(filename, "w");
+    if (f_out) {
+        fwrite(copy, copy_size, 1, f_out);
+        fflush(f_out);
+        fclose(f_out);
+        free(copy);
+        return 0;    
+    } else {
+        free(copy);
+        return -1;
+    }
+
+}
+
+int sfxhash_load_from_db(SFXHASH* t, memcached_st* cache) {
+
+    size_t val_len;
+    uint32_t flags;
+    memcached_return_t err;
+    char* repo_data;
+    const static char key[5] = "port";
+
+    repo_data = memcached_get(cache, key, strlen(key), &val_len, &flags, &err);
+
+    if (repo_data) {
+        sfxhash_deserialize(t, repo_data, val_len);
+        free(repo_data);    
+    }
+}
+
+int sfxhash_save_to_db(SFXHASH* t, memcached_st* cache) {
+    char* copy;
+    int copy_size;
+    const static char key[5] = "port";
+
+    copy_size = sfxhash_calcsize(t);
+    copy = (char*)malloc(copy_size);
+    if (!copy) {
+        return -1;
+    }
+
+    sfxhash_serialize(t, copy, &copy_size);
+
+    memcached_set(cache, key, strlen(key), copy, copy_size, (time_t)0, (uint32_t)0);
+
+    free(copy);
 }
 
 /*
