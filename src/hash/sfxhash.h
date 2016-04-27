@@ -176,8 +176,8 @@ int sfxhash_add_return_data_ptr(SFXHASH* t, const void* key, void** data);
 int sfxhash_load_from_file(SFXHASH* t, const char* filename);
 int sfxhash_save_to_file(SFXHASH* t, const char* filename);
 
-int sfxhash_load_from_db(SFXHASH* t, memcache_st* mem);
-int sfxhash_save_to_db(SFXHASH* t, memcache_st* mem);
+int sfxhash_load_from_db(SFXHASH* t, memcached_st* mem);
+int sfxhash_save_to_db(SFXHASH* t, memcached_st* mem);
 
 #endif
 
