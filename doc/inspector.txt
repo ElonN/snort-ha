@@ -1,0 +1,1144 @@
+
+=== arp_spoof
+
+
+What: detect ARP attacks and anomalies
+
+Type: inspector
+
+Configuration: 
+
+* ip4 *arp_spoof.hosts[].ip*: host ip address
+* mac *arp_spoof.hosts[].mac*: host mac address
+
+Rules: 
+
+* *112:1* (arp_spoof) unicast ARP request
+* *112:2* (arp_spoof) ethernet/ARP mismatch request for source
+* *112:3* (arp_spoof) ethernet/ARP mismatch request for destination
+* *112:4* (arp_spoof) attempted ARP cache overwrite attack
+
+Peg counts: 
+
+* *arp_spoof.packets*: total packets
+
+=== back_orifice
+
+
+What: back orifice detection
+
+Type: inspector
+
+Rules: 
+
+* *105:1* (back_orifice) BO traffic detected
+* *105:2* (back_orifice) BO client traffic detected
+* *105:3* (back_orifice) BO server traffic detected
+* *105:4* (back_orifice) BO Snort buffer attack
+
+Peg counts: 
+
+* *back_orifice.packets*: total packets
+
+=== binder
+
+
+What: configure processing based on CIDRs, ports, services, etc.
+
+Type: inspector
+
+Configuration: 
+
+* int *binder[].when.policy_id* = 0: unique ID for selection of this config by external logic { 0: }
+* bit_list *binder[].when.ifaces*: list of interface indices { 255 }
+* bit_list *binder[].when.vlans*: list of VLAN IDs { 4095 }
+* addr_list *binder[].when.nets*: list of networks
+* enum *binder[].when.proto*: protocol { any | ip | icmp | tcp | udp | user | file }
+* bit_list *binder[].when.ports*: list of ports { 65535 }
+* enum *binder[].when.role* = any: use the given configuration on one or any end of a session { client | server | any }
+* string *binder[].when.service*: override default configuration
+* enum *binder[].use.action* = inspect: what to do with matching traffic { reset | block | allow | inspect }
+* string *binder[].use.file*: use configuration in given file
+* string *binder[].use.service*: override automatic service identification
+* string *binder[].use.type*: select module for binding
+* string *binder[].use.name*: symbol name (defaults to type)
+
+Peg counts: 
+
+* *binder.packets*: initial bindings
+* *binder.resets*: reset bindings
+* *binder.blocks*: block bindings
+* *binder.allows*: allow bindings
+* *binder.inspects*: inspect bindings
+
+=== data_log
+
+
+What: log selected published data to data.log
+
+Type: inspector
+
+Configuration: 
+
+* string *data_log.key* = http_uri: name of data buffer to log
+
+Peg counts: 
+
+* *data_log.packets*: total packets
+
+=== dns
+
+
+What: dns inspection
+
+Type: inspector
+
+Rules: 
+
+* *131:1* (dns) Obsolete DNS RR Types
+* *131:2* (dns) Experimental DNS RR Types
+* *131:3* (dns) DNS Client rdata txt Overflow
+
+Peg counts: 
+
+* *dns.packets*: total packets
+
+=== dpx
+
+
+What: dynamic inspector example
+
+Type: inspector
+
+Configuration: 
+
+* port *dpx.port*: port to check
+* int *dpx.max* = 0: maximum payload before alert { 0:65535 }
+
+Rules: 
+
+* *256:1* (dpx) too much data sent to port
+
+Peg counts: 
+
+* *dpx.packets*: total packets
+
+=== ftp_client
+
+
+What: FTP client configuration module for use with ftp_server
+
+Type: inspector
+
+Configuration: 
+
+* bool *ftp_client.bounce* = false: check for bounces
+* addr *ftp_client.bounce_to[].address* = 1.0.0.0/32: allowed ip address in CIDR format
+* port *ftp_client.bounce_to[].port* = 20: allowed port { 1: }
+* port *ftp_client.bounce_to[].last_port*: optional allowed range from port to last_port inclusive { 0: }
+* bool *ftp_client.ignore_telnet_erase_cmds* = false: ignore erase character and erase line commands when normalizing
+* int *ftp_client.max_resp_len* = -1: maximum ftp response accepted by client { -1: }
+* bool *ftp_client.telnet_cmds* = false: detect telnet escape sequences on ftp control channel
+
+=== ftp_data
+
+
+What: FTP data channel handler
+
+Type: inspector
+
+Peg counts: 
+
+* *ftp_data.packets*: total packets
+
+=== ftp_server
+
+
+What: main FTP module; ftp_client should also be configured
+
+Type: inspector
+
+Configuration: 
+
+* string *ftp_server.chk_str_fmt*: check the formatting of the given commands
+* string *ftp_server.data_chan_cmds*: check the formatting of the given commands
+* string *ftp_server.data_xfer_cmds*: check the formatting of the given commands
+* string *ftp_server.directory_cmds[].dir_cmd*: directory command
+* int *ftp_server.directory_cmds[].rsp_code* = 200: expected successful response code for command { 200: }
+* string *ftp_server.file_put_cmds*: check the formatting of the given commands
+* string *ftp_server.file_get_cmds*: check the formatting of the given commands
+* string *ftp_server.encr_cmds*: check the formatting of the given commands
+* string *ftp_server.login_cmds*: check the formatting of the given commands
+* bool *ftp_server.check_encrypted* = false: check for end of encryption
+* string *ftp_server.cmd_validity[].command*: command string
+* string *ftp_server.cmd_validity[].format*: format specification
+* int *ftp_server.cmd_validity[].length* = 0: specify non-default maximum for command { 0: }
+* int *ftp_server.def_max_param_len* = 100: default maximum length of commands handled by server; 0 is unlimited { 1: }
+* bool *ftp_server.encrypted_traffic* = false: check for encrypted telnet and ftp
+* string *ftp_server.ftp_cmds*: specify additional commands supported by server beyond RFC 959
+* bool *ftp_server.ignore_data_chan* = false: do not inspect ftp data channels
+* bool *ftp_server.ignore_telnet_erase_cmds* = false: ignore erase character and erase line commands when normalizing
+* bool *ftp_server.print_cmds* = false: print command configurations on start up
+* bool *ftp_server.telnet_cmds* = false: detect telnet escape sequences of ftp control channel
+
+Rules: 
+
+* *125:1* (ftp_server) TELNET cmd on FTP command channel
+* *125:2* (ftp_server) invalid FTP command
+* *125:3* (ftp_server) FTP command parameters were too long
+* *125:4* (ftp_server) FTP command parameters were malformed
+* *125:5* (ftp_server) FTP command parameters contained potential string format
+* *125:6* (ftp_server) FTP response message was too long
+* *125:7* (ftp_server) FTP traffic encrypted
+* *125:8* (ftp_server) FTP bounce attempt
+* *125:9* (ftp_server) evasive (incomplete) TELNET cmd on FTP command channel
+
+Peg counts: 
+
+* *ftp_server.packets*: total packets
+
+=== http_global
+
+
+What: http inspector global configuration and client rules for use with http_server
+
+Type: inspector
+
+Configuration: 
+
+* int *http_global.compress_depth* = 65535: maximum amount of packet payload to decompress { 1:65535 }
+* int *http_global.decode.b64_decode_depth* = 0: single packet decode depth { -1:65535 }
+* int *http_global.decode.bitenc_decode_depth* = 0: single packet decode depth { -1:65535 }
+* int *http_global.decode.max_mime_mem* = 838860: single packet decode depth { 3276: }
+* int *http_global.decode.qp_decode_depth* = 0: single packet decode depth { -1:65535 }
+* int *http_global.decode.uu_decode_depth* = 0: single packet decode depth { -1:65535 }
+* int *http_global.decompress_depth* = 65535: maximum amount of decompressed data to process { 1:65535 }
+* bool *http_global.detect_anomalous_servers* = false: inspect non-configured ports for HTTP - bad idea
+* int *http_global.max_gzip_mem* = 838860: total memory used for decompression across all active sessions { 3276: }
+* int *http_global.memcap* = 150994944: limit of memory used for logging extra data { 2304: }
+* bool *http_global.proxy_alert* = false: alert on proxy usage for servers without allow_proxy_use
+* int *http_global.unicode_map.code_page* = 1252: select code page in map file { 0: }
+* string *http_global.unicode_map.map_file*: unicode map file
+
+Rules: 
+
+* *119:1* (http_global) ascii encoding
+* *119:2* (http_global) double decoding attack
+* *119:3* (http_global) u encoding
+* *119:4* (http_global) bare byte unicode encoding
+* *119:5* (http_global) base36 encoding
+* *119:6* (http_global) UTF-8 encoding
+* *119:7* (http_global) IIS unicode codepoint encoding
+* *119:8* (http_global) multi_slash encoding
+* *119:9* (http_global) IIS backslash evasion
+* *119:10* (http_global) self directory traversal
+* *119:11* (http_global) directory traversal
+* *119:12* (http_global) apache whitespace (tab)
+* *119:13* (http_global) non-RFC http delimiter
+* *119:14* (http_global) non-RFC defined char
+* *119:15* (http_global) oversize request-URI directory
+* *119:16* (http_global) oversize chunk encoding
+* *119:17* (http_global) unauthorized proxy use detected
+* *119:18* (http_global) webroot directory traversal
+* *119:19* (http_global) long header
+* *119:20* (http_global) max header fields
+* *119:21* (http_global) multiple content length
+* *119:22* (http_global) chunk size mismatch detected
+* *119:23* (http_global) invalid ip in true-client-IP/XFF header
+* *119:24* (http_global) multiple host hdrs detected
+* *119:25* (http_global) hostname exceeds 255 characters
+* *119:26* (http_global) header parsing space saturation
+* *119:27* (http_global) client consecutive small chunk sizes
+* *119:28* (http_global) post w/o content-length or chunks
+* *119:29* (http_global) multiple true IPs in a session
+* *119:30* (http_global) both true-client-IP and XFF hdrs present
+* *119:31* (http_global) unknown method
+* *119:32* (http_global) simple request
+* *119:33* (http_global) unescaped space in http URI
+* *119:34* (http_global) too many pipelined requests
+
+Peg counts: 
+
+* *http_global.packets*: total packets processed
+* *http_global.gets*: GET requests
+* *http_global.posts*: POST requests
+* *http_global.request headers*: total requests
+* *http_global.response headers*: total responses
+* *http_global.request cookies*: requests with Cookie
+* *http_global.response cookies*: responses with Set-Cookie
+* *http_global.post params*: POST parameters extracted
+* *http_global.unicode*: unicode normalizations
+* *http_global.double unicode*: double unicode normalizations
+* *http_global.non-ascii*: non-ascii normalizations
+* *http_global.paths with ../*: directory traversal normalizations
+* *http_global.paths with //*: double slash normalizations
+* *http_global.paths with ./*: relative directory normalizations
+* *http_global.gzip packets*: packets with gzip compression
+* *http_global.compressed bytes*: total comparessed bytes processed
+* *http_global.decompressed bytes*: total bytes decompressed
+
+=== http_inspect
+
+
+What: http inspection and server rules; also configure http_inspect
+
+Type: inspector
+
+Configuration: 
+
+* bool *http_inspect.allow_proxy_use* = false: don't alert on proxy use for this server
+* bool *http_inspect.decompress_pdf* = false: enable decompression of the compressed portions of PDF files
+* bool *http_inspect.decompress_swf* = false: enable decompression of SWF (Adobe Flash content)
+* bool *http_inspect.enable_cookies* = true: extract cookies
+* bool *http_inspect.enable_xff* = false: log True-Client-IP and X-Forwarded-For headers with unified2 alerts as extra data
+* bool *http_inspect.extended_ascii_uri* = false: allow extended ASCII codes in the request URI
+* bool *http_inspect.extended_response_inspection* = true: extract response headers
+* string *http_inspect.http_methods* = GET POST PUT SEARCH MKCOL COPY MOVE LOCK UNLOCK NOTIFY POLL BCOPY BDELETE BMOVE LINK UNLINK OPTIONS HEAD DELETE TRACE TRACK CONNECT SOURCE SUBSCRIBE UNSUBSCRIBE PROPFIND PROPPATCH BPROPFIND BPROPPATCH RPC_CONNECT PROXY_SUCCESS BITS_POST CCM_POST SMS_POST RPC_IN_DATA RPC_OUT_DATA RPC_ECHO_DATA: request methods allowed in addition to GET and POST
+* bool *http_inspect.inspect_gzip* = true: enable gzip decompression of compressed bodies
+* bool *http_inspect.inspect_uri_only* = false: disable all detection except for uricontent
+* bool *http_inspect.log_hostname* = false: enable logging of Hostname with unified2 alerts as extra data
+* bool *http_inspect.log_uri* = false: enable logging of URI with unified2 alerts as extra data
+* bool *http_inspect.no_pipeline_req* = false: don't inspect pipelined requests after first (still does general detection)
+* bit_list *http_inspect.non_rfc_chars* = 0x00 0x01 0x02 0x03 0x04 0x05 0x06 0x07: alert on given non-RFC chars being present in the URI { 255 }
+* bool *http_inspect.normalize_cookies* = false: normalize cookies similar to URI
+* bool *http_inspect.normalize_headers* = false: normalize headers other than cookie similar to URI
+* int *http_inspect.oversize_dir_length* = 500: alert if a URL has a directory longer than this limit { 0: }
+* bool *http_inspect.profile.apache_whitespace* = false: don't alert if tab is used in lieu of space characters
+* bool *http_inspect.profile.ascii* = false: enable decoding ASCII like %2f to /
+* bool *http_inspect.profile.bare_byte* = false: decode non-standard, non-ASCII character encodings
+* int *http_inspect.profile.chunk_length* = 500000: alert on chunk lengths greater than specified { 1: }
+* int *http_inspect.profile.client_flow_depth* = 0: raw request payload to inspect { -1:1460 }
+* bool *http_inspect.profile.directory* = false: normalize . and .. sequences out of URI
+* bool *http_inspect.profile.double_decode* = false: iis specific extra decoding
+* bool *http_inspect.profile.iis_backslash* = false: normalize directory slashes
+* bool *http_inspect.profile.iis_delimiter* = false: allow use of non-standard delimiter
+* bool *http_inspect.profile.iis_unicode* = false: enable unicode code point mapping using unicode_map settings
+* int *http_inspect.profile.iis_unicode_map.code_page* = 1252: select code page in map file { 0: }
+* string *http_inspect.profile.iis_unicode_map.map_file*: unicode map file
+* int *http_inspect.profile.max_header_length* = 750: maximum allowed client request header field { 0:65535 }
+* int *http_inspect.profile.max_headers* = 100: maximum allowed client request headers { 0:1024 }
+* int *http_inspect.profile.max_spaces* = 200: maximum allowed whitespaces when folding { 0:65535 }
+* bool *http_inspect.profile.multi_slash* = false: normalize out consecutive slashes in URI
+* bool *http_inspect.profile.non_strict* = true: allows HTTP 0.9 processing
+* int *http_inspect.profile.max_javascript_whitespaces* = 200: maximum number of consecutive whitespaces { 0: }
+* bool *http_inspect.profile.normalize_utf* = true: normalize response bodies with UTF content-types
+* bool *http_inspect.profile.normalize_javascript* = true: normalize javascript between <script> tags
+* int *http_inspect.profile.post_depth* = 65495: amount of POST data to inspect { -1:65535 }
+* enum *http_inspect.profile.profile_type* = default: set defaults appropriate for selected server { default | apache | iis | iis_40 | iis_50 }
+* int *http_inspect.profile.server_flow_depth* = 0: response payload to inspect; includes headers with extended_response_inspection { -1:65535 }
+* bool *http_inspect.profile.u_encode* = true: decode %uXXXX character sequences
+* bool *http_inspect.profile.utf_8* = false: decode UTF-8 unicode sequences in URI
+* bool *http_inspect.profile.webroot* = false: alert on directory traversals past the top level (web server root)
+* bit_list *http_inspect.profile.whitespace_chars*: allowed white space characters { 255 }
+* int *http_inspect.small_chunk_count* = 5: alert if more than this limit of consecutive chunks are below small_chunk_length { 0:255 }
+* int *http_inspect.small_chunk_length* = 10: alert if more than small_chunk_count consecutive chunks below this limit { 0:255 }
+* bool *http_inspect.tab_uri_delimiter* = false: whether a tab not preceded by a space is considered a delimiter or part of URI
+* bool *http_inspect.unlimited_decompress* = true: decompress across multiple packets
+* bool *http_inspect.xff_headers* = false: not implemented
+
+Rules: 
+
+* *120:1* (http_inspect) anomalous http server on undefined HTTP port
+* *120:2* (http_inspect) invalid status code in HTTP response
+* *120:3* (http_inspect) no content-length or transfer-encoding in HTTP response
+* *120:4* (http_inspect) HTTP response has UTF charset which failed to normalize
+* *120:5* (http_inspect) HTTP response has UTF-7 charset
+* *120:6* (http_inspect) HTTP response gzip decompression failed
+* *120:7* (http_inspect) server consecutive small chunk sizes
+* *120:8* (http_inspect) invalid content-length or chunk size
+* *120:9* (http_inspect) javascript obfuscation levels exceeds 1
+* *120:10* (http_inspect) javascript whitespaces exceeds max allowed
+* *120:11* (http_inspect) multiple encodings within javascript obfuscated data
+* *120:12* (http_inspect) HTTP response SWF file zlib decompression failure
+* *120:13* (http_inspect) HTTP response SWF file LZMA decompression failure
+* *120:14* (http_inspect) HTTP response PDF file deflate decompression failure
+* *120:15* (http_inspect) HTTP response PDF file unsupported compression type
+* *120:16* (http_inspect) HTTP response PDF file cascaded compression
+* *120:17* (http_inspect) HTTP response PDF file parse failure
+
+=== imap
+
+
+What: imap inspection
+
+Type: inspector
+
+Configuration: 
+
+* int *imap.b64_decode_depth* = 1460:  base64 decoding depth { -1:65535 }
+* int *imap.bitenc_decode_depth* = 1460:  Non-Encoded MIME attachment extraction depth { -1:65535 }
+* int *imap.qp_decode_depth* = 1460:  Quoted Printable decoding depth { -1:65535 }
+* int *imap.uu_decode_depth* = 1460:  Unix-to-Unix decoding depth { -1:65535 }
+
+Rules: 
+
+* *141:1* (imap) Unknown IMAP3 command
+* *141:2* (imap) Unknown IMAP3 response
+* *141:4* (imap) Base64 Decoding failed.
+* *141:5* (imap) Quoted-Printable Decoding failed.
+* *141:7* (imap) Unix-to-Unix Decoding failed.
+
+Peg counts: 
+
+* *imap.packets*: total packets
+
+=== new_http_inspect
+
+
+What: new HTTP inspector
+
+Type: inspector
+
+Configuration: 
+
+* int *new_http_inspect.request_depth* = -1: maximum request message body bytes to examine (-1 no limit) { -1: }
+* int *new_http_inspect.response_depth* = -1: maximum response message body bytes to examine (-1 no limit) { -1: }
+* bool *new_http_inspect.test_input* = false: read HTTP messages from text file
+* bool *new_http_inspect.test_output* = false: print out HTTP section data
+
+Rules: 
+
+* *219:1* (new_http_inspect) ascii encoding
+* *219:2* (new_http_inspect) double decoding attack
+* *219:3* (new_http_inspect) u encoding
+* *219:4* (new_http_inspect) bare byte unicode encoding
+* *219:5* (new_http_inspect) obsolete event--should not appear
+* *219:6* (new_http_inspect) UTF-8 encoding
+* *219:7* (new_http_inspect) IIS unicode codepoint encoding
+* *219:8* (new_http_inspect) multi_slash encoding
+* *219:9* (new_http_inspect) IIS backslash evasion
+* *219:10* (new_http_inspect) self directory traversal
+* *219:11* (new_http_inspect) directory traversal
+* *219:12* (new_http_inspect) apache whitespace (tab)
+* *219:13* (new_http_inspect) non-RFC http delimiter
+* *219:14* (new_http_inspect) non-RFC defined char
+* *219:15* (new_http_inspect) oversize request-uri directory
+* *219:16* (new_http_inspect) oversize chunk encoding
+* *219:17* (new_http_inspect) unauthorized proxy use detected
+* *219:18* (new_http_inspect) webroot directory traversal
+* *219:19* (new_http_inspect) long header
+* *219:20* (new_http_inspect) max header fields
+* *219:21* (new_http_inspect) multiple content length
+* *219:22* (new_http_inspect) chunk size mismatch detected
+* *219:23* (new_http_inspect) invalid IP in true-client-IP/XFF header
+* *219:24* (new_http_inspect) multiple host hdrs detected
+* *219:25* (new_http_inspect) hostname exceeds 255 characters
+* *219:26* (new_http_inspect) header parsing space saturation
+* *219:27* (new_http_inspect) client consecutive small chunk sizes
+* *219:28* (new_http_inspect) post w/o content-length or chunks
+* *219:29* (new_http_inspect) multiple true ips in a session
+* *219:30* (new_http_inspect) both true-client-IP and XFF hdrs present
+* *219:31* (new_http_inspect) unknown method
+* *219:32* (new_http_inspect) simple request
+* *219:33* (new_http_inspect) unescaped space in HTTP URI
+* *219:34* (new_http_inspect) too many pipelined requests
+* *219:35* (new_http_inspect) anomalous http server on undefined HTTP port
+* *219:36* (new_http_inspect) invalid status code in HTTP response
+* *219:37* (new_http_inspect) no content-length or transfer-encoding in HTTP response
+* *219:38* (new_http_inspect) HTTP response has UTF charset which failed to normalize
+* *219:39* (new_http_inspect) HTTP response has UTF-7 charset
+* *219:40* (new_http_inspect) HTTP response gzip decompression failed
+* *219:41* (new_http_inspect) server consecutive small chunk sizes
+* *219:42* (new_http_inspect) invalid content-length or chunk size
+* *219:43* (new_http_inspect) javascript obfuscation levels exceeds 1
+* *219:44* (new_http_inspect) javascript whitespaces exceeds max allowed
+* *219:45* (new_http_inspect) multiple encodings within javascript obfuscated data
+* *219:46* (new_http_inspect) SWF file zlib decompression failure
+* *219:47* (new_http_inspect) SWF file LZMA decompression failure
+* *219:48* (new_http_inspect) PDF file deflate decompression failure
+* *219:49* (new_http_inspect) PDF file unsupported compression type
+* *219:50* (new_http_inspect) PDF file cascaded compression
+* *219:51* (new_http_inspect) PDF file parse failure
+* *219:52* (new_http_inspect) HTTP misformatted or not really HTTP
+* *219:53* (new_http_inspect) Chunk length has excessive leading zeros
+* *219:54* (new_http_inspect) White space before or between messages
+* *219:55* (new_http_inspect) Request message without URI
+* *219:56* (new_http_inspect) Control character in reason phrase
+* *219:57* (new_http_inspect) Illegal extra whitespace in start line
+* *219:58* (new_http_inspect) Corrupted HTTP version
+* *219:59* (new_http_inspect) Unknown HTTP version
+* *219:60* (new_http_inspect) Format error in HTTP header
+* *219:61* (new_http_inspect) Chunk header options present
+* *219:62* (new_http_inspect) URI badly formatted
+* *219:63* (new_http_inspect) URI bad port number
+* *219:64* (new_http_inspect) HTTP chunk misformatted
+* *219:65* (new_http_inspect) White space following chunk length
+
+=== normalizer
+
+
+What: packet scrubbing for inline mode
+
+Type: inspector
+
+Configuration: 
+
+* bool *normalizer.ip4.base* = true: clear options
+* bool *normalizer.ip4.df* = false: clear don't frag flag
+* bool *normalizer.ip4.rf* = false: clear reserved flag
+* bool *normalizer.ip4.tos* = false: clear tos / differentiated services byte
+* bool *normalizer.ip4.trim* = false: truncate excess payload beyond datagram length
+* bool *normalizer.tcp.base* = true: clear reserved bits and option padding and fix urgent pointer / flags issues
+* bool *normalizer.tcp.block* = true: allow packet drops during TCP normalization
+* bool *normalizer.tcp.urp* = true: adjust urgent pointer if beyond segment length
+* bool *normalizer.tcp.ips* = false: ensure consistency in retransmitted data
+* select *normalizer.tcp.ecn* = off: clear ecn for all packets | sessions w/o ecn setup { off | packet | stream }
+* bool *normalizer.tcp.pad* = true: clear any option padding bytes
+* bool *normalizer.tcp.trim_syn* = false: remove data on SYN
+* bool *normalizer.tcp.trim_rst* = false: remove any data from RST packet
+* bool *normalizer.tcp.trim_win* = false: trim data to window
+* bool *normalizer.tcp.trim_mss* = false: trim data to MSS
+* bool *normalizer.tcp.trim* = false: enable all of the TCP trim options
+* bool *normalizer.tcp.opts* = true: clear all options except mss, wscale, timestamp, and any explicitly allowed
+* bool *normalizer.tcp.req_urg* = true: clear the urgent pointer if the urgent flag is not set
+* bool *normalizer.tcp.req_pay* = true: clear the urgent pointer and the urgent flag if there is no payload
+* bool *normalizer.tcp.rsv* = true: clear the reserved bits in the TCP header
+* bool *normalizer.tcp.req_urp* = true: clear the urgent flag if the urgent pointer is not set
+* multi *normalizer.tcp.allow_names*: don't clear given option names { sack | echo | partial_order | conn_count | alt_checksum | md5 }
+* string *normalizer.tcp.allow_codes*: don't clear given option codes
+* bool *normalizer.ip6* = false: clear reserved flag
+* bool *normalizer.icmp4* = false: clear reserved flag
+* bool *normalizer.icmp6* = false: clear reserved flag
+
+Peg counts: 
+
+* *normalizer.ip4 trim*: eth packets trimmed to datagram size
+* *normalizer.test ip4 trim*: During inline mode, would have eth packets trimmed to datagram size
+* *normalizer.ip4 tos*: type of service normalizations
+* *normalizer.test ip4 tos*: During inline mode, would have type of service normalizations
+* *normalizer.ip4 df*: don't frag bit normalizations
+* *normalizer.test ip4 df*: During inline mode, would have don't frag bit normalizations
+* *normalizer.ip4 rf*: reserved flag bit clears
+* *normalizer.test ip4 rf*: During inline mode, would have reserved flag bit clears
+* *normalizer.ip4 ttl*: time-to-live normalizations
+* *normalizer.test ip4 ttl*: During inline mode, would have time-to-live normalizations
+* *normalizer.ip4 opts*: ip4 options cleared
+* *normalizer.test ip4 opts*: During inline mode, would have ip4 options cleared
+* *normalizer.icmp4 echo*: icmp4 ping normalizations
+* *normalizer.test icmp4 echo*: During inline mode, would have icmp4 ping normalizations
+* *normalizer.ip6 hops*: ip6 hop limit normalizations
+* *normalizer.test ip6 hops*: During inline mode, would have ip6 hop limit normalizations
+* *normalizer.ip6 options*: ip6 options cleared
+* *normalizer.test ip6 options*: During inline mode, would have ip6 options cleared
+* *normalizer.icmp6 echo*: icmp6 echo normalizations
+* *normalizer.test icmp6 echo*: During inline mode, would have icmp6 echo normalizations
+* *normalizer.tcp syn options*: SYN only options cleared from non-SYN packets
+* *normalizer.test tcp syn options*: During inline mode, would have SYN only options cleared from non-SYN packets
+* *normalizer.tcp options*: packets with options cleared
+* *normalizer.test tcp options*: During inline mode, would have packets with options cleared
+* *normalizer.tcp paddding*: packets with padding cleared
+* *normalizer.test tcp paddding*: During inline mode, would have packets with padding cleared
+* *normalizer.tcp reserved*: packets with reserved bits cleared
+* *normalizer.test tcp reserved*: During inline mode, would have packets with reserved bits cleared
+* *normalizer.tcp nonce*: packets with nonce bit cleared
+* *normalizer.test tcp nonce*: During inline mode, would have packets with nonce bit cleared
+* *normalizer.tcp urgent ptr*: packets without data with urgent pointer cleared
+* *normalizer.test tcp urgent ptr*: During inline mode, would have packets without data with urgent pointer cleared
+* *normalizer.tcp ecn pkt*: packets with ECN bits cleared
+* *normalizer.test tcp ecn pkt*: During inline mode, would have packets with ECN bits cleared
+* *normalizer.tcp ts ecr*: timestamp cleared on non-ACKs
+* *normalizer.test tcp ts ecr*: During inline mode, would have timestamp cleared on non-ACKs
+* *normalizer.tcp req urg*: cleared urgent pointer when urgent flag is not set
+* *normalizer.test tcp req urg*: During inline mode, would have cleared urgent pointer when urgent flag is not set
+* *normalizer.tcp req pay*: cleared urgent pointer and urgent flag when there is no payload
+* *normalizer.test tcp req pay*: During inline mode, would have cleared urgent pointer and urgent flag when there is no payload
+* *normalizer.tcp req urp*: cleared the urgent flag if the urgent pointer is not set
+* *normalizer.test tcp req urp*: During inline mode, would have cleared the urgent flag if the urgent pointer is not set
+* *normalizer.tcp trim syn*: tcp segments trimmed on SYN
+* *normalizer.test tcp trim syn*: During inline mode, would have tcp segments trimmed on SYN
+* *normalizer.tcp trim rst*: RST packets with data trimmed
+* *normalizer.test tcp trim rst*: During inline mode, would have RST packets with data trimmed
+* *normalizer.tcp trim win*: data trimed to window
+* *normalizer.test tcp trim win*: During inline mode, would have data trimed to window
+* *normalizer.tcp trim mss*: data trimmed to MSS
+* *normalizer.test tcp trim mss*: During inline mode, would have data trimmed to MSS
+* *normalizer.tcp ecn session*: ECN bits cleared
+* *normalizer.test tcp ecn session*: During inline mode, would have ECN bits cleared
+* *normalizer.tcp ts nop*: timestamp options cleared
+* *normalizer.test tcp ts nop*: During inline mode, would have timestamp options cleared
+* *normalizer.tcp ips data*: normalized segments
+* *normalizer.test tcp ips data*: During inline mode, would have normalized segments
+* *normalizer.tcp block*: blocked segments
+* *normalizer.test tcp block*: During inline mode, would have blocked segments
+
+=== perf_monitor
+
+
+What: performance monitoring and flow statistics collection
+
+Type: inspector
+
+Configuration: 
+
+* int *perf_monitor.packets* = 10000: minim packets to report { 0: }
+* int *perf_monitor.seconds* = 60: report interval; 0 means report at exit only { 0: }
+* int *perf_monitor.flow_ip_memcap* = 52428800: maximum memory for flow tracking { 8200: }
+* int *perf_monitor.max_file_size* = 4294967295: files will be rolled over if they exceed this size { 4096: }
+* int *perf_monitor.flow_ports* = 1023: maximum ports to track { 0: }
+* bool *perf_monitor.reset* = true: reset (clear) statistics after each reporting interval
+* bool *perf_monitor.max* = false: calculate theoretical maximum performance
+* bool *perf_monitor.console* = false: output to console
+* bool *perf_monitor.events* = false: report on qualified vs non-qualified events
+* bool *perf_monitor.file* = false: output base stats to perf_monitor.csv instead of stdout
+* bool *perf_monitor.flow* = false: enable traffic statistics
+* bool *perf_monitor.flow_file* = false: output traffic statistics to a perf_monitor_flow.csv instead of stdout
+* bool *perf_monitor.flow_ip* = false: enable statistics on host pairs
+* bool *perf_monitor.flow_ip_file* = false: output host pair statistics to perf_monitor_flow_ip.csv instead of stdout
+
+Peg counts: 
+
+* *perf_monitor.packets*: total packets
+
+=== pop
+
+
+What: pop inspection
+
+Type: inspector
+
+Configuration: 
+
+* int *pop.b64_decode_depth* = 1460:  base64 decoding depth { -1:65535 }
+* int *pop.bitenc_decode_depth* = 1460:  Non-Encoded MIME attachment extraction depth { -1:65535 }
+* int *pop.qp_decode_depth* = 1460:  Quoted Printable decoding depth { -1:65535 }
+* int *pop.uu_decode_depth* = 1460:  Unix-to-Unix decoding depth { -1:65535 }
+
+Rules: 
+
+* *142:1* (pop) Unknown POP3 command
+* *142:2* (pop) Unknown POP3 response
+* *142:4* (pop) Base64 Decoding failed.
+* *142:5* (pop) Quoted-Printable Decoding failed.
+* *142:7* (pop) Unix-to-Unix Decoding failed.
+
+Peg counts: 
+
+* *pop.packets*: total packets
+
+=== port_scan
+
+
+What: port scan inspector; also configure port_scan_global
+
+Type: inspector
+
+Configuration: 
+
+* multi *port_scan.protos* = all: choose the protocols to monitor { tcp | udp | icmp | ip | all }
+* multi *port_scan.scan_types* = all: choose type of scans to look for { portscan | portsweep | decoy_portscan | distributed_portscan | all }
+* enum *port_scan.sense_level* = medium: choose the level of detection { low | medium | high }
+* string *port_scan.watch_ip*: list of CIDRs with optional ports to watch
+* string *port_scan.ignore_scanners*: list of CIDRs with optional ports to ignore if the source of scan alerts
+* string *port_scan.ignore_scanned*: list of CIDRs with optional ports to ignore if the destination of scan alerts
+* bool *port_scan.include_midstream* = false: list of CIDRs with optional ports
+* bool *port_scan.logfile* = false: write scan events to file
+
+Rules: 
+
+* *122:1* (port_scan) TCP portscan
+* *122:2* (port_scan) TCP decoy portscan
+* *122:3* (port_scan) TCP portsweep
+* *122:4* (port_scan) TCP distributed portscan
+* *122:5* (port_scan) TCP filtered portscan
+* *122:6* (port_scan) TCP filtered decoy portscan
+* *122:7* (port_scan) TCP filtered portsweep
+* *122:8* (port_scan) TCP filtered distributed portscan
+* *122:9* (port_scan) IP protocol scan
+* *122:10* (port_scan) IP decoy protocol scan
+* *122:11* (port_scan) IP protocol sweep
+* *122:12* (port_scan) IP distributed protocol scan
+* *122:13* (port_scan) IP filtered protocol scan
+* *122:14* (port_scan) IP filtered decoy protocol scan
+* *122:15* (port_scan) IP filtered protocol sweep
+* *122:16* (port_scan) IP filtered distributed protocol scan
+* *122:17* (port_scan) UDP portscan
+* *122:18* (port_scan) UDP decoy portscan
+* *122:19* (port_scan) UDP portsweep
+* *122:20* (port_scan) UDP distributed portscan
+* *122:21* (port_scan) UDP filtered portscan
+* *122:22* (port_scan) UDP filtered decoy portscan
+* *122:23* (port_scan) UDP filtered portsweep
+* *122:24* (port_scan) UDP filtered distributed portscan
+* *122:25* (port_scan) ICMP sweep
+* *122:26* (port_scan) ICMP filtered sweep
+* *122:27* (port_scan) open port
+
+=== port_scan_global
+
+
+What: shared settings for port_scan inspectors for use with port_scan
+
+Type: inspector
+
+Configuration: 
+
+* int *port_scan_global.memcap* = 1048576: maximum tracker memory { 1: }
+
+Peg counts: 
+
+* *port_scan_global.packets*: total packets
+
+=== rpc_decode
+
+
+What: RPC inspector
+
+Type: inspector
+
+Rules: 
+
+* *106:1* (rpc_decode) fragmented RPC records
+* *106:2* (rpc_decode) multiple RPC records
+* *106:3* (rpc_decode) large RPC record fragment
+* *106:4* (rpc_decode) incomplete RPC segment
+* *106:5* (rpc_decode) zero-length RPC fragment
+
+Peg counts: 
+
+* *rpc_decode.packets*: total packets
+
+=== sip
+
+
+What: sip inspection
+
+Type: inspector
+
+Configuration: 
+
+* bool *sip.ignore_call_channel* = false: enables the support for ignoring audio/video data channel
+* int *sip.max_call_id_len* = 256: maximum call id field size { 0:65535 }
+* int *sip.max_contact_len* = 256: maximum contact field size { 0:65535 }
+* int *sip.max_content_len* = 1024: maximum content length of the message body { 0:65535 }
+* int *sip.max_dialogs* = 4: maximum number of dialogs within one stream session { 1:4194303 }
+* int *sip.max_from_len* = 256: maximum from field size { 0:65535 }
+* int *sip.max_requestName_len* = 20: maximum request name field size { 0:65535 }
+* int *sip.max_sessions* = 10000: maximum number of sessions that can be allocated { 1024:4194303 }
+* int *sip.max_to_len* = 256: maximum to field size { 0:65535 }
+* int *sip.max_uri_len* = 256: maximum request uri field size { 0:65535 }
+* int *sip.max_via_len* = 1024: maximum via field size { 0:65535 }
+* string *sip.methods* = invite cancel ack  bye register options: list of methods to check in sip messages
+
+Rules: 
+
+* *140:1* (sip) Maximum sessions reached
+* *140:2* (sip) Empty request URI
+* *140:3* (sip) URI is too long
+* *140:4* (sip) Empty call-Id
+* *140:5* (sip) Call-Id is too long
+* *140:6* (sip) CSeq number is too large or negative
+* *140:7* (sip) Request name in CSeq is too long
+* *140:8* (sip) Empty From header
+* *140:9* (sip) From header is too long
+* *140:10* (sip) Empty To header
+* *140:11* (sip) To header is too long
+* *140:12* (sip) Empty Via header
+* *140:13* (sip) Via header is too long
+* *140:14* (sip) Empty Contact
+* *140:15* (sip) Contact is too long
+* *140:16* (sip) Content length is too large or negative
+* *140:17* (sip) Multiple SIP messages in a packet
+* *140:18* (sip) Content length mismatch
+* *140:19* (sip) Request name is invalid
+* *140:20* (sip) Invite replay attack
+* *140:21* (sip) Illegal session information modification
+* *140:22* (sip) Response status code is not a 3 digit number
+* *140:23* (sip) Empty Content-type header
+* *140:24* (sip) SIP version is invalid
+* *140:25* (sip) Mismatch in METHOD of request and the CSEQ header
+* *140:26* (sip) Method is unknown
+* *140:27* (sip) Maximum dialogs within a session reached
+
+Peg counts: 
+
+* *sip.sessions*: total sessions
+* *sip.events*: events generated
+* *sip.dialogs*: total dialogs
+* *sip.ignored channels*: total channels ignored
+* *sip.ignored sessions*: total sessions ignored
+* *sip.requests*: total requests
+* *sip.responses*: total responses
+
+=== smtp
+
+
+What: smtp inspection
+
+Type: inspector
+
+Configuration: 
+
+* string *smtp.alt_max_command_line_len[].command*: command string
+* int *smtp.alt_max_command_line_len[].length* = 0: specify non-default maximum for command { 0: }
+* string *smtp.auth_cmds*: commands that initiate an authentication exchange
+* string *smtp.binary_data_cmds*: commands that initiate sending of data and use a length value after the command
+* int *smtp.bitenc_decode_depth* = 25: depth used to extract the non-encoded MIME attachments { -1:65535 }
+* int *smtp.b64_decode_depth* = 25: depth used to decode the base64 encoded MIME attachments { -1:65535 }
+* string *smtp.data_cmds*: commands that initiate sending of data with an end of data delimiter
+* int *smtp.email_hdrs_log_depth* = 1464: depth for logging email headers { 0:20480 }
+* bool *smtp.ignore_data* = false: ignore data section of mail
+* bool *smtp.ignore_tls_data* = false: ignore TLS-encrypted data when processing rules
+* string *smtp.invalid_cmds*: alert if this command is sent from client side
+* bool *smtp.log_email_hdrs* = false: log the SMTP email headers extracted from SMTP data
+* bool *smtp.log_filename* = false: log the MIME attachment filenames extracted from the Content-Disposition header within the MIME body
+* bool *smtp.log_mailfrom* = false: log the sender's email address extracted from the MAIL FROM command
+* bool *smtp.log_rcptto* = false: log the recipient's email address extracted from the RCPT TO command
+* int *smtp.max_command_line_len* = 0: max Command Line Length { 0:65535 }
+* int *smtp.max_header_line_len* = 0: max SMTP DATA header line { 0:65535 }
+* int *smtp.max_response_line_len* = 0: max SMTP response line { 0:65535 }
+* enum *smtp.normalize* = none: turns on/off normalization { none | cmds | all }
+* string *smtp.normalize_cmds*: list of commands to normalize
+* int *smtp.qp_decode_depth* = 25: quoted-Printable decoding depth { -1:65535 }
+* int *smtp.uu_decode_depth* = 25: unix-to-Unix decoding depth { -1:65535 }
+* string *smtp.valid_cmds*: list of valid commands
+* enum *smtp.xlink2state* = alert: enable/disable xlink2state alert { disable | alert | drop }
+
+Rules: 
+
+* *124:1* (smtp) Attempted command buffer overflow
+* *124:2* (smtp) Attempted data header buffer overflow
+* *124:3* (smtp) Attempted response buffer overflow
+* *124:4* (smtp) Attempted specific command buffer overflow
+* *124:5* (smtp) Unknown command
+* *124:6* (smtp) Illegal command
+* *124:7* (smtp) Attempted header name buffer overflow
+* *124:8* (smtp) Attempted X-Link2State command buffer overflow
+* *124:10* (smtp) Base64 Decoding failed.
+* *124:11* (smtp) Quoted-Printable Decoding failed.
+* *124:13* (smtp) Unix-to-Unix Decoding failed.
+* *124:14* (smtp) Cyrus SASL authentication attack.
+
+Peg counts: 
+
+* *smtp.packets*: total packets
+
+=== ssh
+
+
+What: ssh inspection
+
+Type: inspector
+
+Configuration: 
+
+* int *ssh.max_encrypted_packets* = 25: ignore session after this many encrypted packets { 0:65535 }
+* int *ssh.max_client_bytes* = 19600: number of unanswered bytes before alerting on challenge-response overflow or CRC32 { 0:65535 }
+* int *ssh.max_server_version_len* = 80: limit before alerting on secure CRT server version string overflow { 0:255 }
+
+Rules: 
+
+* *128:1* (ssh) Challenge-Response Overflow exploit
+* *128:2* (ssh) SSH1 CRC32 exploit
+* *128:3* (ssh) Server version string overflow
+* *128:5* (ssh) Bad message direction
+* *128:6* (ssh) Payload size incorrect for the given payload
+* *128:7* (ssh) Failed to detect SSH version string
+
+Peg counts: 
+
+* *ssh.packets*: total packets
+
+=== ssl
+
+
+What: ssl inspection
+
+Type: inspector
+
+Configuration: 
+
+* bool *ssl.trust_servers* = false: disables requirement that application (encrypted) data must be observed on both sides
+* int *ssl.max_heartbeat_length* = 0: maximum length of heartbeat record allowed { 0:65535 }
+
+Rules: 
+
+* *137:1* (ssl) Invalid Client HELLO after Server HELLO Detected
+* *137:2* (ssl) Invalid Server HELLO without Client HELLO Detected
+* *137:3* (ssl) Heartbeat Read Overrun Attempt Detected
+* *137:4* (ssl) Large Heartbeat Response Detected
+
+Peg counts: 
+
+* *ssl.packets*: total packets
+
+=== stream
+
+
+What: common flow tracking
+
+Type: inspector
+
+Configuration: 
+
+* int *stream.ip_cache.max_sessions* = 16384: maximum simultaneous sessions tracked before pruning { 1: }
+* int *stream.ip_cache.memcap* = 23920640: maximum cache memory before pruning (0 is unlimited) { 0: }
+* int *stream.ip_cache.pruning_timeout* = 30: minimum inactive time before being eligible for pruning { 1: }
+* int *stream.ip_cache.idle_timeout* = 180: maximum inactive time before retiring session tracker { 1: }
+* int *stream.icmp_cache.max_sessions* = 32768: maximum simultaneous sessions tracked before pruning { 1: }
+* int *stream.icmp_cache.memcap* = 1048576: maximum cache memory before pruning (0 is unlimited) { 0: }
+* int *stream.icmp_cache.pruning_timeout* = 30: minimum inactive time before being eligible for pruning { 1: }
+* int *stream.icmp_cache.idle_timeout* = 180: maximum inactive time before retiring session tracker { 1: }
+* int *stream.tcp_cache.max_sessions* = 131072: maximum simultaneous sessions tracked before pruning { 1: }
+* int *stream.tcp_cache.memcap* = 268435456: maximum cache memory before pruning (0 is unlimited) { 0: }
+* int *stream.tcp_cache.pruning_timeout* = 30: minimum inactive time before being eligible for pruning { 1: }
+* int *stream.tcp_cache.idle_timeout* = 180: maximum inactive time before retiring session tracker { 1: }
+* int *stream.udp_cache.max_sessions* = 65536: maximum simultaneous sessions tracked before pruning { 1: }
+* int *stream.udp_cache.memcap* = 0: maximum cache memory before pruning (0 is unlimited) { 0: }
+* int *stream.udp_cache.pruning_timeout* = 30: minimum inactive time before being eligible for pruning { 1: }
+* int *stream.udp_cache.idle_timeout* = 180: maximum inactive time before retiring session tracker { 1: }
+* int *stream.user_cache.max_sessions* = 1024: maximum simultaneous sessions tracked before pruning { 1: }
+* int *stream.user_cache.memcap* = 1048576: maximum cache memory before pruning (0 is unlimited) { 0: }
+* int *stream.user_cache.pruning_timeout* = 30: minimum inactive time before being eligible for pruning { 1: }
+* int *stream.user_cache.idle_timeout* = 180: maximum inactive time before retiring session tracker { 1: }
+* int *stream.file_cache.max_sessions* =  128: maximum simultaneous sessions tracked before pruning { 1: }
+* int *stream.file_cache.memcap* = 0: maximum cache memory before pruning (0 is unlimited) { 0: }
+* int *stream.file_cache.pruning_timeout* = 30: minimum inactive time before being eligible for pruning { 1: }
+* int *stream.file_cache.idle_timeout* = 180: maximum inactive time before retiring session tracker { 1: }
+
+Peg counts: 
+
+* *stream.ip flows*: total ip sessions
+* *stream.ip prunes*: ip sessions pruned
+* *stream.icmp flows*: total icmp sessions
+* *stream.icmp prunes*: icmp sessions pruned
+* *stream.tcp flows*: total tcp sessions
+* *stream.tcp prunes*: tcp sessions pruned
+* *stream.udp flows*: total udp sessions
+* *stream.udp prunes*: udp sessions pruned
+* *stream.user flows*: total user sessions
+* *stream.user prunes*: user sessions pruned
+* *stream.file flows*: total file sessions
+* *stream.file prunes*: file sessions pruned
+
+=== stream_file
+
+
+What: stream inspector for file flow tracking and processing
+
+Type: inspector
+
+Configuration: 
+
+* bool *stream_file.upload* = false: indicate file transfer direction
+
+=== stream_icmp
+
+
+What: stream inspector for ICMP flow tracking
+
+Type: inspector
+
+Configuration: 
+
+* int *stream_icmp.session_timeout* = 30: session tracking timeout { 1:86400 }
+
+Peg counts: 
+
+* *stream_icmp.created*: icmp session trackers created
+* *stream_icmp.released*: icmp session trackers released
+
+=== stream_ip
+
+
+What: stream inspector for IP flow tracking and defragmentation
+
+Type: inspector
+
+Configuration: 
+
+* int *stream_ip.max_frags* = 8192: maximum number of simultaneous fragments being tracked { 1: }
+* int *stream_ip.max_overlaps* = 0: maximum allowed overlaps per datagram; 0 is unlimited { 0: }
+* int *stream_ip.min_frag_length* = 0: alert if fragment length is below this limit before or after trimming { 0: }
+* int *stream_ip.min_ttl* = 1: discard fragments with ttl below the minimum { 1:255 }
+* enum *stream_ip.policy* = linux: fragment reassembly policy { first | linux | bsd | bsd_right | last | windows | solaris }
+* int *stream_ip.session_timeout* = 30: session tracking timeout { 1:86400 }
+
+Rules: 
+
+* *123:1* (stream_ip) inconsistent IP options on fragmented packets
+* *123:2* (stream_ip) teardrop attack
+* *123:3* (stream_ip) short fragment, possible DOS attempt
+* *123:4* (stream_ip) fragment packet ends after defragmented packet
+* *123:5* (stream_ip) zero-byte fragment packet
+* *123:6* (stream_ip) bad fragment size, packet size is negative
+* *123:7* (stream_ip) bad fragment size, packet size is greater than 65536
+* *123:8* (stream_ip) fragmentation overlap
+* *123:11* (stream_ip) TTL value less than configured minimum, not using for reassembly
+* *123:12* (stream_ip) excessive fragment overlap
+* *123:13* (stream_ip) tiny fragment
+
+Peg counts: 
+
+* *stream_ip.fragments*: total fragments
+* *stream_ip.reassembled*: reassembled datagrams
+* *stream_ip.discards*: fragments discarded
+* *stream_ip.memory faults*: memory faults
+* *stream_ip.frag timeouts*: datagrams abandoned
+* *stream_ip.overlaps*: overlapping fragments
+* *stream_ip.anomalies*: anomalies detected
+* *stream_ip.alerts*: alerts generated
+* *stream_ip.drops*: fragments dropped
+* *stream_ip.trackers added*: datagram trackers created
+* *stream_ip.trackers freed*: datagram trackers released
+* *stream_ip.nodes inserted*: fragments added to tracker
+* *stream_ip.nodes deleted*: fragments deleted from tracker
+
+=== stream_tcp
+
+
+What: stream inspector for TCP flow tracking and stream normalization and reassembly
+
+Type: inspector
+
+Configuration: 
+
+* int *stream_tcp.flush_factor* = 0: flush upon seeing a drop in segment size after given number of non-decreasing segments { 0: }
+* bool *stream_tcp.ignore_any_rules* = false: process tcp content rules w/o ports only if rules with ports are present
+* int *stream_tcp.max_window* = 0: maximum allowed tcp window { 0:1073725440 }
+* int *stream_tcp.overlap_limit* = 0: maximum number of allowed overlapping segments per session { 0:255 }
+* int *stream_tcp.max_pdu* = 16384: maximum reassembled PDU size { 1460:65535 }
+* enum *stream_tcp.policy* = bsd: determines operating system characteristics like reassembly { first | last | linux | old_linux | bsd | macos | solaris | irix | hpux11 | hpux10 | windows | win_2003 | vista | proxy }
+* bool *stream_tcp.reassemble_async* = true: queue data for reassembly before traffic is seen in both directions
+* int *stream_tcp.require_3whs* = -1: don't track midstream sessions after given seconds from start up; -1 tracks all { -1:86400 }
+* bool *stream_tcp.show_rebuilt_packets* = false: enable cmg like output of reassembled packets
+* int *stream_tcp.queue_limit.max_bytes* = 1048576: don't queue more than given bytes per session and direction { 0: }
+* int *stream_tcp.queue_limit.max_segments* = 2621: don't queue more than given segments per session and direction { 0: }
+* int *stream_tcp.small_segments.count* = 0: limit number of small segments queued { 0:2048 }
+* int *stream_tcp.small_segments.maximum_size* = 0: limit number of small segments queued { 0:2048 }
+* int *stream_tcp.session_timeout* = 30: session tracking timeout { 1:86400 }
+* int *stream_tcp.footprint* = 0: use zero for production, non-zero for testing at given size { 0: }
+
+Rules: 
+
+* *129:1* (stream_tcp) SYN on established session
+* *129:2* (stream_tcp) data on SYN packet
+* *129:3* (stream_tcp) data sent on stream not accepting data
+* *129:4* (stream_tcp) TCP timestamp is outside of PAWS window
+* *129:5* (stream_tcp) bad segment, adjusted size <= 0
+* *129:6* (stream_tcp) window size (after scaling) larger than policy allows
+* *129:7* (stream_tcp) limit on number of overlapping TCP packets reached
+* *129:8* (stream_tcp) data sent on stream after TCP Reset sent
+* *129:9* (stream_tcp) TCP client possibly hijacked, different ethernet address
+* *129:10* (stream_tcp) TCP Server possibly hijacked, different ethernet address
+* *129:11* (stream_tcp) TCP data with no TCP flags set
+* *129:12* (stream_tcp) consecutive TCP small segments exceeding threshold
+* *129:13* (stream_tcp) 4-way handshake detected
+* *129:14* (stream_tcp) TCP timestamp is missing
+* *129:15* (stream_tcp) reset outside window
+* *129:16* (stream_tcp) FIN number is greater than prior FIN
+* *129:17* (stream_tcp) ACK number is greater than prior FIN
+* *129:18* (stream_tcp) data sent on stream after TCP Reset received
+* *129:19* (stream_tcp) TCP window closed before receiving data
+* *129:20* (stream_tcp) TCP session without 3-way handshake
+
+Peg counts: 
+
+* *stream_tcp.sessions*: total sessions
+* *stream_tcp.timeouts*: sessions timed out
+* *stream_tcp.resyns*: SYN received on established session
+* *stream_tcp.discards*: tcp packets discarded
+* *stream_tcp.events*: events generated
+* *stream_tcp.ignored*: tcp packets ignored
+* *stream_tcp.untracked*: tcp packets not tracked
+* *stream_tcp.syn trackers*: tcp session tracking started on syn
+* *stream_tcp.syn-ack trackers*: tcp session tracking started on syn-ack
+* *stream_tcp.3way trackers*: tcp session tracking started on ack
+* *stream_tcp.data trackers*: tcp session tracking started on data
+* *stream_tcp.trackers created*: tcp session trackers created
+* *stream_tcp.trackers released*: tcp session trackers released
+* *stream_tcp.segs queued*: total segments queued
+* *stream_tcp.segs released*: total segments released
+* *stream_tcp.segs split*: tcp segments split when reassembling PDUs
+* *stream_tcp.segs used*: queued tcp segments applied to reassembled PDUs
+* *stream_tcp.rebuilt packets*: total reassembled PDUs
+* *stream_tcp.rebuilt buffers*: rebuilt PDU sections
+* *stream_tcp.overlaps*: overlapping segments queued
+* *stream_tcp.gaps*: missing data between PDUs
+* *stream_tcp.max segs*: number of times the maximum queued segment limit was reached
+* *stream_tcp.max bytes*: number of times the maximum queued byte limit was reached
+* *stream_tcp.internal events*: 135:X events generated
+* *stream_tcp.client cleanups*: number of times data from server was flushed when session released
+* *stream_tcp.server cleanups*: number of times data from client was flushed when session released
+
+=== stream_udp
+
+
+What: stream inspector for UDP flow tracking
+
+Type: inspector
+
+Configuration: 
+
+* int *stream_udp.session_timeout* = 30: session tracking timeout { 1:86400 }
+* bool *stream_udp.ignore_any_rules* = false: process udp content rules w/o ports only if rules with ports are present
+
+Peg counts: 
+
+* *stream_udp.sessions*: total udp sessions
+* *stream_udp.created*: udp session trackers created
+* *stream_udp.released*: udp session trackers released
+* *stream_udp.timeouts*: udp session timeouts
+
+=== stream_user
+
+
+What: stream inspector for user flow tracking and reassembly 
+
+Type: inspector
+
+Configuration: 
+
+* int *stream_user.session_timeout* = 30: session tracking timeout { 1:86400 }
+
+=== telnet
+
+
+What: telnet inspection and normalization
+
+Type: inspector
+
+Configuration: 
+
+* int *telnet.ayt_attack_thresh* = -1: alert on this number of consecutive telnet AYT commands { -1: }
+* bool *telnet.check_encrypted* = false: check for end of encryption
+* bool *telnet.encrypted_traffic* = false: check for encrypted telnet and ftp
+* bool *telnet.normalize* = false: eliminate escape sequences
+
+Rules: 
+
+* *126:1* (telnet) consecutive telnet AYT commands beyond threshold
+* *126:2* (telnet) telnet traffic encrypted
+* *126:3* (telnet) telnet subnegotiation begin command without subnegotiation end
+
+Peg counts: 
+
+* *telnet.packets*: total packets
+
+=== wizard
+
+
+What: inspector that implements port-independent protocol identification
+
+Type: inspector
+
+Configuration: 
+
+* string *wizard.hexes[].service*: name of service
+* select *wizard.hexes[].proto* = tcp: protocol to scan { tcp | udp }
+* bool *wizard.hexes[].client_first* = true: which end initiates data transfer
+* string *wizard.hexes[].to_server[].hex*: sequence of data with wild chars (?)
+* string *wizard.hexes[].to_client[].hex*: sequence of data with wild chars (?)
+* string *wizard.spells[].service*: name of service
+* select *wizard.spells[].proto* = tcp: protocol to scan { tcp | udp }
+* bool *wizard.spells[].client_first* = true: which end initiates data transfer
+* string *wizard.spells[].to_server[].spell*: sequence of data with wild cards (*)
+* string *wizard.spells[].to_client[].spell*: sequence of data with wild cards (*)
+
+Peg counts: 
+
+* *wizard.tcp scans*: tcp payload scans
+* *wizard.tcp hits*: tcp identifications
+* *wizard.udp scans*: udp payload scans
+* *wizard.udp hits*: udp identifications
+* *wizard.user scans*: user payload scans
+* *wizard.user hits*: user identifications

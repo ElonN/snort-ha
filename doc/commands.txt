@@ -1,0 +1,9 @@
+* *snort.detach*(): exit shell w/o shutdown
+* *snort.dump_stats*(): show summary statistics
+* *snort.help*(): this output
+* *snort.pause*(): suspend packet processing
+* *snort.quit*(): shutdown and dump-stats
+* *snort.reload_config*(): load new configuration
+* *snort.resume*(): continue packet processing
+* *snort.rotate_stats*(): roll perfmonitor log files
+* *snort.show_plugins*(): show available plugins

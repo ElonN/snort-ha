@@ -1,0 +1,586 @@
+
+=== active
+
+
+What: configure responses
+
+Type: basic
+
+Configuration: 
+
+* int *active.attempts* = 0: number of TCP packets sent per response (with varying sequence numbers) { 0:20 }
+* string *active.device*: use 'ip' for network layer responses or 'eth0' etc for link layer
+* string *active.dst_mac*: use format '01:23:45:67:89:ab'
+* int *active.max_responses* = 0: maximum number of responses { 0: }
+* int *active.min_interval* = 255: minimum number of seconds between responses { 1: }
+
+=== alerts
+
+
+What: configure alerts
+
+Type: basic
+
+Configuration: 
+
+* bool *alerts.alert_with_interface_name* = false: include interface in alert info (fast, full, or syslog only)
+* bool *alerts.default_rule_state* = true: enable or disable ips rules
+* int *alerts.detection_filter_memcap* = 1048576: set available memory for filters { 0: }
+* int *alerts.event_filter_memcap* = 1048576: set available memory for filters { 0: }
+* string *alerts.order* = pass drop alert log: change the order of rule action application
+* int *alerts.rate_filter_memcap* = 1048576: set available memory for filters { 0: }
+* string *alerts.reference_net*: set the CIDR for homenet (for use with -l or -B, does NOT change $HOME_NET in IDS mode)
+* bool *alerts.stateful* = false: don't alert w/o established session (note: rule action still taken)
+* string *alerts.tunnel_verdicts*: let DAQ handle non-allow verdicts for GTP|Teredo|6in4|4in6 traffic
+
+=== attribute_table
+
+
+What: configure hosts loading
+
+Type: basic
+
+Configuration: 
+
+* int *attribute_table.max_hosts* = 1024: maximum number of hosts in attribute table { 32:207551 }
+* int *attribute_table.max_services_per_host* = 8: maximum number of services per host entry in attribute table { 1:65535 }
+* int *attribute_table.max_metadata_services* = 8: maximum number of services in rule metadata { 1:256 }
+
+=== classifications
+
+
+What: define rule categories with priority
+
+Type: basic
+
+Configuration: 
+
+* string *classifications[].name*: name used with classtype rule option
+* int *classifications[].priority* = 1: default priority for class { 0: }
+* string *classifications[].text*: description of class
+
+=== daq
+
+
+What: configure packet acquisition interface
+
+Type: basic
+
+Configuration: 
+
+* string *daq.dir*: directory where to search for DAQ plugins
+* select *daq.mode*: set mode of operation { passive | inline | read-file }
+* bool *daq.no_promisc* = false: whether to put DAQ device into promiscuous mode
+* string *daq.type*: select type of DAQ
+* string *daq.vars*: comma separated list of name=value DAQ-specific parameters
+* int *daq.snaplen* = deflt: set snap length (same as -P) { 0:65535 }
+* bool *daq.decode_data_link* = false: display the second layer header info
+
+Peg counts: 
+
+* *daq.pcaps*: total files and interfaces processed
+* *daq.received*: total packets received from DAQ
+* *daq.analyzed*: total packets analyzed from DAQ
+* *daq.dropped*: packets dropped
+* *daq.filtered*: packets filtered out
+* *daq.outstanding*: packets unprocessed
+* *daq.injected*: active responses or replacements
+* *daq.allow*: total allow verdicts
+* *daq.block*: total block verdicts
+* *daq.replace*: total replace verdicts
+* *daq.whitelist*: total whitelist verdicts
+* *daq.blacklist*: total blacklist verdicts
+* *daq.ignore*: total ignore verdicts
+* *daq.internal blacklist*: packets blacklisted internally due to lack of DAQ support
+* *daq.internal whitelist*: packets whitelisted internally due to lack of DAQ support
+* *daq.skipped*: packets skipped at startup
+* *daq.fail open*: packets passed during initialization
+* *daq.idle*: attempts to acquire from DAQ without available packets
+
+=== decode
+
+
+What: general decoder rules
+
+Type: basic
+
+Rules: 
+
+* *116:450* (decode) BAD-TRAFFIC bad IP protocol
+* *116:293* (decode) two or more IP (v4 and/or v6) encapsulation layers present
+* *116:459* (decode) fragment with zero length
+* *116:150* (decode) bad traffic loopback IP
+* *116:151* (decode) bad traffic same src/dst IP
+* *116:449* (decode) BAD-TRAFFIC unassigned/reserved IP protocol
+* *116:468* (decode) too many protocols present
+
+=== detection
+
+
+What: configure general IPS rule processing parameters
+
+Type: basic
+
+Configuration: 
+
+* int *detection.asn1* = 256: maximum decode nodes { 1: }
+* bool *detection.pcre_enable* = true: disable pcre pattern matching
+* int *detection.pcre_match_limit* = 1500: limit pcre backtracking, -1 = max, 0 = off { -1:1000000 }
+* int *detection.pcre_match_limit_recursion* = 1500: limit pcre stack consumption, -1 = max, 0 = off { -1:10000 }
+
+Peg counts: 
+
+* *detection.analyzed*: packets sent to detection
+* *detection.slow searches*: non-fast pattern rule evaluations
+* *detection.raw searches*: fast pattern searches in raw packet data
+* *detection.cooked searches*: fast pattern searches in cooked packet data
+* *detection.pkt searches*: fast pattern searches in packet data
+* *detection.alt searches*: alt fast pattern searches in packet data
+* *detection.key searches*: fast pattern searches in key buffer
+* *detection.header searches*: fast pattern searches in header buffer
+* *detection.body searches*: fast pattern searches in body buffer
+* *detection.file searches*: fast pattern searches in file buffer
+* *detection.alerts*: alerts not including IP reputation
+* *detection.total alerts*: alerts including IP reputation
+* *detection.logged*: logged packets
+* *detection.passed*: passed packets
+* *detection.match limit*: fast pattern matches not processed
+* *detection.queue limit*: events not queued because queue full
+* *detection.log limit*: events queued but not logged
+* *detection.event limit*: events filtered
+* *detection.alert limit*: events previously triggered on same PDU
+
+=== event_filter
+
+
+What: configure thresholding of events
+
+Type: basic
+
+Configuration: 
+
+* int *event_filter[].gid* = 1: rule generator ID { 0: }
+* int *event_filter[].sid* = 1: rule signature ID { 0: }
+* enum *event_filter[].type*: 1st count events | every count events | once after count events { limit | threshold | both }
+* enum *event_filter[].track*: filter only matching source or destination addresses { by_src | by_dst }
+* int *event_filter[].count* = 0: number of events in interval before tripping; -1 to disable { -1: }
+* int *event_filter[].seconds* = 0: count interval { 0: }
+* string *event_filter[].ip*: restrict filter to these addresses according to track
+
+=== event_queue
+
+
+What: configure event queue parameters
+
+Type: basic
+
+Configuration: 
+
+* int *event_queue.max_queue* = 8: maximum events to queue { 1: }
+* int *event_queue.log* = 3: maximum events to log { 1: }
+* enum *event_queue.order_events* = content_length: criteria for ordering incoming events { priority|content_length }
+* bool *event_queue.process_all_events* = false: process just first action group or all action groups
+
+=== file_id
+
+
+What: configure file identification
+
+Type: basic
+
+Configuration: 
+
+* int *file_id.type_depth* = 1460: stop type ID at this point { 0: }
+* int *file_id.signature_depth* = 10485760: stop signature at this point { 0: }
+* int *file_id.block_timeout* = 86400: stop blocking after this many seconds { 0: }
+* int *file_id.lookup_timeout* = 2: give up on lookup after this many seconds { 0: }
+* bool *file_id.block_timeout_lookup* = false: block if lookup times out
+* bool *file_id.enable_type* = false: enable type ID
+* bool *file_id.enable_signature* = false: enable signature calculation
+* bool *file_id.enable_capture* = false: enable file capture
+* int *file_id.show_data_depth* = 100: print this many octets { 0: }
+* int *file_id.file_rules[].rev* = 0: rule revision { 0: }
+* string *file_id.file_rules[].msg*: information about the file type
+* string *file_id.file_rules[].type*: file type name
+* int *file_id.file_rules[].id* = 0: file type id { 0: }
+* string *file_id.file_rules[].category*: file type category
+* string *file_id.file_rules[].version*: file type version
+* string *file_id.file_rules[].magic[].content*: file magic content
+* int *file_id.file_rules[].magic[].offset* = 0: file magic offset { 0: }
+* bool *file_id.trace_type* = false: enable runtime dump of type info
+* bool *file_id.trace_signature* = false: enable runtime dump of signature info
+* bool *file_id.trace_stream* = false: enable runtime dump of file data
+
+=== hosts
+
+
+What: configure hosts
+
+Type: basic
+
+Configuration: 
+
+* addr *hosts[].ip* = 0.0.0.0/32: hosts address / cidr
+* enum *hosts[].frag_policy*: defragmentation policy { first | linux | bsd | bsd_right | last | windows | solaris }
+* enum *hosts[].tcp_policy*: tcp reassembly policy { first | last | linux | old_linux | bsd | macos | solaris | irix | hpux11 | hpux10 | windows | win_2003 | vista | proxy }
+* string *hosts[].services[].name*: service identifier
+* enum *hosts[].services[].proto* = tcp: ip protocol { tcp | udp }
+* port *hosts[].services[].port*: port number
+
+=== ips
+
+
+What: configure IPS rule processing
+
+Type: basic
+
+Configuration: 
+
+* bool *ips.enable_builtin_rules* = false: enable events from builtin rules w/o stubs
+* int *ips.id* = 0: correlate unified2 events with configuration { 0:65535 }
+* string *ips.include*: legacy snort rules and includes
+* enum *ips.mode*: set policy mode { tap | inline | inline-test }
+* string *ips.rules*: snort rules and includes
+
+=== network
+
+
+What: configure basic network parameters
+
+Type: basic
+
+Configuration: 
+
+* multi *network.checksum_drop* = none: drop if checksum is bad { all | ip | noip | tcp | notcp | udp | noudp | icmp | noicmp | none }
+* multi *network.checksum_eval* = none: checksums to verify { all | ip | noip | tcp | notcp | udp | noudp | icmp | noicmp | none }
+* bool *network.decode_drops* = false: enable dropping of packets by the decoder
+* int *network.id* = 0: correlate unified2 events with configuration { 0:65535 }
+* int *network.min_ttl* = 1: alert / normalize packets with lower ttl / hop limit (you must enable rules and / or normalization also) { 1:255 }
+* int *network.new_ttl* = 1: use this value for responses and when normalizing { 1:255 }
+* int *network.layers* = 40: The maximum number of protocols that Snort can correctly decode { 3:255 }
+* int *network.max_ip6_extensions* = 0: The number of IP6 options Snort will process for a given IPv6 layer. If this limit is hit, rule 116:456 may fire.  0 = unlimited { 0:255 }
+* int *network.max_ip_layers* = 0: The maximum number of IP layers Snort will process for a given packet If this limit is hit, rule 116:293 may fire.  0 = unlimited { 0:255 }
+
+=== output
+
+
+What: configure general output parameters
+
+Type: basic
+
+Configuration: 
+
+* bool *output.dump_chars_only* = false: turns on character dumps (same as -C)
+* bool *output.dump_payload* = false: dumps application layer (same as -d)
+* bool *output.dump_payload_verbose* = false: dumps raw packet starting at link layer (same as -X)
+* bool *output.log_ipv6_extra_data* = false: log IPv6 source and destination addresses as unified2 extra data records
+* int *output.event_trace.max_data* = 0: maximum amount of packet data to capture { 0:65535 }
+* bool *output.quiet* = false: suppress non-fatal information (still show alerts, same as -q)
+* string *output.logdir* = .: where to put log files (same as -l)
+* bool *output.obfuscate* = false: obfuscate the logged IP addresses (same as -O)
+* bool *output.show_year* = false: include year in timestamp in the alert and log files (same as -y)
+* int *output.tagged_packet_limit* = 256: maximum number of packets tagged for non-packet metrics { 0: }
+* bool *output.verbose* = false: be verbose (same as -v)
+
+=== packets
+
+
+What: configure basic packet handling
+
+Type: basic
+
+Configuration: 
+
+* bool *packets.address_space_agnostic* = false: determines whether DAQ address space info is used to track fragments and connections
+* string *packets.bpf_file*: file with BPF to select traffic for Snort
+* bool *packets.enable_inline_init_failopen* = true: whether to pass traffic during later stage of initialization to avoid drops
+* int *packets.limit* = 0: maximum number of packets to process before stopping (0 is unlimited) { 0: }
+* int *packets.skip* = 0: number of packets to skip before before processing { 0: }
+* bool *packets.vlan_agnostic* = false: determines whether VLAN info is used to track fragments and connections
+
+=== ppm
+
+
+What: packet and rule latency monitoring and control (requires --enable-ppm)
+
+Type: basic
+
+Configuration: 
+
+* int *ppm.max_pkt_time* = 0: enable packet latency thresholding (usec), 0 = off { 0: }
+* bool *ppm.fastpath_expensive_packets* = false: stop inspection if the max_pkt_time is exceeded
+* enum *ppm.pkt_log* = none: log event if max_pkt_time is exceeded { none | log | alert | both }
+* int *ppm.max_rule_time* = 0: enable rule latency thresholding (usec), 0 = off { 0: }
+* int *ppm.threshold* = 5: number of times to exceed limit before disabling rule { 1: }
+* bool *ppm.suspend_expensive_rules* = false: temporarily disable rule if threshold is reached
+* int *ppm.suspend_timeout* = 60: seconds to suspend rule, 0 = permanent { 0: }
+* enum *ppm.rule_log* = none: enable event logging for suspended rules { none|log|alert|both }
+
+Rules: 
+
+* *134:1* (ppm) rule options disabled by rule latency
+* *134:2* (ppm) rule options re-enabled by rule latency
+* *134:3* (ppm) packet aborted due to latency
+
+=== process
+
+
+What: configure basic process setup
+
+Type: basic
+
+Configuration: 
+
+* string *process.chroot*: set chroot directory (same as -t)
+* int *process.threads[].cpu* = 0: pin the associated source/thread to this cpu { 0:127 }
+* string *process.threads[].source*: set cpu affinity for this source (either pcap or <iface>
+* int *process.threads[].thread* = 0: set cpu affinity for the <cur_thread_num> thread that runs { 0: }
+* bool *process.daemon* = false: fork as a daemon (same as -D)
+* bool *process.dirty_pig* = false: shutdown without internal cleanup
+* string *process.set_gid*: set group ID (same as -g)
+* string *process.set_uid*: set user ID (same as -u)
+* string *process.umask*: set process umask (same as -m)
+* bool *process.utc* = false: use UTC instead of local time for timestamps
+
+=== profile
+
+
+What: configure profiling of rules and/or modules (requires --enable-perf-profiling)
+
+Type: basic
+
+Configuration: 
+
+* int *profile.rules.count* = -1: print results to given level (-1 = all, 0 = off) { -1: }
+* enum *profile.rules.sort* = avg_ticks: sort by given field { checks | avg_ticks | total_ticks | matches | no_matches | avg_ticks_per_match | avg_ticks_per_no_match }
+* int *profile.modules.count* = -1: print results to given level (-1 = all, 0 = off) { -1: }
+* enum *profile.modules.sort* = avg_ticks: sort by given field { checks | avg_ticks | total_ticks }
+
+=== rate_filter
+
+
+What: configure rate filters (which change rule actions)
+
+Type: basic
+
+Configuration: 
+
+* int *rate_filter[].gid* = 1: rule generator ID { 0: }
+* int *rate_filter[].sid* = 1: rule signature ID { 0: }
+* enum *rate_filter[].track* = by_src: filter only matching source or destination addresses { by_src | by_dst | by_rule }
+* int *rate_filter[].count* = 1: number of events in interval before tripping { 0: }
+* int *rate_filter[].seconds* = 1: count interval { 0: }
+* select *rate_filter[].new_action* = alert: take this action on future hits until timeout { alert | drop | log | pass | | reject | sdrop }
+* int *rate_filter[].timeout* = 1: count interval { 0: }
+* string *rate_filter[].apply_to*: restrict filter to these addresses according to track
+
+=== references
+
+
+What: define reference systems used in rules
+
+Type: basic
+
+Configuration: 
+
+* string *references[].name*: name used with reference rule option
+* string *references[].url*: where this reference is defined
+
+=== rule_state
+
+
+What: enable/disable specific IPS rules
+
+Type: basic
+
+Configuration: 
+
+* int *rule_state.gid* = 0: rule generator ID { 0: }
+* int *rule_state.sid* = 0: rule signature ID { 0: }
+* bool *rule_state.enable* = true: enable or disable rule in all policies
+
+=== search_engine
+
+
+What: configure fast pattern matcher
+
+Type: basic
+
+Configuration: 
+
+* int *search_engine.bleedover_port_limit* = 1024: maximum ports in rule before demotion to any-any port group { 1: }
+* bool *search_engine.bleedover_warnings_enabled* = false: print warning if a rule is demoted to any-any port group
+* bool *search_engine.enable_single_rule_group* = false: put all rules into one group
+* bool *search_engine.debug* = false: print verbose fast pattern info
+* bool *search_engine.debug_print_nocontent_rule_tests* = false: print rule group info during packet evaluation
+* bool *search_engine.debug_print_rule_group_build_details* = false: print rule group info during compilation
+* bool *search_engine.debug_print_rule_groups_uncompiled* = false: prints uncompiled rule group information
+* bool *search_engine.debug_print_rule_groups_compiled* = false: prints compiled rule group information
+* bool *search_engine.debug_print_fast_pattern* = false: print fast pattern info for each rule
+* int *search_engine.max_pattern_len* = 0: truncate patterns when compiling into state machine (0 means no maximum) { 0: }
+* int *search_engine.max_queue_events* = 5: maximum number of matching fast pattern states to queue per packet
+* bool *search_engine.inspect_stream_inserts* = false: inspect reassembled payload - disabling is good for performance, bad for detection
+* dynamic *search_engine.search_method* = ac_bnfa_q: set fast pattern algorithm - choose available search engine { ac_banded | ac_bnfa | ac_bnfa_q | ac_full | ac_full_q | ac_sparse | ac_sparse_bands | ac_std }
+* bool *search_engine.split_any_any* = false: evaluate any-any rules separately to save memory
+* bool *search_engine.search_optimize* = false: tweak state machine construction for better performance
+
+=== snort
+
+
+What: command line configuration and shell commands
+
+Type: basic
+
+Configuration: 
+
+* string *snort.-?*: <option prefix> output matching command line option quick help (same as --help-options) { (optional) }
+* string *snort.-A*: <mode> set alert mode: none, cmg, or alert_*
+* implied *snort.-B*: <mask> obfuscated IP addresses in alerts and packet dumps using CIDR mask
+* implied *snort.-C*: print out payloads with character data only (no hex)
+* string *snort.-c*: <conf> use this configuration
+* implied *snort.-D*: run Snort in background (daemon) mode
+* implied *snort.-d*: dump the Application Layer
+* implied *snort.-E*: enable daemon restart
+* implied *snort.-e*: display the second layer header info
+* implied *snort.-f*: turn off fflush() calls after binary log writes
+* int *snort.-G*: <0xid> (same as --logid) { 0:65535 }
+* string *snort.-g*: <gname> run snort gid as <gname> group (or gid) after initialization
+* implied *snort.-H*: make hash tables deterministic
+* string *snort.-i*: <iface>... list of interfaces
+* port *snort.-j*: <port> to listen for telnet connections
+* enum *snort.-k* = all: <mode> checksum mode; default is all { all|noip|notcp|noudp|noicmp|none }
+* string *snort.-L*: <mode> logging mode (none, dump, pcap, or log_*)
+* string *snort.-l*: <logdir> log to this directory instead of current directory
+* implied *snort.-M*: log messages to syslog (not alerts)
+* int *snort.-m*: <umask> set umask = <umask> { 0: }
+* int *snort.-n*: <count> stop after count packets { 0: }
+* implied *snort.-O*: obfuscate the logged IP addresses
+* implied *snort.-Q*: enable inline mode operation
+* implied *snort.-q*: quiet mode - Don't show banner and status report
+* string *snort.-R*: <rules> include this rules file in the default policy
+* string *snort.-r*: <pcap>... (same as --pcap-list)
+* string *snort.-S*: <x=v> set config variable x equal to value v
+* int *snort.-s* = 1514: <snap> (same as --snaplen); default is 1514 { 68:65535 }
+* implied *snort.-T*: test and report on the current Snort configuration
+* string *snort.-t*: <dir> chroots process to <dir> after initialization
+* implied *snort.-U*: use UTC for timestamps
+* string *snort.-u*: <uname> run snort as <uname> or <uid> after initialization
+* implied *snort.-V*: (same as --version)
+* implied *snort.-v*: be verbose
+* implied *snort.-W*: lists available interfaces
+* implied *snort.-w*: dump 802.11 management and control frames
+* implied *snort.-X*: dump the raw packet data starting at the link layer
+* implied *snort.-x*: same as --pedantic
+* implied *snort.-y*: include year in timestamp in the alert and log files
+* int *snort.-z* = 1: <count> maximum number of packet threads (same as --max-packet-threads); 0 gets the number of CPU cores reported by the system; default is 1 { 0: }
+* implied *snort.--alert-before-pass*: process alert, drop, sdrop, or reject before pass; default is pass before alert, drop,...
+* string *snort.--bpf*: <filter options> are standard BPF options, as seen in TCPDump
+* string *snort.--c2x*: output hex for given char (see also --x2c)
+* implied *snort.--create-pidfile*: create PID file, even when not in Daemon mode
+* string *snort.--daq*: <type> select packet acquisition module (default is pcap)
+* string *snort.--daq-dir*: <dir> tell snort where to find desired DAQ
+* implied *snort.--daq-list*: list packet acquisition modules available in optional dir, default is static modules only
+* string *snort.--daq-mode*: <mode> select the DAQ operating mode
+* string *snort.--daq-var*: <name=value> specify extra DAQ configuration variable
+* implied *snort.--dirty-pig*: don't flush packets on shutdown
+* implied *snort.--dump-builtin-rules*: [<module prefix>] output stub rules for selected modules
+* implied *snort.--dump-dynamic-rules*: output stub rules for all loaded rules libraries
+* string *snort.--dump-defaults*: [<module prefix>] output module defaults in Lua format { (optional) }
+* string *snort.--dump-version*: output the version, the whole version, and only the version { (optional) }
+* implied *snort.--enable-inline-test*: enable Inline-Test Mode Operation
+* implied *snort.--help*: list command line options
+* string *snort.--help-commands*: [<module prefix>] output matching commands { (optional) }
+* string *snort.--help-config*: [<module prefix>] output matching config options { (optional) }
+* string *snort.--help-counts*: [<module prefix>] output matching peg counts { (optional) }
+* string *snort.--help-module*: <module> output description of given module
+* implied *snort.--help-modules*: list all available modules with brief help
+* string *snort.--help-options*: <option prefix> output matching command line option quick help (same as -?) { (optional) }
+* implied *snort.--help-plugins*: list all available plugins with brief help
+* implied *snort.--help-signals*: dump available control signals
+* implied *snort.--id-subdir*: create/use instance subdirectories in logdir instead of instance filename prefix
+* implied *snort.--id-zero*: use id prefix / subdirectory even with one packet thread
+* implied *snort.--list-buffers*: output available inspection buffers
+* string *snort.--list-builtin*: <module prefix> output matching builtin rules { (optional) }
+* string *snort.--list-gids*: [<module prefix>] output matching generators { (optional) }
+* string *snort.--list-modules*: [<module type>] list all known modules of given type { (optional) }
+* implied *snort.--list-plugins*: list all known plugins
+* string *snort.--lua*: <chunk> extend/override conf with chunk; may be repeated
+* int *snort.--logid*: <0xid> log Identifier to uniquely id events for multiple snorts (same as -G) { 0:65535 }
+* implied *snort.--markup*: output help in asciidoc compatible format
+* int *snort.--max-packet-threads* = 1: <count> configure maximum number of packet threads (same as -z) { 0: }
+* implied *snort.--nostamps*: don't include timestamps in log file names
+* implied *snort.--nolock-pidfile*: do not try to lock Snort PID file
+* implied *snort.--pause*: wait for resume/quit command before processing packets/terminating
+* string *snort.--pcap-file*: <file> file that contains a list of pcaps to read - read mode is implied
+* string *snort.--pcap-list*: <list> a space separated list of pcaps to read - read mode is implied
+* string *snort.--pcap-dir*: <dir> a directory to recurse to look for pcaps - read mode is implied
+* string *snort.--pcap-filter*: <filter> filter to apply when getting pcaps from file or directory
+* int *snort.--pcap-loop*: <count> read all pcaps <count> times;  0 will read until Snort is terminated { -1: }
+* implied *snort.--pcap-no-filter*: reset to use no filter when getting pcaps from file or directory
+* implied *snort.--pcap-reload*: if reading multiple pcaps, reload snort config between pcaps
+* implied *snort.--pcap-show*: print a line saying what pcap is currently being read
+* implied *snort.--pedantic*: warnings are fatal
+* string *snort.--plugin-path*: <path> where to find plugins
+* implied *snort.--process-all-events*: process all action groups
+* string *snort.--rule*: <rules> to be added to configuration; may be repeated
+* implied *snort.--rule-to-hex*: output so rule header to stdout for text rule on stdin
+* implied *snort.--rule-to-text*: output plain so rule header to stdout for text rule on stdin
+* string *snort.--run-prefix*: <pfx> prepend this to each output file
+* string *snort.--script-path*: <path> to a luajit script or directory containing luajit scripts
+* implied *snort.--shell*: enable the interactive command line
+* implied *snort.--piglet*: enable piglet test harness mode
+* implied *snort.--show-plugins*: list module and plugin versions
+* int *snort.--skip*: <n> skip 1st n packets { 0: }
+* int *snort.--snaplen* = 1514: <snap> set snaplen of packet (same as -s) { 68:65535 }
+* implied *snort.--stdin-rules*: read rules from stdin until EOF or a line starting with END is read
+* implied *snort.--treat-drop-as-alert*: converts drop, sdrop, and reject rules into alert rules during startup
+* implied *snort.--treat-drop-as-ignore*: use drop, sdrop, and reject rules to ignore session traffic when not inline
+* string *snort.--catch-test*: comma separated list of cat unit test tags or 'all'
+* implied *snort.--version*: show version number (same as -V)
+* implied *snort.--warn-all*: enable all warnings
+* implied *snort.--warn-conf*: warn about configuration issues
+* implied *snort.--warn-daq*: warn about DAQ issues, usually related to mode
+* implied *snort.--warn-flowbits*: warn about flowbits that are checked but not set and vice-versa
+* implied *snort.--warn-hosts*: warn about host table issues
+* implied *snort.--warn-plugins*: warn about issues that prevent plugins from loading
+* implied *snort.--warn-rules*: warn about duplicate rules and rule parsing issues
+* implied *snort.--warn-scripts*: warn about issues discovered while processing Lua scripts
+* implied *snort.--warn-symbols*: warn about unknown symbols in your Lua config
+* implied *snort.--warn-vars*: warn about variable definition and usage issues
+* int *snort.--x2c*: output ASCII char for given hex (see also --c2x)
+* string *snort.--x2s*: output ASCII string for given byte code (see also --x2c)
+
+Commands: 
+
+* *snort.show_plugins*(): show available plugins
+* *snort.dump_stats*(): show summary statistics
+* *snort.rotate_stats*(): roll perfmonitor log files
+* *snort.reload_config*(): load new configuration
+* *snort.pause*(): suspend packet processing
+* *snort.resume*(): continue packet processing
+* *snort.detach*(): exit shell w/o shutdown
+* *snort.quit*(): shutdown and dump-stats
+* *snort.help*(): this output
+
+Peg counts: 
+
+* *snort.local commands*: total local commands processed
+* *snort.remote commands*: total remote commands processed
+* *snort.signals*: total signals processed
+* *snort.conf reloads*: number of times configuration was reloaded
+* *snort.attribute table reloads*: number of times hosts table was reloaded
+* *snort.attribute table hosts*: total number of hosts in table
+
+=== suppress
+
+
+What: configure event suppressions
+
+Type: basic
+
+Configuration: 
+
+* int *suppress[].gid* = 0: rule generator ID { 0: }
+* int *suppress[].sid* = 0: rule signature ID { 0: }
+* enum *suppress[].track*: suppress only matching source or destination addresses { by_src | by_dst }
+* string *suppress[].ip*: restrict suppression to these addresses according to track

@@ -1,0 +1,127 @@
+
+=== alert_csv
+
+
+What: output event in csv format
+
+Type: logger
+
+Configuration: 
+
+* bool *alert_csv.file* = false: output to alert_csv.txt instead of stdout
+* multi *alert_csv.fields* = timestamp pkt_num proto pkt_gen dgm_len dir src_ap dst_ap rule action: selected fields will be output in given order left to right { action | dir | dgm_len | dst_addr | dst_ap | dst_port | eth_dst | eth_len | eth_src | eth_type | gid | icmp_code | icmp_id | icmp_seq | icmp_type | ip_id | ip_len | msg | pkt_gen | pkt_num | proto | rev | rule | sid | src_addr | src_ap | src_port | tcp_ack | tcp_flags | tcp_len | tcp_seq | tcp_win | timestamp | tos | ttl | udp_len }
+* int *alert_csv.limit* = 0: set limit (0 is unlimited) { 0: }
+* string *alert_csv.separator* = , : separate fields with this character sequence
+* enum *alert_csv.units* = B: bytes | KB | MB | GB { B | K | M | G }
+
+=== alert_ex
+
+
+What: output gid:sid:rev for alerts
+
+Type: logger
+
+Configuration: 
+
+* bool *alert_ex.upper* = false: true/false -> convert to upper/lower case
+
+=== alert_fast
+
+
+What: output event with brief text format
+
+Type: logger
+
+Configuration: 
+
+* bool *alert_fast.file* = false: output to alert_fast.txt instead of stdout
+* bool *alert_fast.packet* = false: output packet dump with alert
+* int *alert_fast.limit* = 0: set limit (0 is unlimited) { 0: }
+* enum *alert_fast.units* = B: bytes | KB | MB | GB { B | K | M | G }
+
+=== alert_full
+
+
+What: output event with full packet dump
+
+Type: logger
+
+Configuration: 
+
+* bool *alert_full.file* = false: output to alert_full.txt instead of stdout
+* int *alert_full.limit* = 0: set limit (0 is unlimited) { 0: }
+* enum *alert_full.units* = B: limit is in bytes | KB | MB | GB { B | K | M | G }
+
+=== alert_syslog
+
+
+What: output event to syslog
+
+Type: logger
+
+Configuration: 
+
+* enum *alert_syslog.facility* = auth: part of priority applied to each message { auth | authpriv | daemon | user | local0 | local1 | local2 | local3 | local4 | local5 | local6 | local7 }
+* enum *alert_syslog.level* = info: part of priority applied to each message { emerg | alert | crit | err | warning | notice | info | debug }
+* multi *alert_syslog.options*: used to open the syslog connection { cons | ndelay | perror | pid }
+
+=== alert_unixsock
+
+
+What: output event over unix socket
+
+Type: logger
+
+=== log_codecs
+
+
+What: log protocols in packet by layer
+
+Type: logger
+
+Configuration: 
+
+* bool *log_codecs.file* = false: output to log_codecs.txt instead of stdout
+* bool *log_codecs.msg* = false: include alert msg
+
+=== log_hext
+
+
+What: output payload suitable for daq hext
+
+Type: logger
+
+Configuration: 
+
+* bool *log_hext.file* = false: output to log_hext.txt instead of stdout
+* bool *log_hext.raw* = false: output all full packets if true, else just TCP payload
+* int *log_hext.limit* = 0: set limit (0 is unlimited) { 0: }
+* enum *log_hext.units* = B: bytes | KB | MB | GB { B | K | M | G }
+* int *log_hext.width* = 20: set line width (0 is unlimited) { 0: }
+
+=== log_pcap
+
+
+What: log packet in pcap format
+
+Type: logger
+
+Configuration: 
+
+* int *log_pcap.limit* = 0: set limit (0 is unlimited) { 0: }
+* enum *log_pcap.units* = B: bytes | KB | MB | GB { B | K | M | G }
+
+=== unified2
+
+
+What: output event and packet in unified2 format file
+
+Type: logger
+
+Configuration: 
+
+* int *unified2.limit* = 0: set limit (0 is unlimited) { 0: }
+* enum *unified2.units* = B: limit multiplier { B | K | M | G }
+* bool *unified2.nostamp* = true: append file creation time to name (in Unix Epoch format)
+* bool *unified2.mpls_event_types* = false: include mpls labels in events
+* bool *unified2.vlan_event_types* = false: include vlan IDs in events

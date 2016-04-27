@@ -1,0 +1,19 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=@bindir@
+libdir=@libdir@
+includedir=@includedir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+mandir=@infodir@
+infodir=@infodir@
+cppflags=@CPPFLAGS@
+cxxflags=@CXXFLAGS@
+
+Name: Snort++
+Description: Snort 3.0 Project
+URL: www.snort.org
+Version: @VERSION@
+Libs: -L${libdir} -lcurl @LDFLAGS@ @LIBS@
+Cflags: @CFLAGS@
+

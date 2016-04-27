@@ -1,0 +1,31 @@
+
+Snort has several options to get more help:
+
+-? list command line options (same as --help)
+--help this overview of help
+--help-commands [<module prefix>] output matching commands
+--help-config [<module prefix>] output matching config options
+--help-counts [<module prefix>] output matching peg counts
+--help-module <module> output description of given module
+--help-modules list all available modules with brief help
+--help-plugins list all available plugins with brief help
+--help-options [<option prefix>] output matching command line options
+--help-signals dump available control signals
+--list-buffers output available inspection buffers
+--list-builtin [<module prefix>] output matching builtin rules
+--list-gids [<module prefix>] output matching generators
+--list-modules [<module type>] list all known modules
+--list-plugins list all known modules
+--show-plugins list module and plugin versions
+
+--help* and --list* options preempt other processing so should be last on the
+command line since any following options are ignored.  To ensure options like
+--markup and --plugin-path take effect, place them ahead of the help or list
+options.
+
+Options that filter output based on a matching prefix, such as --help-config
+won't output anything if there is no match.  If no prefix is given, everything
+matches.
+
+Report bugs to bugs@snort.org.
+

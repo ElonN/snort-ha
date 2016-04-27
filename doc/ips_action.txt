@@ -1,0 +1,31 @@
+
+=== react
+
+
+What: send response to client and terminate session
+
+Type: ips_action
+
+Configuration: 
+
+* bool *react.msg* = false:  use rule msg in response page instead of default message
+* string *react.page*: file containing HTTP response (headers and body)
+
+=== reject
+
+
+What: terminate session with TCP reset or ICMP unreachable
+
+Type: ips_action
+
+Configuration: 
+
+* enum *reject.reset*: send tcp reset to one or both ends { source|dest|both }
+* enum *reject.control*: send icmp unreachable(s) { network|host|port|all }
+
+=== rewrite
+
+
+What: overwrite packet contents
+
+Type: ips_action

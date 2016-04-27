@@ -1,0 +1,217 @@
+* *arp_spoof.packets*: total packets
+* *back_orifice.packets*: total packets
+* *binder.allows*: allow bindings
+* *binder.blocks*: block bindings
+* *binder.inspects*: inspect bindings
+* *binder.packets*: initial bindings
+* *binder.resets*: reset bindings
+* *daq.allow*: total allow verdicts
+* *daq.analyzed*: total packets analyzed from DAQ
+* *daq.blacklist*: total blacklist verdicts
+* *daq.block*: total block verdicts
+* *daq.dropped*: packets dropped
+* *daq.fail open*: packets passed during initialization
+* *daq.filtered*: packets filtered out
+* *daq.idle*: attempts to acquire from DAQ without available packets
+* *daq.ignore*: total ignore verdicts
+* *daq.injected*: active responses or replacements
+* *daq.internal blacklist*: packets blacklisted internally due to lack of DAQ support
+* *daq.internal whitelist*: packets whitelisted internally due to lack of DAQ support
+* *daq.outstanding*: packets unprocessed
+* *daq.pcaps*: total files and interfaces processed
+* *daq.received*: total packets received from DAQ
+* *daq.replace*: total replace verdicts
+* *daq.skipped*: packets skipped at startup
+* *daq.whitelist*: total whitelist verdicts
+* *data_log.packets*: total packets
+* *detection.alert limit*: events previously triggered on same PDU
+* *detection.alerts*: alerts not including IP reputation
+* *detection.alt searches*: alt fast pattern searches in packet data
+* *detection.analyzed*: packets sent to detection
+* *detection.body searches*: fast pattern searches in body buffer
+* *detection.cooked searches*: fast pattern searches in cooked packet data
+* *detection.event limit*: events filtered
+* *detection.file searches*: fast pattern searches in file buffer
+* *detection.header searches*: fast pattern searches in header buffer
+* *detection.key searches*: fast pattern searches in key buffer
+* *detection.log limit*: events queued but not logged
+* *detection.logged*: logged packets
+* *detection.match limit*: fast pattern matches not processed
+* *detection.passed*: passed packets
+* *detection.pkt searches*: fast pattern searches in packet data
+* *detection.queue limit*: events not queued because queue full
+* *detection.raw searches*: fast pattern searches in raw packet data
+* *detection.slow searches*: non-fast pattern rule evaluations
+* *detection.total alerts*: alerts including IP reputation
+* *dns.packets*: total packets
+* *dpx.packets*: total packets
+* *ftp_data.packets*: total packets
+* *ftp_server.packets*: total packets
+* *http_global.compressed bytes*: total comparessed bytes processed
+* *http_global.decompressed bytes*: total bytes decompressed
+* *http_global.double unicode*: double unicode normalizations
+* *http_global.gets*: GET requests
+* *http_global.gzip packets*: packets with gzip compression
+* *http_global.non-ascii*: non-ascii normalizations
+* *http_global.packets*: total packets processed
+* *http_global.paths with ../*: directory traversal normalizations
+* *http_global.paths with ./*: relative directory normalizations
+* *http_global.paths with //*: double slash normalizations
+* *http_global.post params*: POST parameters extracted
+* *http_global.posts*: POST requests
+* *http_global.request cookies*: requests with Cookie
+* *http_global.request headers*: total requests
+* *http_global.response cookies*: responses with Set-Cookie
+* *http_global.response headers*: total responses
+* *http_global.unicode*: unicode normalizations
+* *icmp4.bad checksum*: non-zero icmp checksums
+* *icmp6.bad checksum (ip4)*: nonzero ipcm4 checksums
+* *icmp6.bad checksum (ip6)*: nonzero ipcm6 checksums
+* *imap.packets*: total packets
+* *ipv4.bad checksum*: nonzero ip checksums
+* *normalizer.icmp4 echo*: icmp4 ping normalizations
+* *normalizer.icmp6 echo*: icmp6 echo normalizations
+* *normalizer.ip4 df*: don't frag bit normalizations
+* *normalizer.ip4 opts*: ip4 options cleared
+* *normalizer.ip4 rf*: reserved flag bit clears
+* *normalizer.ip4 tos*: type of service normalizations
+* *normalizer.ip4 trim*: eth packets trimmed to datagram size
+* *normalizer.ip4 ttl*: time-to-live normalizations
+* *normalizer.ip6 hops*: ip6 hop limit normalizations
+* *normalizer.ip6 options*: ip6 options cleared
+* *normalizer.tcp block*: blocked segments
+* *normalizer.tcp ecn pkt*: packets with ECN bits cleared
+* *normalizer.tcp ecn session*: ECN bits cleared
+* *normalizer.tcp ips data*: normalized segments
+* *normalizer.tcp nonce*: packets with nonce bit cleared
+* *normalizer.tcp options*: packets with options cleared
+* *normalizer.tcp paddding*: packets with padding cleared
+* *normalizer.tcp req pay*: cleared urgent pointer and urgent flag when there is no payload
+* *normalizer.tcp req urg*: cleared urgent pointer when urgent flag is not set
+* *normalizer.tcp req urp*: cleared the urgent flag if the urgent pointer is not set
+* *normalizer.tcp reserved*: packets with reserved bits cleared
+* *normalizer.tcp syn options*: SYN only options cleared from non-SYN packets
+* *normalizer.tcp trim mss*: data trimmed to MSS
+* *normalizer.tcp trim rst*: RST packets with data trimmed
+* *normalizer.tcp trim syn*: tcp segments trimmed on SYN
+* *normalizer.tcp trim win*: data trimed to window
+* *normalizer.tcp ts ecr*: timestamp cleared on non-ACKs
+* *normalizer.tcp ts nop*: timestamp options cleared
+* *normalizer.tcp urgent ptr*: packets without data with urgent pointer cleared
+* *normalizer.test icmp4 echo*: During inline mode, would have icmp4 ping normalizations
+* *normalizer.test icmp6 echo*: During inline mode, would have icmp6 echo normalizations
+* *normalizer.test ip4 df*: During inline mode, would have don't frag bit normalizations
+* *normalizer.test ip4 opts*: During inline mode, would have ip4 options cleared
+* *normalizer.test ip4 rf*: During inline mode, would have reserved flag bit clears
+* *normalizer.test ip4 tos*: During inline mode, would have type of service normalizations
+* *normalizer.test ip4 trim*: During inline mode, would have eth packets trimmed to datagram size
+* *normalizer.test ip4 ttl*: During inline mode, would have time-to-live normalizations
+* *normalizer.test ip6 hops*: During inline mode, would have ip6 hop limit normalizations
+* *normalizer.test ip6 options*: During inline mode, would have ip6 options cleared
+* *normalizer.test tcp block*: During inline mode, would have blocked segments
+* *normalizer.test tcp ecn pkt*: During inline mode, would have packets with ECN bits cleared
+* *normalizer.test tcp ecn session*: During inline mode, would have ECN bits cleared
+* *normalizer.test tcp ips data*: During inline mode, would have normalized segments
+* *normalizer.test tcp nonce*: During inline mode, would have packets with nonce bit cleared
+* *normalizer.test tcp options*: During inline mode, would have packets with options cleared
+* *normalizer.test tcp paddding*: During inline mode, would have packets with padding cleared
+* *normalizer.test tcp req pay*: During inline mode, would have cleared urgent pointer and urgent flag when there is no payload
+* *normalizer.test tcp req urg*: During inline mode, would have cleared urgent pointer when urgent flag is not set
+* *normalizer.test tcp req urp*: During inline mode, would have cleared the urgent flag if the urgent pointer is not set
+* *normalizer.test tcp reserved*: During inline mode, would have packets with reserved bits cleared
+* *normalizer.test tcp syn options*: During inline mode, would have SYN only options cleared from non-SYN packets
+* *normalizer.test tcp trim mss*: During inline mode, would have data trimmed to MSS
+* *normalizer.test tcp trim rst*: During inline mode, would have RST packets with data trimmed
+* *normalizer.test tcp trim syn*: During inline mode, would have tcp segments trimmed on SYN
+* *normalizer.test tcp trim win*: During inline mode, would have data trimed to window
+* *normalizer.test tcp ts ecr*: During inline mode, would have timestamp cleared on non-ACKs
+* *normalizer.test tcp ts nop*: During inline mode, would have timestamp options cleared
+* *normalizer.test tcp urgent ptr*: During inline mode, would have packets without data with urgent pointer cleared
+* *perf_monitor.packets*: total packets
+* *pop.packets*: total packets
+* *port_scan_global.packets*: total packets
+* *rpc_decode.packets*: total packets
+* *sip.dialogs*: total dialogs
+* *sip.events*: events generated
+* *sip.ignored channels*: total channels ignored
+* *sip.ignored sessions*: total sessions ignored
+* *sip.requests*: total requests
+* *sip.responses*: total responses
+* *sip.sessions*: total sessions
+* *smtp.packets*: total packets
+* *snort.attribute table hosts*: total number of hosts in table
+* *snort.attribute table reloads*: number of times hosts table was reloaded
+* *snort.conf reloads*: number of times configuration was reloaded
+* *snort.local commands*: total local commands processed
+* *snort.remote commands*: total remote commands processed
+* *snort.signals*: total signals processed
+* *ssh.packets*: total packets
+* *ssl.packets*: total packets
+* *stream.file flows*: total file sessions
+* *stream.file prunes*: file sessions pruned
+* *stream.icmp flows*: total icmp sessions
+* *stream.icmp prunes*: icmp sessions pruned
+* *stream.ip flows*: total ip sessions
+* *stream.ip prunes*: ip sessions pruned
+* *stream.tcp flows*: total tcp sessions
+* *stream.tcp prunes*: tcp sessions pruned
+* *stream.udp flows*: total udp sessions
+* *stream.udp prunes*: udp sessions pruned
+* *stream.user flows*: total user sessions
+* *stream.user prunes*: user sessions pruned
+* *stream_icmp.created*: icmp session trackers created
+* *stream_icmp.released*: icmp session trackers released
+* *stream_ip.alerts*: alerts generated
+* *stream_ip.anomalies*: anomalies detected
+* *stream_ip.discards*: fragments discarded
+* *stream_ip.drops*: fragments dropped
+* *stream_ip.frag timeouts*: datagrams abandoned
+* *stream_ip.fragments*: total fragments
+* *stream_ip.memory faults*: memory faults
+* *stream_ip.nodes deleted*: fragments deleted from tracker
+* *stream_ip.nodes inserted*: fragments added to tracker
+* *stream_ip.overlaps*: overlapping fragments
+* *stream_ip.reassembled*: reassembled datagrams
+* *stream_ip.trackers added*: datagram trackers created
+* *stream_ip.trackers freed*: datagram trackers released
+* *stream_tcp.3way trackers*: tcp session tracking started on ack
+* *stream_tcp.client cleanups*: number of times data from server was flushed when session released
+* *stream_tcp.data trackers*: tcp session tracking started on data
+* *stream_tcp.discards*: tcp packets discarded
+* *stream_tcp.events*: events generated
+* *stream_tcp.gaps*: missing data between PDUs
+* *stream_tcp.ignored*: tcp packets ignored
+* *stream_tcp.internal events*: 135:X events generated
+* *stream_tcp.max bytes*: number of times the maximum queued byte limit was reached
+* *stream_tcp.max segs*: number of times the maximum queued segment limit was reached
+* *stream_tcp.overlaps*: overlapping segments queued
+* *stream_tcp.rebuilt buffers*: rebuilt PDU sections
+* *stream_tcp.rebuilt packets*: total reassembled PDUs
+* *stream_tcp.resyns*: SYN received on established session
+* *stream_tcp.segs queued*: total segments queued
+* *stream_tcp.segs released*: total segments released
+* *stream_tcp.segs split*: tcp segments split when reassembling PDUs
+* *stream_tcp.segs used*: queued tcp segments applied to reassembled PDUs
+* *stream_tcp.server cleanups*: number of times data from client was flushed when session released
+* *stream_tcp.sessions*: total sessions
+* *stream_tcp.syn trackers*: tcp session tracking started on syn
+* *stream_tcp.syn-ack trackers*: tcp session tracking started on syn-ack
+* *stream_tcp.timeouts*: sessions timed out
+* *stream_tcp.trackers created*: tcp session trackers created
+* *stream_tcp.trackers released*: tcp session trackers released
+* *stream_tcp.untracked*: tcp packets not tracked
+* *stream_udp.created*: udp session trackers created
+* *stream_udp.released*: udp session trackers released
+* *stream_udp.sessions*: total udp sessions
+* *stream_udp.timeouts*: udp session timeouts
+* *tcp.bad checksum (ip4)*: nonzero tcp over ip checksums
+* *tcp.bad checksum (ip6)*: nonzero tcp over ipv6 checksums
+* *telnet.packets*: total packets
+* *udp.bad checksum (ip4)*: nonzero udp over ipv4 checksums
+* *udp.bad checksum (ip6)*: nonzero udp over ipv6 checksums
+* *wizard.tcp hits*: tcp identifications
+* *wizard.tcp scans*: tcp payload scans
+* *wizard.udp hits*: udp identifications
+* *wizard.udp scans*: udp payload scans
+* *wizard.user hits*: user identifications
+* *wizard.user scans*: user payload scans

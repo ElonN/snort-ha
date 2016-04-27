@@ -1,0 +1,162 @@
+* *ack* (ips_option): rule option to match on TCP ack numbers
+* *active* (basic): configure responses
+* *alert_csv* (logger): output event in csv format
+* *alert_ex* (logger): output gid:sid:rev for alerts
+* *alert_fast* (logger): output event with brief text format
+* *alert_full* (logger): output event with full packet dump
+* *alert_syslog* (logger): output event to syslog
+* *alert_unixsock* (logger): output event over unix socket
+* *alerts* (basic): configure alerts
+* *arp* (codec): support for address resolution protocol
+* *arp_spoof* (inspector): detect ARP attacks and anomalies
+* *asn1* (ips_option): rule option for asn1 detection
+* *attribute_table* (basic): configure hosts loading
+* *auth* (codec): support for IP authentication header
+* *back_orifice* (inspector): back orifice detection
+* *base64_decode* (ips_option): rule option to decode base64 data - must be used with base64_data option
+* *binder* (inspector): configure processing based on CIDRs, ports, services, etc.
+* *bufferlen* (ips_option): rule option to check length of current buffer
+* *byte_extract* (ips_option): rule option to convert data to an integer variable
+* *byte_jump* (ips_option): rule option to move the detection cursor
+* *byte_test* (ips_option): rule option to convert data to integer and compare
+* *classifications* (basic): define rule categories with priority
+* *classtype* (ips_option): general rule option for rule classification
+* *content* (ips_option): payload rule option for basic pattern matching
+* *cvs* (ips_option): payload rule option for detecting specific attacks
+* *daq* (basic): configure packet acquisition interface
+* *data_log* (inspector): log selected published data to data.log
+* *decode* (basic): general decoder rules
+* *detection* (basic): configure general IPS rule processing parameters
+* *detection_filter* (ips_option): rule option to require multiple hits before a rule generates an event
+* *dns* (inspector): dns inspection
+* *dpx* (inspector): dynamic inspector example
+* *dsize* (ips_option): rule option to test payload size
+* *eapol* (codec): support for extensible authentication protocol over LAN
+* *erspan2* (codec): support for encapsulated remote switched port analyzer - type 2
+* *erspan3* (codec): support for encapsulated remote switched port analyzer - type 3
+* *esp* (codec): support for encapsulating security payload
+* *eth* (codec): support for ethernet protocol (DLT 1) (DLT 51)
+* *event_filter* (basic): configure thresholding of events
+* *event_queue* (basic): configure event queue parameters
+* *fabricpath* (codec): support for fabricpath
+* *file_data* (ips_option): rule option to set detection cursor to file data
+* *file_id* (basic): configure file identification
+* *flags* (ips_option): rule option to test TCP control flags
+* *flow* (ips_option): rule option to check session properties
+* *flowbits* (ips_option): rule option to set and test arbitrary boolean flags
+* *fragbits* (ips_option): rule option to test IP frag flags
+* *fragoffset* (ips_option): rule option to test IP frag offset
+* *ftp_client* (inspector): FTP client configuration module for use with ftp_server
+* *ftp_data* (inspector): FTP data channel handler
+* *ftp_server* (inspector): main FTP module; ftp_client should also be configured
+* *gid* (ips_option): rule option specifying rule generator
+* *gre* (codec): support for generic routing encapsulation
+* *gtp* (codec): support for general-packet-radio-service tunnelling protocol
+* *hosts* (basic): configure hosts
+* *http_client_body* (ips_option): rule option to set the detection cursor to the request body
+* *http_cookie* (ips_option): rule option to set the detection cursor to the HTTP cookie
+* *http_global* (inspector): http inspector global configuration and client rules for use with http_server
+* *http_header* (ips_option): rule option to set the detection cursor to the normalized header(s)
+* *http_inspect* (inspector): http inspection and server rules; also configure http_inspect
+* *http_method* (ips_option): rule option to set the detection cursor to the HTTP request method
+* *http_raw_cookie* (ips_option): rule option to set the detection cursor to the unnormalized cookie
+* *http_raw_header* (ips_option): rule option to set the detection cursor to the unnormalized headers
+* *http_raw_uri* (ips_option): rule option to set the detection cursor to the unnormalized URI
+* *http_stat_code* (ips_option): rule option to set the detection cursor to the HTTP status code
+* *http_stat_msg* (ips_option): rule option to set the detection cursor to the HTTP status message
+* *http_uri* (ips_option): rule option to set the detection cursor to the normalized URI buffer
+* *icmp4* (codec): support for Internet control message protocol v4
+* *icmp6* (codec): support for Internet control message protocol v6
+* *icmp_id* (ips_option): rule option to check ICMP ID
+* *icmp_seq* (ips_option): rule option to check ICMP sequence number
+* *icode* (ips_option): rule option to check ICMP code
+* *id* (ips_option): rule option to check the IP ID field
+* *igmp* (codec): support for Internet group management protocol
+* *imap* (inspector): imap inspection
+* *ip_proto* (ips_option): rule option to check the IP protocol number
+* *ipopts* (ips_option): rule option to check for IP options
+* *ips* (basic): configure IPS rule processing
+* *ipv4* (codec): support for Internet protocol v4
+* *ipv6* (codec): support for Internet protocol v6
+* *isdataat* (ips_option): rule option to check for the presence of payload data
+* *itype* (ips_option): rule option to check ICMP type
+* *log_codecs* (logger): log protocols in packet by layer
+* *log_hext* (logger): output payload suitable for daq hext
+* *log_pcap* (logger): log packet in pcap format
+* *lowmem_q* (search_engine): MPSE that minimizes memory used
+* *md5* (ips_option): payload rule option for hash matching
+* *metadata* (ips_option): rule option for conveying arbitrary name, value data within the rule text
+* *mpls* (codec): support for multiprotocol label switching
+* *msg* (ips_option): rule option summarizing rule purpose output with events
+* *network* (basic): configure basic network parameters
+* *new_http_inspect* (inspector): new HTTP inspector
+* *normalizer* (inspector): packet scrubbing for inline mode
+* *output* (basic): configure general output parameters
+* *packets* (basic): configure basic packet handling
+* *pcre* (ips_option): rule option for matching payload data with regex
+* *perf_monitor* (inspector): performance monitoring and flow statistics collection
+* *pgm* (codec): support for pragmatic general multicast
+* *pkt_data* (ips_option): rule option to set the detection cursor to the normalized packet data
+* *pop* (inspector): pop inspection
+* *port_scan* (inspector): port scan inspector; also configure port_scan_global
+* *port_scan_global* (inspector): shared settings for port_scan inspectors for use with port_scan
+* *ppm* (basic): packet and rule latency monitoring and control (requires --enable-ppm)
+* *pppoe* (codec): support for point-to-point protocol over ethernet
+* *priority* (ips_option): rule option for prioritizing events
+* *process* (basic): configure basic process setup
+* *profile* (basic): configure profiling of rules and/or modules (requires --enable-perf-profiling)
+* *rate_filter* (basic): configure rate filters (which change rule actions)
+* *raw_data* (ips_option): rule option to set the detection cursor to the raw packet data
+* *react* (ips_action): send response to client and terminate session
+* *reference* (ips_option): rule option to indicate relevant attack identification system
+* *references* (basic): define reference systems used in rules
+* *reject* (ips_action): terminate session with TCP reset or ICMP unreachable
+* *rem* (ips_option): rule option to convey an arbitrary comment in the rule body
+* *replace* (ips_option): rule option to overwrite payload data; use with rewrite action
+* *rev* (ips_option): rule option to indicate current revision of signature
+* *rewrite* (ips_action): overwrite packet contents
+* *rpc* (ips_option): rule option to check SUNRPC CALL parameters
+* *rpc_decode* (inspector): RPC inspector
+* *rule_state* (basic): enable/disable specific IPS rules
+* *search_engine* (basic): configure fast pattern matcher
+* *seq* (ips_option): rule option to check TCP sequence number
+* *session* (ips_option): rule option to check user data from TCP sessions
+* *sha256* (ips_option): payload rule option for hash matching
+* *sha512* (ips_option): payload rule option for hash matching
+* *sid* (ips_option): rule option to indicate signature number
+* *sip* (inspector): sip inspection
+* *sip_body* (ips_option): rule option to set the detection cursor to the request body
+* *sip_header* (ips_option): rule option to set the detection cursor to the SIP header buffer
+* *sip_method* (ips_option): detection option for sip stat code
+* *sip_stat_code* (ips_option): detection option for sip stat code
+* *smtp* (inspector): smtp inspection
+* *snort* (basic): command line configuration and shell commands
+* *so* (ips_option): rule option to call custom eval function
+* *soid* (ips_option): rule option to specify a shared object rule ID
+* *ssh* (inspector): ssh inspection
+* *ssl* (inspector): ssl inspection
+* *ssl_state* (ips_option): detection option for ssl state
+* *ssl_version* (ips_option): detection option for ssl version
+* *stream* (inspector): common flow tracking
+* *stream_file* (inspector): stream inspector for file flow tracking and processing
+* *stream_icmp* (inspector): stream inspector for ICMP flow tracking
+* *stream_ip* (inspector): stream inspector for IP flow tracking and defragmentation
+* *stream_reassemble* (ips_option): detection option for stream reassembly control
+* *stream_size* (ips_option): detection option for stream size checking
+* *stream_tcp* (inspector): stream inspector for TCP flow tracking and stream normalization and reassembly
+* *stream_udp* (inspector): stream inspector for UDP flow tracking
+* *stream_user* (inspector): stream inspector for user flow tracking and reassembly 
+* *suppress* (basic): configure event suppressions
+* *tag* (ips_option): rule option to log additional packets
+* *tcp* (codec): support for transmission control protocol
+* *telnet* (inspector): telnet inspection and normalization
+* *token_ring* (codec): support for token ring decoding
+* *tos* (ips_option): rule option to check type of service field
+* *ttl* (ips_option): rule option to check time to live field
+* *udp* (codec): support for user datagram protocol
+* *unified2* (logger): output event and packet in unified2 format file
+* *urg* (ips_option): detection for TCP urgent pointer
+* *vlan* (codec): support for local area network
+* *window* (ips_option): rule option to check TCP window field
+* *wizard* (inspector): inspector that implements port-independent protocol identification
+* *wlan* (codec): support for wireless local area network protocol (DLT 105)

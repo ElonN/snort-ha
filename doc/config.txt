@@ -1,0 +1,745 @@
+* string *ack.~range*: check if packet payload size is 'size | min<>max | <max | >min'
+* int *active.attempts* = 0: number of TCP packets sent per response (with varying sequence numbers) { 0:20 }
+* string *active.device*: use 'ip' for network layer responses or 'eth0' etc for link layer
+* string *active.dst_mac*: use format '01:23:45:67:89:ab'
+* int *active.max_responses* = 0: maximum number of responses { 0: }
+* int *active.min_interval* = 255: minimum number of seconds between responses { 1: }
+* multi *alert_csv.fields* = timestamp pkt_num proto pkt_gen dgm_len dir src_ap dst_ap rule action: selected fields will be output in given order left to right { action | dir | dgm_len | dst_addr | dst_ap | dst_port | eth_dst | eth_len | eth_src | eth_type | gid | icmp_code | icmp_id | icmp_seq | icmp_type | ip_id | ip_len | msg | pkt_gen | pkt_num | proto | rev | rule | sid | src_addr | src_ap | src_port | tcp_ack | tcp_flags | tcp_len | tcp_seq | tcp_win | timestamp | tos | ttl | udp_len }
+* bool *alert_csv.file* = false: output to alert_csv.txt instead of stdout
+* int *alert_csv.limit* = 0: set limit (0 is unlimited) { 0: }
+* string *alert_csv.separator* = , : separate fields with this character sequence
+* enum *alert_csv.units* = B: bytes | KB | MB | GB { B | K | M | G }
+* bool *alert_ex.upper* = false: true/false -> convert to upper/lower case
+* bool *alert_fast.file* = false: output to alert_fast.txt instead of stdout
+* int *alert_fast.limit* = 0: set limit (0 is unlimited) { 0: }
+* bool *alert_fast.packet* = false: output packet dump with alert
+* enum *alert_fast.units* = B: bytes | KB | MB | GB { B | K | M | G }
+* bool *alert_full.file* = false: output to alert_full.txt instead of stdout
+* int *alert_full.limit* = 0: set limit (0 is unlimited) { 0: }
+* enum *alert_full.units* = B: limit is in bytes | KB | MB | GB { B | K | M | G }
+* enum *alert_syslog.facility* = auth: part of priority applied to each message { auth | authpriv | daemon | user | local0 | local1 | local2 | local3 | local4 | local5 | local6 | local7 }
+* enum *alert_syslog.level* = info: part of priority applied to each message { emerg | alert | crit | err | warning | notice | info | debug }
+* multi *alert_syslog.options*: used to open the syslog connection { cons | ndelay | perror | pid }
+* bool *alerts.alert_with_interface_name* = false: include interface in alert info (fast, full, or syslog only)
+* bool *alerts.default_rule_state* = true: enable or disable ips rules
+* int *alerts.detection_filter_memcap* = 1048576: set available memory for filters { 0: }
+* int *alerts.event_filter_memcap* = 1048576: set available memory for filters { 0: }
+* string *alerts.order* = pass drop alert log: change the order of rule action application
+* int *alerts.rate_filter_memcap* = 1048576: set available memory for filters { 0: }
+* string *alerts.reference_net*: set the CIDR for homenet (for use with -l or -B, does NOT change $HOME_NET in IDS mode)
+* bool *alerts.stateful* = false: don't alert w/o established session (note: rule action still taken)
+* string *alerts.tunnel_verdicts*: let DAQ handle non-allow verdicts for GTP|Teredo|6in4|4in6 traffic
+* ip4 *arp_spoof.hosts[].ip*: host ip address
+* mac *arp_spoof.hosts[].mac*: host mac address
+* int *asn1.absolute_offset*: Absolute offset from the beginning of the packet. { 0: }
+* implied *asn1.bitstring_overflow*: Detects invalid bitstring encodings that are known to be remotely exploitable.
+* implied *asn1.double_overflow*: Detects a double ASCII encoding that is larger than a standard buffer.
+* int *asn1.oversize_length*: Compares ASN.1 type lengths with the supplied argument. { 0: }
+* implied *asn1.print*: <>max | <max | >min
+* int *asn1.relative_offset*: relative offset from the cursor.
+* int *attribute_table.max_hosts* = 1024: maximum number of hosts in attribute table { 32:207551 }
+* int *attribute_table.max_metadata_services* = 8: maximum number of services in rule metadata { 1:256 }
+* int *attribute_table.max_services_per_host* = 8: maximum number of services per host entry in attribute table { 1:65535 }
+* int *base64_decode.bytes*: Number of base64 encoded bytes to decode. { 1: }
+* int *base64_decode.offset* = 0: Bytes past start of buffer to start decoding. { 0: }
+* implied *base64_decode.relative*: Apply offset to cursor instead of start of buffer.
+* enum *binder[].use.action* = inspect: what to do with matching traffic { reset | block | allow | inspect }
+* string *binder[].use.file*: use configuration in given file
+* string *binder[].use.name*: symbol name (defaults to type)
+* string *binder[].use.service*: override automatic service identification
+* string *binder[].use.type*: select module for binding
+* bit_list *binder[].when.ifaces*: list of interface indices { 255 }
+* addr_list *binder[].when.nets*: list of networks
+* int *binder[].when.policy_id* = 0: unique ID for selection of this config by external logic { 0: }
+* bit_list *binder[].when.ports*: list of ports { 65535 }
+* enum *binder[].when.proto*: protocol { any | ip | icmp | tcp | udp | user | file }
+* enum *binder[].when.role* = any: use the given configuration on one or any end of a session { client | server | any }
+* string *binder[].when.service*: override default configuration
+* bit_list *binder[].when.vlans*: list of VLAN IDs { 4095 }
+* string *bufferlen.~range*: len | min<>max | <max | >min
+* int *byte_extract.align* = 0: round the number of converted bytes up to the next 2- or 4-byte boundary { 0:4 }
+* implied *byte_extract.big*: big endian
+* implied *byte_extract.dce*: dcerpc2 determines endianness
+* implied *byte_extract.dec*: convert from decimal string
+* implied *byte_extract.hex*: convert from hex string
+* implied *byte_extract.little*: little endian
+* int *byte_extract.multiplier* = 1: scale extracted value by given amount { 1:65535 }
+* implied *byte_extract.oct*: convert from octal string
+* implied *byte_extract.relative*: offset from cursor instead of start of buffer
+* implied *byte_extract.string*: convert from string
+* int *byte_extract.~count*: number of bytes to pick up from the buffer { 1:10 }
+* string *byte_extract.~name*: name of the variable that will be used in other rule options
+* int *byte_extract.~offset*: number of bytes into the buffer to start processing { -65535:65535 }
+* int *byte_jump.align* = 0: round the number of converted bytes up to the next 2- or 4-byte boundary { 0:4 }
+* implied *byte_jump.big*: big endian
+* implied *byte_jump.dce*: dcerpc2 determines endianness
+* implied *byte_jump.dec*: convert from decimal string
+* implied *byte_jump.from_beginning*: jump from start of buffer instead of cursor
+* implied *byte_jump.hex*: convert from hex string
+* implied *byte_jump.little*: little endian
+* int *byte_jump.multiplier* = 1: scale extracted value by given amount { 1:65535 }
+* implied *byte_jump.oct*: convert from octal string
+* int *byte_jump.post_offset* = 0: also skip forward or backwards (positive of negative value) this number of bytes { -65535:65535 }
+* implied *byte_jump.relative*: offset from cursor instead of start of buffer
+* implied *byte_jump.string*: convert from string
+* int *byte_jump.~count*: number of bytes to pick up from the buffer { 1:10 }
+* string *byte_jump.~offset*: variable name or number of bytes into the buffer to start processing
+* implied *byte_test.big*: big endian
+* implied *byte_test.dce*: dcerpc2 determines endianness
+* implied *byte_test.dec*: convert from decimal string
+* implied *byte_test.hex*: convert from hex string
+* implied *byte_test.little*: little endian
+* implied *byte_test.oct*: convert from octal string
+* implied *byte_test.relative*: offset from cursor instead of start of buffer
+* implied *byte_test.string*: convert from string
+* string *byte_test.~compare*: variable name or value to test the converted result against
+* int *byte_test.~count*: number of bytes to pick up from the buffer { 1:10 }
+* string *byte_test.~offset*: variable name or number of bytes into the payload to start processing
+* string *byte_test.~operator*: variable name or number of bytes into the buffer to start processing
+* string *classifications[].name*: name used with classtype rule option
+* int *classifications[].priority* = 1: default priority for class { 0: }
+* string *classifications[].text*: description of class
+* string *classtype.~*: classification for this rule
+* string *content.depth*: var or maximum number of bytes to search from beginning of buffer
+* string *content.distance*: var or number of bytes from cursor to start search
+* implied *content.fast_pattern*: use this content in the fast pattern matcher instead of the content selected by default
+* int *content.fast_pattern_length*: maximum number of characters from this content the fast pattern matcher should use { 1: }
+* int *content.fast_pattern_offset* = 0: number of leading characters of this content the fast pattern matcher should exclude { 0: }
+* implied *content.nocase*: case insensitive match
+* string *content.offset*: var or number of bytes from start of buffer to start search
+* string *content.within*: var or maximum number of bytes to search from cursor
+* string *content.~data*: data to match
+* implied *cvs.invalid-entry*: looks for an invalid Entry string
+* bool *daq.decode_data_link* = false: display the second layer header info
+* string *daq.dir*: directory where to search for DAQ plugins
+* select *daq.mode*: set mode of operation { passive | inline | read-file }
+* bool *daq.no_promisc* = false: whether to put DAQ device into promiscuous mode
+* int *daq.snaplen* = deflt: set snap length (same as -P) { 0:65535 }
+* string *daq.type*: select type of DAQ
+* string *daq.vars*: comma separated list of name=value DAQ-specific parameters
+* string *data_log.key* = http_uri: name of data buffer to log
+* int *detection.asn1* = 256: maximum decode nodes { 1: }
+* bool *detection.pcre_enable* = true: disable pcre pattern matching
+* int *detection.pcre_match_limit* = 1500: limit pcre backtracking, -1 = max, 0 = off { -1:1000000 }
+* int *detection.pcre_match_limit_recursion* = 1500: limit pcre stack consumption, -1 = max, 0 = off { -1:10000 }
+* int *detection_filter.count*: hits in interval before allowing the rule to fire { 1: }
+* int *detection_filter.seconds*: length of interval to count hits { 1: }
+* enum *detection_filter.track*: track hits by source or destination IP address { by_src | by_dst }
+* int *dpx.max* = 0: maximum payload before alert { 0:65535 }
+* port *dpx.port*: port to check
+* string *dsize.~range*: check if packet payload size is 'size | min<>max | <max | >min'
+* bool *esp.decode_esp* = false: enable for inspection of esp traffic that has authentication but not encryption
+* int *event_filter[].count* = 0: number of events in interval before tripping; -1 to disable { -1: }
+* int *event_filter[].gid* = 1: rule generator ID { 0: }
+* string *event_filter[].ip*: restrict filter to these addresses according to track
+* int *event_filter[].seconds* = 0: count interval { 0: }
+* int *event_filter[].sid* = 1: rule signature ID { 0: }
+* enum *event_filter[].track*: filter only matching source or destination addresses { by_src | by_dst }
+* enum *event_filter[].type*: 1st count events | every count events | once after count events { limit | threshold | both }
+* int *event_queue.log* = 3: maximum events to log { 1: }
+* int *event_queue.max_queue* = 8: maximum events to queue { 1: }
+* enum *event_queue.order_events* = content_length: criteria for ordering incoming events { priority|content_length }
+* bool *event_queue.process_all_events* = false: process just first action group or all action groups
+* int *file_id.block_timeout* = 86400: stop blocking after this many seconds { 0: }
+* bool *file_id.block_timeout_lookup* = false: block if lookup times out
+* bool *file_id.enable_capture* = false: enable file capture
+* bool *file_id.enable_signature* = false: enable signature calculation
+* bool *file_id.enable_type* = false: enable type ID
+* string *file_id.file_rules[].category*: file type category
+* int *file_id.file_rules[].id* = 0: file type id { 0: }
+* string *file_id.file_rules[].magic[].content*: file magic content
+* int *file_id.file_rules[].magic[].offset* = 0: file magic offset { 0: }
+* string *file_id.file_rules[].msg*: information about the file type
+* int *file_id.file_rules[].rev* = 0: rule revision { 0: }
+* string *file_id.file_rules[].type*: file type name
+* string *file_id.file_rules[].version*: file type version
+* int *file_id.lookup_timeout* = 2: give up on lookup after this many seconds { 0: }
+* int *file_id.show_data_depth* = 100: print this many octets { 0: }
+* int *file_id.signature_depth* = 10485760: stop signature at this point { 0: }
+* bool *file_id.trace_signature* = false: enable runtime dump of signature info
+* bool *file_id.trace_stream* = false: enable runtime dump of file data
+* bool *file_id.trace_type* = false: enable runtime dump of type info
+* int *file_id.type_depth* = 1460: stop type ID at this point { 0: }
+* string *flags.~mask_flags*: these flags are don't cares
+* string *flags.~test_flags*: these flags are tested
+* implied *flow.established*: match only during data transfer phase
+* implied *flow.from_client*: same as to_server
+* implied *flow.from_server*: same as to_client
+* implied *flow.no_frag*: match on raw packets only
+* implied *flow.no_stream*: match on raw packets only
+* implied *flow.not_established*: match only outside data transfer phase
+* implied *flow.only_frag*: match on defragmented packets only
+* implied *flow.only_stream*: match on reassembled packets only
+* implied *flow.stateless*: match regardless of stream state
+* implied *flow.to_client*: match on server responses
+* implied *flow.to_server*: match on client requests
+* string *flowbits.~arg1*: bits or group
+* string *flowbits.~arg2*: group if arg1 is bits
+* string *flowbits.~command*: set|reset|isset|etc.
+* string *fragbits.~flags*: these flags are tested
+* string *fragoffset.~range*: check if packet payload size is 'size | min<>max | <max | >min'
+* bool *ftp_client.bounce* = false: check for bounces
+* addr *ftp_client.bounce_to[].address* = 1.0.0.0/32: allowed ip address in CIDR format
+* port *ftp_client.bounce_to[].last_port*: optional allowed range from port to last_port inclusive { 0: }
+* port *ftp_client.bounce_to[].port* = 20: allowed port { 1: }
+* bool *ftp_client.ignore_telnet_erase_cmds* = false: ignore erase character and erase line commands when normalizing
+* int *ftp_client.max_resp_len* = -1: maximum ftp response accepted by client { -1: }
+* bool *ftp_client.telnet_cmds* = false: detect telnet escape sequences on ftp control channel
+* bool *ftp_server.check_encrypted* = false: check for end of encryption
+* string *ftp_server.chk_str_fmt*: check the formatting of the given commands
+* string *ftp_server.cmd_validity[].command*: command string
+* string *ftp_server.cmd_validity[].format*: format specification
+* int *ftp_server.cmd_validity[].length* = 0: specify non-default maximum for command { 0: }
+* string *ftp_server.data_chan_cmds*: check the formatting of the given commands
+* string *ftp_server.data_xfer_cmds*: check the formatting of the given commands
+* int *ftp_server.def_max_param_len* = 100: default maximum length of commands handled by server; 0 is unlimited { 1: }
+* string *ftp_server.directory_cmds[].dir_cmd*: directory command
+* int *ftp_server.directory_cmds[].rsp_code* = 200: expected successful response code for command { 200: }
+* string *ftp_server.encr_cmds*: check the formatting of the given commands
+* bool *ftp_server.encrypted_traffic* = false: check for encrypted telnet and ftp
+* string *ftp_server.file_get_cmds*: check the formatting of the given commands
+* string *ftp_server.file_put_cmds*: check the formatting of the given commands
+* string *ftp_server.ftp_cmds*: specify additional commands supported by server beyond RFC 959
+* bool *ftp_server.ignore_data_chan* = false: do not inspect ftp data channels
+* bool *ftp_server.ignore_telnet_erase_cmds* = false: ignore erase character and erase line commands when normalizing
+* string *ftp_server.login_cmds*: check the formatting of the given commands
+* bool *ftp_server.print_cmds* = false: print command configurations on start up
+* bool *ftp_server.telnet_cmds* = false: detect telnet escape sequences of ftp control channel
+* int *gid.~*: generator id { 1: }
+* enum *hosts[].frag_policy*: defragmentation policy { first | linux | bsd | bsd_right | last | windows | solaris }
+* addr *hosts[].ip* = 0.0.0.0/32: hosts address / cidr
+* string *hosts[].services[].name*: service identifier
+* port *hosts[].services[].port*: port number
+* enum *hosts[].services[].proto* = tcp: ip protocol { tcp | udp }
+* enum *hosts[].tcp_policy*: tcp reassembly policy { first | last | linux | old_linux | bsd | macos | solaris | irix | hpux11 | hpux10 | windows | win_2003 | vista | proxy }
+* int *http_global.compress_depth* = 65535: maximum amount of packet payload to decompress { 1:65535 }
+* int *http_global.decode.b64_decode_depth* = 0: single packet decode depth { -1:65535 }
+* int *http_global.decode.bitenc_decode_depth* = 0: single packet decode depth { -1:65535 }
+* int *http_global.decode.max_mime_mem* = 838860: single packet decode depth { 3276: }
+* int *http_global.decode.qp_decode_depth* = 0: single packet decode depth { -1:65535 }
+* int *http_global.decode.uu_decode_depth* = 0: single packet decode depth { -1:65535 }
+* int *http_global.decompress_depth* = 65535: maximum amount of decompressed data to process { 1:65535 }
+* bool *http_global.detect_anomalous_servers* = false: inspect non-configured ports for HTTP - bad idea
+* int *http_global.max_gzip_mem* = 838860: total memory used for decompression across all active sessions { 3276: }
+* int *http_global.memcap* = 150994944: limit of memory used for logging extra data { 2304: }
+* bool *http_global.proxy_alert* = false: alert on proxy usage for servers without allow_proxy_use
+* int *http_global.unicode_map.code_page* = 1252: select code page in map file { 0: }
+* string *http_global.unicode_map.map_file*: unicode map file
+* string *http_header.~name*: restrict to given header
+* bool *http_inspect.allow_proxy_use* = false: don't alert on proxy use for this server
+* bool *http_inspect.decompress_pdf* = false: enable decompression of the compressed portions of PDF files
+* bool *http_inspect.decompress_swf* = false: enable decompression of SWF (Adobe Flash content)
+* bool *http_inspect.enable_cookies* = true: extract cookies
+* bool *http_inspect.enable_xff* = false: log True-Client-IP and X-Forwarded-For headers with unified2 alerts as extra data
+* bool *http_inspect.extended_ascii_uri* = false: allow extended ASCII codes in the request URI
+* bool *http_inspect.extended_response_inspection* = true: extract response headers
+* string *http_inspect.http_methods* = GET POST PUT SEARCH MKCOL COPY MOVE LOCK UNLOCK NOTIFY POLL BCOPY BDELETE BMOVE LINK UNLINK OPTIONS HEAD DELETE TRACE TRACK CONNECT SOURCE SUBSCRIBE UNSUBSCRIBE PROPFIND PROPPATCH BPROPFIND BPROPPATCH RPC_CONNECT PROXY_SUCCESS BITS_POST CCM_POST SMS_POST RPC_IN_DATA RPC_OUT_DATA RPC_ECHO_DATA: request methods allowed in addition to GET and POST
+* bool *http_inspect.inspect_gzip* = true: enable gzip decompression of compressed bodies
+* bool *http_inspect.inspect_uri_only* = false: disable all detection except for uricontent
+* bool *http_inspect.log_hostname* = false: enable logging of Hostname with unified2 alerts as extra data
+* bool *http_inspect.log_uri* = false: enable logging of URI with unified2 alerts as extra data
+* bool *http_inspect.no_pipeline_req* = false: don't inspect pipelined requests after first (still does general detection)
+* bit_list *http_inspect.non_rfc_chars* = 0x00 0x01 0x02 0x03 0x04 0x05 0x06 0x07: alert on given non-RFC chars being present in the URI { 255 }
+* bool *http_inspect.normalize_cookies* = false: normalize cookies similar to URI
+* bool *http_inspect.normalize_headers* = false: normalize headers other than cookie similar to URI
+* int *http_inspect.oversize_dir_length* = 500: alert if a URL has a directory longer than this limit { 0: }
+* bool *http_inspect.profile.apache_whitespace* = false: don't alert if tab is used in lieu of space characters
+* bool *http_inspect.profile.ascii* = false: enable decoding ASCII like %2f to /
+* bool *http_inspect.profile.bare_byte* = false: decode non-standard, non-ASCII character encodings
+* int *http_inspect.profile.chunk_length* = 500000: alert on chunk lengths greater than specified { 1: }
+* int *http_inspect.profile.client_flow_depth* = 0: raw request payload to inspect { -1:1460 }
+* bool *http_inspect.profile.directory* = false: normalize . and .. sequences out of URI
+* bool *http_inspect.profile.double_decode* = false: iis specific extra decoding
+* bool *http_inspect.profile.iis_backslash* = false: normalize directory slashes
+* bool *http_inspect.profile.iis_delimiter* = false: allow use of non-standard delimiter
+* bool *http_inspect.profile.iis_unicode* = false: enable unicode code point mapping using unicode_map settings
+* int *http_inspect.profile.iis_unicode_map.code_page* = 1252: select code page in map file { 0: }
+* string *http_inspect.profile.iis_unicode_map.map_file*: unicode map file
+* int *http_inspect.profile.max_header_length* = 750: maximum allowed client request header field { 0:65535 }
+* int *http_inspect.profile.max_headers* = 100: maximum allowed client request headers { 0:1024 }
+* int *http_inspect.profile.max_javascript_whitespaces* = 200: maximum number of consecutive whitespaces { 0: }
+* int *http_inspect.profile.max_spaces* = 200: maximum allowed whitespaces when folding { 0:65535 }
+* bool *http_inspect.profile.multi_slash* = false: normalize out consecutive slashes in URI
+* bool *http_inspect.profile.non_strict* = true: allows HTTP 0.9 processing
+* bool *http_inspect.profile.normalize_javascript* = true: normalize javascript between <script> tags
+* bool *http_inspect.profile.normalize_utf* = true: normalize response bodies with UTF content-types
+* int *http_inspect.profile.post_depth* = 65495: amount of POST data to inspect { -1:65535 }
+* enum *http_inspect.profile.profile_type* = default: set defaults appropriate for selected server { default | apache | iis | iis_40 | iis_50 }
+* int *http_inspect.profile.server_flow_depth* = 0: response payload to inspect; includes headers with extended_response_inspection { -1:65535 }
+* bool *http_inspect.profile.u_encode* = true: decode %uXXXX character sequences
+* bool *http_inspect.profile.utf_8* = false: decode UTF-8 unicode sequences in URI
+* bool *http_inspect.profile.webroot* = false: alert on directory traversals past the top level (web server root)
+* bit_list *http_inspect.profile.whitespace_chars*: allowed white space characters { 255 }
+* int *http_inspect.small_chunk_count* = 5: alert if more than this limit of consecutive chunks are below small_chunk_length { 0:255 }
+* int *http_inspect.small_chunk_length* = 10: alert if more than small_chunk_count consecutive chunks below this limit { 0:255 }
+* bool *http_inspect.tab_uri_delimiter* = false: whether a tab not preceded by a space is considered a delimiter or part of URI
+* bool *http_inspect.unlimited_decompress* = true: decompress across multiple packets
+* bool *http_inspect.xff_headers* = false: not implemented
+* string *icmp_id.~range*: check if icmp id is 'id | min<>max | <max | >min'
+* string *icmp_seq.~range*: check if icmp sequence number is 'seq | min<>max | <max | >min'
+* string *icode.~range*: check if ICMP code is 'code | min<>max | <max | >min'
+* string *id.~range*: check if the IP ID is 'id | min<>max | <max | >min'
+* int *imap.b64_decode_depth* = 1460:  base64 decoding depth { -1:65535 }
+* int *imap.bitenc_decode_depth* = 1460:  Non-Encoded MIME attachment extraction depth { -1:65535 }
+* int *imap.qp_decode_depth* = 1460:  Quoted Printable decoding depth { -1:65535 }
+* int *imap.uu_decode_depth* = 1460:  Unix-to-Unix decoding depth { -1:65535 }
+* string *ip_proto.~proto*: [!|>|<] name or number
+* select *ipopts.~opt*: output format { rr|eol|nop|ts|sec|esec|lsrr|lsrre|ssrr|satid|any }
+* bool *ips.enable_builtin_rules* = false: enable events from builtin rules w/o stubs
+* int *ips.id* = 0: correlate unified2 events with configuration { 0:65535 }
+* string *ips.include*: legacy snort rules and includes
+* enum *ips.mode*: set policy mode { tap | inline | inline-test }
+* string *ips.rules*: snort rules and includes
+* implied *isdataat.relative*: offset from cursor instead of start of buffer
+* string *isdataat.~length*: num | !num
+* string *itype.~range*: check if icmp type is 'type | min<>max | <max | >min'
+* bool *log_codecs.file* = false: output to log_codecs.txt instead of stdout
+* bool *log_codecs.msg* = false: include alert msg
+* bool *log_hext.file* = false: output to log_hext.txt instead of stdout
+* int *log_hext.limit* = 0: set limit (0 is unlimited) { 0: }
+* bool *log_hext.raw* = false: output all full packets if true, else just TCP payload
+* enum *log_hext.units* = B: bytes | KB | MB | GB { B | K | M | G }
+* int *log_hext.width* = 20: set line width (0 is unlimited) { 0: }
+* int *log_pcap.limit* = 0: set limit (0 is unlimited) { 0: }
+* enum *log_pcap.units* = B: bytes | KB | MB | GB { B | K | M | G }
+* string *lowmem_q.var*: additional print text
+* int *md5.length*: number of octets in plain text { 1:65535 }
+* string *md5.offset*: var or number of bytes from start of buffer to start search
+* implied *md5.relative* = false: offset from cursor instead of start of buffer
+* string *md5.~hash*: data to match
+* string *metadata.**: additional parameters not used by snort
+* string *metadata.service*: service name
+* bool *mpls.enable_mpls_multicast* = false: enables support for MPLS multicast
+* bool *mpls.enable_mpls_overlapping_ip* = false: enable if private network addresses overlap and must be differentiated by MPLS label(s)
+* int *mpls.max_mpls_stack_depth* = -1: set MPLS stack depth { -1: }
+* enum *mpls.mpls_payload_type* = ip4: set encapsulated payload type { eth | ip4 | ip6 }
+* string *msg.~*: message describing rule
+* multi *network.checksum_drop* = none: drop if checksum is bad { all | ip | noip | tcp | notcp | udp | noudp | icmp | noicmp | none }
+* multi *network.checksum_eval* = none: checksums to verify { all | ip | noip | tcp | notcp | udp | noudp | icmp | noicmp | none }
+* bool *network.decode_drops* = false: enable dropping of packets by the decoder
+* int *network.id* = 0: correlate unified2 events with configuration { 0:65535 }
+* int *network.layers* = 40: The maximum number of protocols that Snort can correctly decode { 3:255 }
+* int *network.max_ip6_extensions* = 0: The number of IP6 options Snort will process for a given IPv6 layer. If this limit is hit, rule 116:456 may fire.  0 = unlimited { 0:255 }
+* int *network.max_ip_layers* = 0: The maximum number of IP layers Snort will process for a given packet If this limit is hit, rule 116:293 may fire.  0 = unlimited { 0:255 }
+* int *network.min_ttl* = 1: alert / normalize packets with lower ttl / hop limit (you must enable rules and / or normalization also) { 1:255 }
+* int *network.new_ttl* = 1: use this value for responses and when normalizing { 1:255 }
+* int *new_http_inspect.request_depth* = -1: maximum request message body bytes to examine (-1 no limit) { -1: }
+* int *new_http_inspect.response_depth* = -1: maximum response message body bytes to examine (-1 no limit) { -1: }
+* bool *new_http_inspect.test_input* = false: read HTTP messages from text file
+* bool *new_http_inspect.test_output* = false: print out HTTP section data
+* bool *normalizer.icmp4* = false: clear reserved flag
+* bool *normalizer.icmp6* = false: clear reserved flag
+* bool *normalizer.ip4.base* = true: clear options
+* bool *normalizer.ip4.df* = false: clear don't frag flag
+* bool *normalizer.ip4.rf* = false: clear reserved flag
+* bool *normalizer.ip4.tos* = false: clear tos / differentiated services byte
+* bool *normalizer.ip4.trim* = false: truncate excess payload beyond datagram length
+* bool *normalizer.ip6* = false: clear reserved flag
+* string *normalizer.tcp.allow_codes*: don't clear given option codes
+* multi *normalizer.tcp.allow_names*: don't clear given option names { sack | echo | partial_order | conn_count | alt_checksum | md5 }
+* bool *normalizer.tcp.base* = true: clear reserved bits and option padding and fix urgent pointer / flags issues
+* bool *normalizer.tcp.block* = true: allow packet drops during TCP normalization
+* select *normalizer.tcp.ecn* = off: clear ecn for all packets | sessions w/o ecn setup { off | packet | stream }
+* bool *normalizer.tcp.ips* = false: ensure consistency in retransmitted data
+* bool *normalizer.tcp.opts* = true: clear all options except mss, wscale, timestamp, and any explicitly allowed
+* bool *normalizer.tcp.pad* = true: clear any option padding bytes
+* bool *normalizer.tcp.req_pay* = true: clear the urgent pointer and the urgent flag if there is no payload
+* bool *normalizer.tcp.req_urg* = true: clear the urgent pointer if the urgent flag is not set
+* bool *normalizer.tcp.req_urp* = true: clear the urgent flag if the urgent pointer is not set
+* bool *normalizer.tcp.rsv* = true: clear the reserved bits in the TCP header
+* bool *normalizer.tcp.trim* = false: enable all of the TCP trim options
+* bool *normalizer.tcp.trim_mss* = false: trim data to MSS
+* bool *normalizer.tcp.trim_rst* = false: remove any data from RST packet
+* bool *normalizer.tcp.trim_syn* = false: remove data on SYN
+* bool *normalizer.tcp.trim_win* = false: trim data to window
+* bool *normalizer.tcp.urp* = true: adjust urgent pointer if beyond segment length
+* bool *output.dump_chars_only* = false: turns on character dumps (same as -C)
+* bool *output.dump_payload* = false: dumps application layer (same as -d)
+* bool *output.dump_payload_verbose* = false: dumps raw packet starting at link layer (same as -X)
+* int *output.event_trace.max_data* = 0: maximum amount of packet data to capture { 0:65535 }
+* bool *output.log_ipv6_extra_data* = false: log IPv6 source and destination addresses as unified2 extra data records
+* string *output.logdir* = .: where to put log files (same as -l)
+* bool *output.obfuscate* = false: obfuscate the logged IP addresses (same as -O)
+* bool *output.quiet* = false: suppress non-fatal information (still show alerts, same as -q)
+* bool *output.show_year* = false: include year in timestamp in the alert and log files (same as -y)
+* int *output.tagged_packet_limit* = 256: maximum number of packets tagged for non-packet metrics { 0: }
+* bool *output.verbose* = false: be verbose (same as -v)
+* bool *packets.address_space_agnostic* = false: determines whether DAQ address space info is used to track fragments and connections
+* string *packets.bpf_file*: file with BPF to select traffic for Snort
+* bool *packets.enable_inline_init_failopen* = true: whether to pass traffic during later stage of initialization to avoid drops
+* int *packets.limit* = 0: maximum number of packets to process before stopping (0 is unlimited) { 0: }
+* int *packets.skip* = 0: number of packets to skip before before processing { 0: }
+* bool *packets.vlan_agnostic* = false: determines whether VLAN info is used to track fragments and connections
+* string *pcre.~regex*: Snort regular expression
+* bool *perf_monitor.console* = false: output to console
+* bool *perf_monitor.events* = false: report on qualified vs non-qualified events
+* bool *perf_monitor.file* = false: output base stats to perf_monitor.csv instead of stdout
+* bool *perf_monitor.flow* = false: enable traffic statistics
+* bool *perf_monitor.flow_file* = false: output traffic statistics to a perf_monitor_flow.csv instead of stdout
+* bool *perf_monitor.flow_ip* = false: enable statistics on host pairs
+* bool *perf_monitor.flow_ip_file* = false: output host pair statistics to perf_monitor_flow_ip.csv instead of stdout
+* int *perf_monitor.flow_ip_memcap* = 52428800: maximum memory for flow tracking { 8200: }
+* int *perf_monitor.flow_ports* = 1023: maximum ports to track { 0: }
+* bool *perf_monitor.max* = false: calculate theoretical maximum performance
+* int *perf_monitor.max_file_size* = 4294967295: files will be rolled over if they exceed this size { 4096: }
+* int *perf_monitor.packets* = 10000: minim packets to report { 0: }
+* bool *perf_monitor.reset* = true: reset (clear) statistics after each reporting interval
+* int *perf_monitor.seconds* = 60: report interval; 0 means report at exit only { 0: }
+* int *pop.b64_decode_depth* = 1460:  base64 decoding depth { -1:65535 }
+* int *pop.bitenc_decode_depth* = 1460:  Non-Encoded MIME attachment extraction depth { -1:65535 }
+* int *pop.qp_decode_depth* = 1460:  Quoted Printable decoding depth { -1:65535 }
+* int *pop.uu_decode_depth* = 1460:  Unix-to-Unix decoding depth { -1:65535 }
+* string *port_scan.ignore_scanned*: list of CIDRs with optional ports to ignore if the destination of scan alerts
+* string *port_scan.ignore_scanners*: list of CIDRs with optional ports to ignore if the source of scan alerts
+* bool *port_scan.include_midstream* = false: list of CIDRs with optional ports
+* bool *port_scan.logfile* = false: write scan events to file
+* multi *port_scan.protos* = all: choose the protocols to monitor { tcp | udp | icmp | ip | all }
+* multi *port_scan.scan_types* = all: choose type of scans to look for { portscan | portsweep | decoy_portscan | distributed_portscan | all }
+* enum *port_scan.sense_level* = medium: choose the level of detection { low | medium | high }
+* string *port_scan.watch_ip*: list of CIDRs with optional ports to watch
+* int *port_scan_global.memcap* = 1048576: maximum tracker memory { 1: }
+* bool *ppm.fastpath_expensive_packets* = false: stop inspection if the max_pkt_time is exceeded
+* int *ppm.max_pkt_time* = 0: enable packet latency thresholding (usec), 0 = off { 0: }
+* int *ppm.max_rule_time* = 0: enable rule latency thresholding (usec), 0 = off { 0: }
+* enum *ppm.pkt_log* = none: log event if max_pkt_time is exceeded { none | log | alert | both }
+* enum *ppm.rule_log* = none: enable event logging for suspended rules { none|log|alert|both }
+* bool *ppm.suspend_expensive_rules* = false: temporarily disable rule if threshold is reached
+* int *ppm.suspend_timeout* = 60: seconds to suspend rule, 0 = permanent { 0: }
+* int *ppm.threshold* = 5: number of times to exceed limit before disabling rule { 1: }
+* int *priority.~*: relative severity level; 1 is highest priority { 1: }
+* string *process.chroot*: set chroot directory (same as -t)
+* bool *process.daemon* = false: fork as a daemon (same as -D)
+* bool *process.dirty_pig* = false: shutdown without internal cleanup
+* string *process.set_gid*: set group ID (same as -g)
+* string *process.set_uid*: set user ID (same as -u)
+* int *process.threads[].cpu* = 0: pin the associated source/thread to this cpu { 0:127 }
+* string *process.threads[].source*: set cpu affinity for this source (either pcap or <iface>
+* int *process.threads[].thread* = 0: set cpu affinity for the <cur_thread_num> thread that runs { 0: }
+* string *process.umask*: set process umask (same as -m)
+* bool *process.utc* = false: use UTC instead of local time for timestamps
+* int *profile.modules.count* = -1: print results to given level (-1 = all, 0 = off) { -1: }
+* enum *profile.modules.sort* = avg_ticks: sort by given field { checks | avg_ticks | total_ticks }
+* int *profile.rules.count* = -1: print results to given level (-1 = all, 0 = off) { -1: }
+* enum *profile.rules.sort* = avg_ticks: sort by given field { checks | avg_ticks | total_ticks | matches | no_matches | avg_ticks_per_match | avg_ticks_per_no_match }
+* string *rate_filter[].apply_to*: restrict filter to these addresses according to track
+* int *rate_filter[].count* = 1: number of events in interval before tripping { 0: }
+* int *rate_filter[].gid* = 1: rule generator ID { 0: }
+* select *rate_filter[].new_action* = alert: take this action on future hits until timeout { alert | drop | log | pass | | reject | sdrop }
+* int *rate_filter[].seconds* = 1: count interval { 0: }
+* int *rate_filter[].sid* = 1: rule signature ID { 0: }
+* int *rate_filter[].timeout* = 1: count interval { 0: }
+* enum *rate_filter[].track* = by_src: filter only matching source or destination addresses { by_src | by_dst | by_rule }
+* bool *react.msg* = false:  use rule msg in response page instead of default message
+* string *react.page*: file containing HTTP response (headers and body)
+* string *reference.~id*: reference id
+* string *reference.~scheme*: reference scheme
+* string *references[].name*: name used with reference rule option
+* string *references[].url*: where this reference is defined
+* enum *reject.control*: send icmp unreachable(s) { network|host|port|all }
+* enum *reject.reset*: send tcp reset to one or both ends { source|dest|both }
+* string *rem.~*: comment
+* string *replace.~*: byte code to replace with
+* int *rev.~*: revision { 1: }
+* string *rpc.~app*: application number
+* string *rpc.~proc*: procedure number or * for any
+* string *rpc.~ver*: version number or * for any
+* bool *rule_state.enable* = true: enable or disable rule in all policies
+* int *rule_state.gid* = 0: rule generator ID { 0: }
+* int *rule_state.sid* = 0: rule signature ID { 0: }
+* int *search_engine.bleedover_port_limit* = 1024: maximum ports in rule before demotion to any-any port group { 1: }
+* bool *search_engine.bleedover_warnings_enabled* = false: print warning if a rule is demoted to any-any port group
+* bool *search_engine.debug* = false: print verbose fast pattern info
+* bool *search_engine.debug_print_fast_pattern* = false: print fast pattern info for each rule
+* bool *search_engine.debug_print_nocontent_rule_tests* = false: print rule group info during packet evaluation
+* bool *search_engine.debug_print_rule_group_build_details* = false: print rule group info during compilation
+* bool *search_engine.debug_print_rule_groups_compiled* = false: prints compiled rule group information
+* bool *search_engine.debug_print_rule_groups_uncompiled* = false: prints uncompiled rule group information
+* bool *search_engine.enable_single_rule_group* = false: put all rules into one group
+* bool *search_engine.inspect_stream_inserts* = false: inspect reassembled payload - disabling is good for performance, bad for detection
+* int *search_engine.max_pattern_len* = 0: truncate patterns when compiling into state machine (0 means no maximum) { 0: }
+* int *search_engine.max_queue_events* = 5: maximum number of matching fast pattern states to queue per packet
+* dynamic *search_engine.search_method* = ac_bnfa_q: set fast pattern algorithm - choose available search engine { ac_banded | ac_bnfa | ac_bnfa_q | ac_full | ac_full_q | ac_sparse | ac_sparse_bands | ac_std | lowmem | lowmem_q }
+* bool *search_engine.search_optimize* = false: tweak state machine construction for better performance
+* bool *search_engine.split_any_any* = false: evaluate any-any rules separately to save memory
+* string *seq.~range*: check if packet payload size is 'size | min<>max | <max | >min'
+* enum *session.~mode*: output format { printable|binary|all }
+* int *sha256.length*: number of octets in plain text { 1:65535 }
+* string *sha256.offset*: var or number of bytes from start of buffer to start search
+* implied *sha256.relative* = false: offset from cursor instead of start of buffer
+* string *sha256.~hash*: data to match
+* int *sha512.length*: number of octets in plain text { 1:65535 }
+* string *sha512.offset*: var or number of bytes from start of buffer to start search
+* implied *sha512.relative* = false: offset from cursor instead of start of buffer
+* string *sha512.~hash*: data to match
+* int *sid.~*: signature id { 1: }
+* bool *sip.ignore_call_channel* = false: enables the support for ignoring audio/video data channel
+* int *sip.max_call_id_len* = 256: maximum call id field size { 0:65535 }
+* int *sip.max_contact_len* = 256: maximum contact field size { 0:65535 }
+* int *sip.max_content_len* = 1024: maximum content length of the message body { 0:65535 }
+* int *sip.max_dialogs* = 4: maximum number of dialogs within one stream session { 1:4194303 }
+* int *sip.max_from_len* = 256: maximum from field size { 0:65535 }
+* int *sip.max_requestName_len* = 20: maximum request name field size { 0:65535 }
+* int *sip.max_sessions* = 10000: maximum number of sessions that can be allocated { 1024:4194303 }
+* int *sip.max_to_len* = 256: maximum to field size { 0:65535 }
+* int *sip.max_uri_len* = 256: maximum request uri field size { 0:65535 }
+* int *sip.max_via_len* = 1024: maximum via field size { 0:65535 }
+* string *sip.methods* = invite cancel ack  bye register options: list of methods to check in sip messages
+* string *sip_method.*method*: sip method
+* int *sip_stat_code.*code*: stat code { 1:999 }
+* string *smtp.alt_max_command_line_len[].command*: command string
+* int *smtp.alt_max_command_line_len[].length* = 0: specify non-default maximum for command { 0: }
+* string *smtp.auth_cmds*: commands that initiate an authentication exchange
+* int *smtp.b64_decode_depth* = 25: depth used to decode the base64 encoded MIME attachments { -1:65535 }
+* string *smtp.binary_data_cmds*: commands that initiate sending of data and use a length value after the command
+* int *smtp.bitenc_decode_depth* = 25: depth used to extract the non-encoded MIME attachments { -1:65535 }
+* string *smtp.data_cmds*: commands that initiate sending of data with an end of data delimiter
+* int *smtp.email_hdrs_log_depth* = 1464: depth for logging email headers { 0:20480 }
+* bool *smtp.ignore_data* = false: ignore data section of mail
+* bool *smtp.ignore_tls_data* = false: ignore TLS-encrypted data when processing rules
+* string *smtp.invalid_cmds*: alert if this command is sent from client side
+* bool *smtp.log_email_hdrs* = false: log the SMTP email headers extracted from SMTP data
+* bool *smtp.log_filename* = false: log the MIME attachment filenames extracted from the Content-Disposition header within the MIME body
+* bool *smtp.log_mailfrom* = false: log the sender's email address extracted from the MAIL FROM command
+* bool *smtp.log_rcptto* = false: log the recipient's email address extracted from the RCPT TO command
+* int *smtp.max_command_line_len* = 0: max Command Line Length { 0:65535 }
+* int *smtp.max_header_line_len* = 0: max SMTP DATA header line { 0:65535 }
+* int *smtp.max_response_line_len* = 0: max SMTP response line { 0:65535 }
+* enum *smtp.normalize* = none: turns on/off normalization { none | cmds | all }
+* string *smtp.normalize_cmds*: list of commands to normalize
+* int *smtp.qp_decode_depth* = 25: quoted-Printable decoding depth { -1:65535 }
+* int *smtp.uu_decode_depth* = 25: unix-to-Unix decoding depth { -1:65535 }
+* string *smtp.valid_cmds*: list of valid commands
+* enum *smtp.xlink2state* = alert: enable/disable xlink2state alert { disable | alert | drop }
+* implied *snort.--alert-before-pass*: process alert, drop, sdrop, or reject before pass; default is pass before alert, drop,...
+* string *snort.--bpf*: <filter options> are standard BPF options, as seen in TCPDump
+* string *snort.--c2x*: output hex for given char (see also --x2c)
+* string *snort.--catch-test*: comma separated list of cat unit test tags or 'all'
+* implied *snort.--create-pidfile*: create PID file, even when not in Daemon mode
+* string *snort.--daq*: <type> select packet acquisition module (default is pcap)
+* string *snort.--daq-dir*: <dir> tell snort where to find desired DAQ
+* implied *snort.--daq-list*: list packet acquisition modules available in optional dir, default is static modules only
+* string *snort.--daq-mode*: <mode> select the DAQ operating mode
+* string *snort.--daq-var*: <name=value> specify extra DAQ configuration variable
+* implied *snort.--dirty-pig*: don't flush packets on shutdown
+* implied *snort.--dump-builtin-rules*: [<module prefix>] output stub rules for selected modules
+* string *snort.--dump-defaults*: [<module prefix>] output module defaults in Lua format { (optional) }
+* implied *snort.--dump-dynamic-rules*: output stub rules for all loaded rules libraries
+* string *snort.--dump-version*: output the version, the whole version, and only the version { (optional) }
+* implied *snort.--enable-inline-test*: enable Inline-Test Mode Operation
+* implied *snort.--help*: list command line options
+* string *snort.--help-commands*: [<module prefix>] output matching commands { (optional) }
+* string *snort.--help-config*: [<module prefix>] output matching config options { (optional) }
+* string *snort.--help-counts*: [<module prefix>] output matching peg counts { (optional) }
+* string *snort.--help-module*: <module> output description of given module
+* implied *snort.--help-modules*: list all available modules with brief help
+* string *snort.--help-options*: <option prefix> output matching command line option quick help (same as -?) { (optional) }
+* implied *snort.--help-plugins*: list all available plugins with brief help
+* implied *snort.--help-signals*: dump available control signals
+* implied *snort.--id-subdir*: create/use instance subdirectories in logdir instead of instance filename prefix
+* implied *snort.--id-zero*: use id prefix / subdirectory even with one packet thread
+* implied *snort.--list-buffers*: output available inspection buffers
+* string *snort.--list-builtin*: <module prefix> output matching builtin rules { (optional) }
+* string *snort.--list-gids*: [<module prefix>] output matching generators { (optional) }
+* string *snort.--list-modules*: [<module type>] list all known modules of given type { (optional) }
+* implied *snort.--list-plugins*: list all known plugins
+* int *snort.--logid*: <0xid> log Identifier to uniquely id events for multiple snorts (same as -G) { 0:65535 }
+* string *snort.--lua*: <chunk> extend/override conf with chunk; may be repeated
+* implied *snort.--markup*: output help in asciidoc compatible format
+* int *snort.--max-packet-threads* = 1: <count> configure maximum number of packet threads (same as -z) { 0: }
+* implied *snort.--nolock-pidfile*: do not try to lock Snort PID file
+* implied *snort.--nostamps*: don't include timestamps in log file names
+* implied *snort.--pause*: wait for resume/quit command before processing packets/terminating
+* string *snort.--pcap-dir*: <dir> a directory to recurse to look for pcaps - read mode is implied
+* string *snort.--pcap-file*: <file> file that contains a list of pcaps to read - read mode is implied
+* string *snort.--pcap-filter*: <filter> filter to apply when getting pcaps from file or directory
+* string *snort.--pcap-list*: <list> a space separated list of pcaps to read - read mode is implied
+* int *snort.--pcap-loop*: <count> read all pcaps <count> times;  0 will read until Snort is terminated { -1: }
+* implied *snort.--pcap-no-filter*: reset to use no filter when getting pcaps from file or directory
+* implied *snort.--pcap-reload*: if reading multiple pcaps, reload snort config between pcaps
+* implied *snort.--pcap-show*: print a line saying what pcap is currently being read
+* implied *snort.--pedantic*: warnings are fatal
+* implied *snort.--piglet*: enable piglet test harness mode
+* string *snort.--plugin-path*: <path> where to find plugins
+* implied *snort.--process-all-events*: process all action groups
+* string *snort.--rule*: <rules> to be added to configuration; may be repeated
+* implied *snort.--rule-to-hex*: output so rule header to stdout for text rule on stdin
+* implied *snort.--rule-to-text*: output plain so rule header to stdout for text rule on stdin
+* string *snort.--run-prefix*: <pfx> prepend this to each output file
+* string *snort.--script-path*: <path> to a luajit script or directory containing luajit scripts
+* implied *snort.--shell*: enable the interactive command line
+* implied *snort.--show-plugins*: list module and plugin versions
+* int *snort.--skip*: <n> skip 1st n packets { 0: }
+* int *snort.--snaplen* = 1514: <snap> set snaplen of packet (same as -s) { 68:65535 }
+* implied *snort.--stdin-rules*: read rules from stdin until EOF or a line starting with END is read
+* implied *snort.--treat-drop-as-alert*: converts drop, sdrop, and reject rules into alert rules during startup
+* implied *snort.--treat-drop-as-ignore*: use drop, sdrop, and reject rules to ignore session traffic when not inline
+* implied *snort.--version*: show version number (same as -V)
+* implied *snort.--warn-all*: enable all warnings
+* implied *snort.--warn-conf*: warn about configuration issues
+* implied *snort.--warn-daq*: warn about DAQ issues, usually related to mode
+* implied *snort.--warn-flowbits*: warn about flowbits that are checked but not set and vice-versa
+* implied *snort.--warn-hosts*: warn about host table issues
+* implied *snort.--warn-plugins*: warn about issues that prevent plugins from loading
+* implied *snort.--warn-rules*: warn about duplicate rules and rule parsing issues
+* implied *snort.--warn-scripts*: warn about issues discovered while processing Lua scripts
+* implied *snort.--warn-symbols*: warn about unknown symbols in your Lua config
+* implied *snort.--warn-vars*: warn about variable definition and usage issues
+* int *snort.--x2c*: output ASCII char for given hex (see also --c2x)
+* string *snort.--x2s*: output ASCII string for given byte code (see also --x2c)
+* string *snort.-?*: <option prefix> output matching command line option quick help (same as --help-options) { (optional) }
+* string *snort.-A*: <mode> set alert mode: none, cmg, or alert_*
+* implied *snort.-B*: <mask> obfuscated IP addresses in alerts and packet dumps using CIDR mask
+* implied *snort.-C*: print out payloads with character data only (no hex)
+* implied *snort.-D*: run Snort in background (daemon) mode
+* implied *snort.-E*: enable daemon restart
+* int *snort.-G*: <0xid> (same as --logid) { 0:65535 }
+* implied *snort.-H*: make hash tables deterministic
+* string *snort.-L*: <mode> logging mode (none, dump, pcap, or log_*)
+* implied *snort.-M*: log messages to syslog (not alerts)
+* implied *snort.-O*: obfuscate the logged IP addresses
+* implied *snort.-Q*: enable inline mode operation
+* string *snort.-R*: <rules> include this rules file in the default policy
+* string *snort.-S*: <x=v> set config variable x equal to value v
+* implied *snort.-T*: test and report on the current Snort configuration
+* implied *snort.-U*: use UTC for timestamps
+* implied *snort.-V*: (same as --version)
+* implied *snort.-W*: lists available interfaces
+* implied *snort.-X*: dump the raw packet data starting at the link layer
+* string *snort.-c*: <conf> use this configuration
+* implied *snort.-d*: dump the Application Layer
+* implied *snort.-e*: display the second layer header info
+* implied *snort.-f*: turn off fflush() calls after binary log writes
+* string *snort.-g*: <gname> run snort gid as <gname> group (or gid) after initialization
+* string *snort.-i*: <iface>... list of interfaces
+* port *snort.-j*: <port> to listen for telnet connections
+* enum *snort.-k* = all: <mode> checksum mode; default is all { all|noip|notcp|noudp|noicmp|none }
+* string *snort.-l*: <logdir> log to this directory instead of current directory
+* int *snort.-m*: <umask> set umask = <umask> { 0: }
+* int *snort.-n*: <count> stop after count packets { 0: }
+* implied *snort.-q*: quiet mode - Don't show banner and status report
+* string *snort.-r*: <pcap>... (same as --pcap-list)
+* int *snort.-s* = 1514: <snap> (same as --snaplen); default is 1514 { 68:65535 }
+* string *snort.-t*: <dir> chroots process to <dir> after initialization
+* string *snort.-u*: <uname> run snort as <uname> or <uid> after initialization
+* implied *snort.-v*: be verbose
+* implied *snort.-w*: dump 802.11 management and control frames
+* implied *snort.-x*: same as --pedantic
+* implied *snort.-y*: include year in timestamp in the alert and log files
+* int *snort.-z* = 1: <count> maximum number of packet threads (same as --max-packet-threads); 0 gets the number of CPU cores reported by the system; default is 1 { 0: }
+* string *so.~func*: name of eval function
+* string *soid.~*: SO rule ID has <gid>|<sid> format, like 3|12345
+* int *ssh.max_client_bytes* = 19600: number of unanswered bytes before alerting on challenge-response overflow or CRC32 { 0:65535 }
+* int *ssh.max_encrypted_packets* = 25: ignore session after this many encrypted packets { 0:65535 }
+* int *ssh.max_server_version_len* = 80: limit before alerting on secure CRT server version string overflow { 0:255 }
+* int *ssl.max_heartbeat_length* = 0: maximum length of heartbeat record allowed { 0:65535 }
+* bool *ssl.trust_servers* = false: disables requirement that application (encrypted) data must be observed on both sides
+* implied *ssl_state.!client_hello*: check for records that are not client hello
+* implied *ssl_state.!client_keyx*: check for records that are not client keyx
+* implied *ssl_state.!server_hello*: check for records that are not server hello
+* implied *ssl_state.!server_keyx*: check for records that are not server keyx
+* implied *ssl_state.!unknown*: check for records that are not unknown
+* implied *ssl_state.client_hello*: check for client hello
+* implied *ssl_state.client_keyx*: check for client keyx
+* implied *ssl_state.server_hello*: check for server hello
+* implied *ssl_state.server_keyx*: check for server keyx
+* implied *ssl_state.unknown*: check for unknown record
+* implied *ssl_version.!sslv2*: check for records that are not sslv2
+* implied *ssl_version.!sslv3*: check for records that are not sslv3
+* implied *ssl_version.!tls1.0*: check for records that are not tls1.0
+* implied *ssl_version.!tls1.1*: check for records that are not tls1.1
+* implied *ssl_version.!tls1.2*: check for records that are not tls1.2
+* implied *ssl_version.sslv2*: check for sslv2
+* implied *ssl_version.sslv3*: check for sslv3
+* implied *ssl_version.tls1.0*: check for tls1.0
+* implied *ssl_version.tls1.1*: check for tls1.1
+* implied *ssl_version.tls1.2*: check for tls1.2
+* int *stream.file_cache.idle_timeout* = 180: maximum inactive time before retiring session tracker { 1: }
+* int *stream.file_cache.max_sessions* =  128: maximum simultaneous sessions tracked before pruning { 1: }
+* int *stream.file_cache.memcap* = 0: maximum cache memory before pruning (0 is unlimited) { 0: }
+* int *stream.file_cache.pruning_timeout* = 30: minimum inactive time before being eligible for pruning { 1: }
+* int *stream.icmp_cache.idle_timeout* = 180: maximum inactive time before retiring session tracker { 1: }
+* int *stream.icmp_cache.max_sessions* = 32768: maximum simultaneous sessions tracked before pruning { 1: }
+* int *stream.icmp_cache.memcap* = 1048576: maximum cache memory before pruning (0 is unlimited) { 0: }
+* int *stream.icmp_cache.pruning_timeout* = 30: minimum inactive time before being eligible for pruning { 1: }
+* int *stream.ip_cache.idle_timeout* = 180: maximum inactive time before retiring session tracker { 1: }
+* int *stream.ip_cache.max_sessions* = 16384: maximum simultaneous sessions tracked before pruning { 1: }
+* int *stream.ip_cache.memcap* = 23920640: maximum cache memory before pruning (0 is unlimited) { 0: }
+* int *stream.ip_cache.pruning_timeout* = 30: minimum inactive time before being eligible for pruning { 1: }
+* int *stream.tcp_cache.idle_timeout* = 180: maximum inactive time before retiring session tracker { 1: }
+* int *stream.tcp_cache.max_sessions* = 131072: maximum simultaneous sessions tracked before pruning { 1: }
+* int *stream.tcp_cache.memcap* = 268435456: maximum cache memory before pruning (0 is unlimited) { 0: }
+* int *stream.tcp_cache.pruning_timeout* = 30: minimum inactive time before being eligible for pruning { 1: }
+* int *stream.udp_cache.idle_timeout* = 180: maximum inactive time before retiring session tracker { 1: }
+* int *stream.udp_cache.max_sessions* = 65536: maximum simultaneous sessions tracked before pruning { 1: }
+* int *stream.udp_cache.memcap* = 0: maximum cache memory before pruning (0 is unlimited) { 0: }
+* int *stream.udp_cache.pruning_timeout* = 30: minimum inactive time before being eligible for pruning { 1: }
+* int *stream.user_cache.idle_timeout* = 180: maximum inactive time before retiring session tracker { 1: }
+* int *stream.user_cache.max_sessions* = 1024: maximum simultaneous sessions tracked before pruning { 1: }
+* int *stream.user_cache.memcap* = 1048576: maximum cache memory before pruning (0 is unlimited) { 0: }
+* int *stream.user_cache.pruning_timeout* = 30: minimum inactive time before being eligible for pruning { 1: }
+* bool *stream_file.upload* = false: indicate file transfer direction
+* int *stream_icmp.session_timeout* = 30: session tracking timeout { 1:86400 }
+* int *stream_ip.max_frags* = 8192: maximum number of simultaneous fragments being tracked { 1: }
+* int *stream_ip.max_overlaps* = 0: maximum allowed overlaps per datagram; 0 is unlimited { 0: }
+* int *stream_ip.min_frag_length* = 0: alert if fragment length is below this limit before or after trimming { 0: }
+* int *stream_ip.min_ttl* = 1: discard fragments with ttl below the minimum { 1:255 }
+* enum *stream_ip.policy* = linux: fragment reassembly policy { first | linux | bsd | bsd_right | last | windows | solaris }
+* int *stream_ip.session_timeout* = 30: session tracking timeout { 1:86400 }
+* enum *stream_reassemble.action*: stop or start stream reassembly { disable|enable }
+* enum *stream_reassemble.direction*: action applies to the given direction(s) { client|server|both }
+* implied *stream_reassemble.fastpath*: optionally whitelist the remainder of the session
+* implied *stream_reassemble.noalert*: don't alert when rule matches
+* enum *stream_size.~direction*: compare applies to the given direction(s) { either|to_server|to_client|both }
+* string *stream_size.~range*: size for comparison
+* int *stream_tcp.flush_factor* = 0: flush upon seeing a drop in segment size after given number of non-decreasing segments { 0: }
+* int *stream_tcp.footprint* = 0: use zero for production, non-zero for testing at given size { 0: }
+* bool *stream_tcp.ignore_any_rules* = false: process tcp content rules w/o ports only if rules with ports are present
+* int *stream_tcp.max_pdu* = 16384: maximum reassembled PDU size { 1460:65535 }
+* int *stream_tcp.max_window* = 0: maximum allowed tcp window { 0:1073725440 }
+* int *stream_tcp.overlap_limit* = 0: maximum number of allowed overlapping segments per session { 0:255 }
+* enum *stream_tcp.policy* = bsd: determines operating system characteristics like reassembly { first | last | linux | old_linux | bsd | macos | solaris | irix | hpux11 | hpux10 | windows | win_2003 | vista | proxy }
+* int *stream_tcp.queue_limit.max_bytes* = 1048576: don't queue more than given bytes per session and direction { 0: }
+* int *stream_tcp.queue_limit.max_segments* = 2621: don't queue more than given segments per session and direction { 0: }
+* bool *stream_tcp.reassemble_async* = true: queue data for reassembly before traffic is seen in both directions
+* int *stream_tcp.require_3whs* = -1: don't track midstream sessions after given seconds from start up; -1 tracks all { -1:86400 }
+* int *stream_tcp.session_timeout* = 30: session tracking timeout { 1:86400 }
+* bool *stream_tcp.show_rebuilt_packets* = false: enable cmg like output of reassembled packets
+* int *stream_tcp.small_segments.count* = 0: limit number of small segments queued { 0:2048 }
+* int *stream_tcp.small_segments.maximum_size* = 0: limit number of small segments queued { 0:2048 }
+* bool *stream_udp.ignore_any_rules* = false: process udp content rules w/o ports only if rules with ports are present
+* int *stream_udp.session_timeout* = 30: session tracking timeout { 1:86400 }
+* int *stream_user.session_timeout* = 30: session tracking timeout { 1:86400 }
+* int *suppress[].gid* = 0: rule generator ID { 0: }
+* string *suppress[].ip*: restrict suppression to these addresses according to track
+* int *suppress[].sid* = 0: rule signature ID { 0: }
+* enum *suppress[].track*: suppress only matching source or destination addresses { by_src | by_dst }
+* int *tag.bytes*: tag for this many bytes { 1: }
+* int *tag.packets*: tag this many packets { 1: }
+* int *tag.seconds*: tag for this many seconds { 1: }
+* enum *tag.~*: log all packets in session or all packets to or from host { session|host_src|host_dst }
+* int *telnet.ayt_attack_thresh* = -1: alert on this number of consecutive telnet AYT commands { -1: }
+* bool *telnet.check_encrypted* = false: check for end of encryption
+* bool *telnet.encrypted_traffic* = false: check for encrypted telnet and ftp
+* bool *telnet.normalize* = false: eliminate escape sequences
+* string *tos.~range*: check if packet payload size is 'size | min<>max | <max | >min'
+* string *ttl.~range*: check if packet payload size is 'size | min<>max | <max | >min'
+* bool *udp.deep_teredo_inspection* = false: look for Teredo on all UDP ports (default is only 3544)
+* bool *udp.enable_gtp* = false: decode GTP encapsulations
+* bit_list *udp.gtp_ports* = 2152 3386: set GTP ports { 65535 }
+* int *unified2.limit* = 0: set limit (0 is unlimited) { 0: }
+* bool *unified2.mpls_event_types* = false: include mpls labels in events
+* bool *unified2.nostamp* = true: append file creation time to name (in Unix Epoch format)
+* enum *unified2.units* = B: limit multiplier { B | K | M | G }
+* bool *unified2.vlan_event_types* = false: include vlan IDs in events
+* string *urg.~range*: check if urgent offset is min<>max | <max | >min
+* string *window.~range*: check if packet payload size is 'size | min<>max | <max | >min'
+* bool *wizard.hexes[].client_first* = true: which end initiates data transfer
+* select *wizard.hexes[].proto* = tcp: protocol to scan { tcp | udp }
+* string *wizard.hexes[].service*: name of service
+* string *wizard.hexes[].to_client[].hex*: sequence of data with wild chars (?)
+* string *wizard.hexes[].to_server[].hex*: sequence of data with wild chars (?)
+* bool *wizard.spells[].client_first* = true: which end initiates data transfer
+* select *wizard.spells[].proto* = tcp: protocol to scan { tcp | udp }
+* string *wizard.spells[].service*: name of service
+* string *wizard.spells[].to_client[].spell*: sequence of data with wild cards (*)
+* string *wizard.spells[].to_server[].spell*: sequence of data with wild cards (*)

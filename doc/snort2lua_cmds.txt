@@ -1,0 +1,100 @@
+=== Usage: snort2lua [OPTIONS]... -c <snort_conf> ...
+
+Converts the Snort configuration file specified by the -c or --conf-file
+options into a Snort++ configuration file
+
+
+
+==== Options:
+
+* *-?*                show usage
+
+* *-h*                this overview of snort2lua
+
+* *-a*                default option.  print all data
+
+* *-c <snort_conf>*   The Snort <snort_conf> file to convert
+
+* *-d*                print the differences, and only the differences, between the
+                    Snort and Snort++ configurations to the <out_file>
+
+* *-e <error_file>*   output all errors to <error_file>
+
+* *-i*                if <snort_conf> file contains any <include_file> or
+                    <policy_file> (i.e. 'include path/to/conf/other_conf'), do
+                    NOT parse those files
+
+* *-m*                add a remark to the end of every converted rule
+
+* *-o <out_file>*     output the new Snort++ lua configuration to <out_file>
+
+* *-q*                quiet mode. Only output valid confiration information to the
+                    <out_file>
+
+* *-r <rule_file>*    output any converted rule to <rule_file>
+
+* *-s*                when parsing <include_file>, write <include_file>'s rules to
+                    <rule_file>. Meaningles if '-i' provided
+
+* *-t*                when parsing <include_file>, write <include_file>'s
+                    information, excluding rules, to <out_file>. Meaningles if
+                    '-i' provided
+
+* *-V*                Print the current Snort2Lua version
+
+* *--conf-file*       Same as '-c'. A Snort <snort_conf> file which will be
+                    converted
+
+* *--dont-parse-includes*  
+                    Same as '-p'. if <snort_conf> file contains any
+                    <include_file> or <policy_file> (i.e. 'include
+                    path/to/conf/other_conf'), do NOT parse those files
+
+* *--error-file=<error_file>*  
+                    Same as '-e'. output all errors to <error_file>
+
+* *--help*            Same as '-h'. this overview of snort2lua
+
+* *--markup*          print help in asciidoc compatible format
+
+* *--output-file=<out_file>*  
+                    Same as '-o'. output the new Snort++ lua configuration to
+                    <out_file>
+
+* *--print-all*       Same as '-a'. default option.  print all data
+
+* *--print-differences*  Same as '-d'. output the differences, and only the
+                    differences, between the Snort and Snort++ configurations to
+                    the <out_file>
+
+* *--quiet*           Same as '-q'. quiet mode. Only output valid confiration
+                    information to the <out_file>
+
+* *--remark*          same as '-m'.  add a remark to the end of every converted
+                    rule
+
+* *--rule-file=<rule_file>*  
+                    Same as '-r'. output any converted rule to <rule_file>
+
+* *--single-conf-file*  Same as '-t'. when parsing <include_file>, write
+                    <include_file>'s information, excluding rules, to
+                    <out_file>
+
+* *--single-rule-file*  Same as '-s'. when parsing <include_file>, write
+                    <include_file>'s rules to <rule_file>.
+
+* *--version*         Same as '-V'. Print the current Snort2Lua version
+
+
+
+
+==== Required option:
+
+* 	A Snort configuration file to convert. Set with either '-c' or '--conf-file'
+
+
+==== Default values:
+* 	<out_file>   =  snort.lua
+* 	<rule_file>  =  <out_file> = snort.lua.  Rules are written to the 'local_rules' variable in the <out_file>
+* 	<error_file> =  snort.rej.  This file will not be created in quiet mode.
+

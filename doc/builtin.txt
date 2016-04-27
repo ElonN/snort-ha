@@ -1,0 +1,418 @@
+* *105:1* (back_orifice) BO traffic detected
+* *105:2* (back_orifice) BO client traffic detected
+* *105:3* (back_orifice) BO server traffic detected
+* *105:4* (back_orifice) BO Snort buffer attack
+* *106:1* (rpc_decode) fragmented RPC records
+* *106:2* (rpc_decode) multiple RPC records
+* *106:3* (rpc_decode) large RPC record fragment
+* *106:4* (rpc_decode) incomplete RPC segment
+* *106:5* (rpc_decode) zero-length RPC fragment
+* *112:1* (arp_spoof) unicast ARP request
+* *112:2* (arp_spoof) ethernet/ARP mismatch request for source
+* *112:3* (arp_spoof) ethernet/ARP mismatch request for destination
+* *112:4* (arp_spoof) attempted ARP cache overwrite attack
+* *116:1* (ipv4) Not IPv4 datagram
+* *116:2* (ipv4) hlen < minimum
+* *116:3* (ipv4) IP dgm len < IP Hdr len
+* *116:4* (ipv4) Ipv4 Options found with bad lengths
+* *116:5* (ipv4) Truncated Ipv4 Options
+* *116:6* (ipv4) IP dgm len > captured len
+* *116:45* (tcp) TCP packet len is smaller than 20 bytes
+* *116:46* (tcp) TCP data offset is less than 5
+* *116:47* (tcp) TCP header length exceeds packet length
+* *116:54* (tcp) TCP options found with bad lengths
+* *116:55* (tcp) truncated TCP options
+* *116:56* (tcp) T/TCP detected
+* *116:57* (tcp) obsolete TCP options found
+* *116:58* (tcp) experimental TCP options found
+* *116:59* (tcp) TCP window scale option found with length > 14
+* *116:95* (udp) truncated UDP header
+* *116:96* (udp) invalid UDP header, length field < 8
+* *116:97* (udp) short UDP packet, length field > payload length
+* *116:98* (udp) long UDP packet, length field < payload length
+* *116:105* (icmp4) ICMP header truncated
+* *116:106* (icmp4) ICMP timestamp header truncated
+* *116:107* (icmp4) ICMP address header truncated
+* *116:109* (arp) truncated ARP
+* *116:110* (eapol) truncated EAP header
+* *116:111* (eapol) EAP key truncated
+* *116:112* (eapol) EAP header truncated
+* *116:120* (pppoe) bad PPPOE frame detected
+* *116:130* (vlan) bad VLAN frame
+* *116:131* (vlan) bad LLC header
+* *116:132* (vlan) bad extra LLC info
+* *116:133* (wlan) bad 802.11 LLC header
+* *116:134* (wlan) bad 802.11 extra LLC info
+* *116:140* (token_ring) (token_ring) Bad Token Ring Header
+* *116:141* (token_ring) (token_ring) Bad Token Ring ETHLLC Header
+* *116:142* (token_ring) (token_ring) Bad Token Ring MRLENHeader
+* *116:143* (token_ring) (token_ring) Bad Token Ring MR Header
+* *116:150* (decode) bad traffic loopback IP
+* *116:151* (decode) bad traffic same src/dst IP
+* *116:160* (gre) GRE header length > payload length
+* *116:161* (gre) multiple encapsulations in packet
+* *116:162* (gre) invalid GRE version
+* *116:163* (gre) invalid GRE header
+* *116:164* (gre) invalid GRE v.1 PPTP header
+* *116:165* (gre) GRE trans header length > payload length
+* *116:170* (mpls) bad MPLS frame
+* *116:171* (mpls) MPLS label 0 appears in non-bottom header
+* *116:172* (mpls) MPLS label 1 appears in bottom header
+* *116:173* (mpls) MPLS label 2 appears in non-bottom header
+* *116:174* (mpls) MPLS label 3 appears in header
+* *116:175* (mpls) MPLS label 4, 5,.. or 15 appears in header
+* *116:176* (mpls) too many MPLS headers
+* *116:250* (icmp4) ICMP original IP header truncated
+* *116:251* (icmp4) ICMP version and original IP header versions differ
+* *116:252* (icmp4) ICMP original datagram length < original IP header length
+* *116:253* (icmp4) ICMP original IP payload < 64 bits
+* *116:254* (icmp4) ICMP original IP payload > 576 bytes
+* *116:255* (icmp4) ICMP original IP fragmented and offset not 0
+* *116:270* (ipv6) IPv6 packet below TTL limit
+* *116:271* (ipv6) IPv6 header claims to not be IPv6
+* *116:272* (ipv6) IPV6 truncated extension header
+* *116:273* (ipv6) IPV6 truncated header
+* *116:274* (ipv6) IP dgm len < IP Hdr len
+* *116:275* (ipv6) IP dgm len > captured len
+* *116:276* (ipv6) IPv6 packet with destination address ::0
+* *116:277* (ipv6) IPv6 packet with multicast source address
+* *116:278* (ipv6) IPv6 packet with reserved multicast destination address
+* *116:279* (ipv6) IPv6 header includes an undefined option type
+* *116:280* (ipv6) IPv6 address includes an unassigned multicast scope value
+* *116:281* (ipv6) IPv6 header includes an invalid value for the 'next header' field
+* *116:282* (ipv6) IPv6 header includes a routing extension header followed by a hop-by-hop header
+* *116:283* (ipv6) IPv6 header includes two routing extension headers
+* *116:285* (icmp6) ICMPv6 packet of type 2 (message too big) with MTU field < 1280
+* *116:286* (icmp6) ICMPv6 packet of type 1 (destination unreachable) with non-RFC 2463 code
+* *116:287* (icmp6) ICMPv6 router solicitation packet with a code not equal to 0
+* *116:288* (icmp6) ICMPv6 router advertisement packet with a code not equal to 0
+* *116:289* (icmp6) ICMPv6 router solicitation packet with the reserved field not equal to 0
+* *116:290* (icmp6) ICMPv6 router advertisement packet with the reachable time field set > 1 hour
+* *116:291* (ipv6) IPV6 tunneled over IPv4, IPv6 header truncated, possible Linux kernel attack
+* *116:292* (ipv6) IPv6 header has destination options followed by a routing header
+* *116:293* (decode) two or more IP (v4 and/or v6) encapsulation layers present
+* *116:294* (esp) truncated encapsulated security payload header
+* *116:295* (ipv6) IPv6 header includes an option which is too big for the containing header
+* *116:296* (ipv6) IPv6 packet includes out-of-order extension headers
+* *116:297* (gtp) two or more GTP encapsulation layers present
+* *116:298* (gtp) GTP header length is invalid
+* *116:400* (tcp) XMAS attack detected
+* *116:401* (tcp) Nmap XMAS attack detected
+* *116:402* (tcp) DOS NAPTHA vulnerability detected
+* *116:403* (tcp) bad traffic SYN to multicast address
+* *116:404* (ipv4) IPV4 packet with zero TTL
+* *116:405* (ipv4) IPV4 packet with bad frag bits (both MF and DF set)
+* *116:406* (udp) invalid IPv6 UDP packet, checksum zero
+* *116:407* (ipv4) IPV4 packet frag offset + length exceed maximum
+* *116:408* (ipv4) IPV4 packet from 'current net' source address
+* *116:409* (ipv4) IPV4 packet to 'current net' dest address
+* *116:410* (ipv4) IPV4 packet from multicast source address
+* *116:411* (ipv4) IPV4 packet from reserved source address
+* *116:412* (ipv4) IPV4 packet to reserved dest address
+* *116:413* (ipv4) IPV4 packet from broadcast source address
+* *116:414* (ipv4) IPV4 packet to broadcast dest address
+* *116:415* (icmp4) ICMP4 packet to multicast dest address
+* *116:416* (icmp4) ICMP4 packet to broadcast dest address
+* *116:418* (icmp4) ICMP4 type other
+* *116:419* (tcp) TCP urgent pointer exceeds payload length or no payload
+* *116:420* (tcp) TCP SYN with FIN
+* *116:421* (tcp) TCP SYN with RST
+* *116:422* (tcp) TCP PDU missing ack for established session
+* *116:423* (tcp) TCP has no SYN, ACK, or RST
+* *116:424* (eth) truncated eth header
+* *116:425* (ipv4) truncated IP4 header
+* *116:426* (icmp4) truncated ICMP4 header
+* *116:427* (icmp6) truncated ICMP6 header
+* *116:428* (ipv4) IPV4 packet below TTL limit
+* *116:429* (ipv6) IPV6 packet has zero hop limit
+* *116:430* (ipv4) IPV4 packet both DF and offset set
+* *116:431* (icmp6) ICMP6 type not decoded
+* *116:432* (icmp6) ICMP6 packet to multicast address
+* *116:433* (tcp) DDOS shaft SYN flood
+* *116:434* (icmp4) ICMP ping NMAP
+* *116:435* (icmp4) ICMP icmpenum v1.1.1
+* *116:436* (icmp4) ICMP redirect host
+* *116:437* (icmp4) ICMP redirect net
+* *116:438* (icmp4) ICMP traceroute ipopts
+* *116:439* (icmp4) ICMP source quench
+* *116:440* (icmp4) broadscan smurf scanner
+* *116:441* (icmp4) ICMP destination unreachable communication administratively prohibited
+* *116:442* (icmp4) ICMP destination unreachable communication with destination host is administratively prohibited
+* *116:443* (icmp4) ICMP destination unreachable communication with destination network is administratively prohibited
+* *116:444* (ipv4) MISC IP option set
+* *116:445* (udp) misc large UDP Packet
+* *116:446* (tcp) BAD-TRAFFIC TCP port 0 traffic
+* *116:447* (udp) BAD-TRAFFIC UDP port 0 traffic
+* *116:448* (ipv4) BAD-TRAFFIC IP reserved bit set
+* *116:449* (decode) BAD-TRAFFIC unassigned/reserved IP protocol
+* *116:450* (decode) BAD-TRAFFIC bad IP protocol
+* *116:451* (icmp4) ICMP path MTU denial of service attempt
+* *116:452* (icmp4) BAD-TRAFFIC Linux ICMP header DOS attempt
+* *116:453* (ipv6) BAD-TRAFFIC ISATAP-addressed IPv6 traffic spoofing attempt
+* *116:454* (pgm) BAD-TRAFFIC PGM nak list overflow attempt
+* *116:455* (igmp) DOS IGMP IP options validation attempt
+* *116:456* (ipv6) too many IP6 extension headers
+* *116:457* (icmp6) ICMPv6 packet of type 1 (destination unreachable) with non-RFC 4443 code
+* *116:458* (ipv6) bogus fragmentation packet, possible BSD attack
+* *116:459* (decode) fragment with zero length
+* *116:460* (icmp6) ICMPv6 node info query/response packet with a code greater than 2
+* *116:461* (ipv6) IPV6 routing type 0 extension header
+* *116:462* (erspan2) ERSpan header version mismatch
+* *116:463* (erspan2) captured < ERSpan type2 header length
+* *116:464* (erspan3) captured < ERSpan type3 header length
+* *116:465* (auth) truncated authentication header
+* *116:466* (auth) bad authentication header length
+* *116:467* (fabricpath) truncated FabricPath header
+* *116:468* (decode) too many protocols present
+* *119:1* (http_global) ascii encoding
+* *119:2* (http_global) double decoding attack
+* *119:3* (http_global) u encoding
+* *119:4* (http_global) bare byte unicode encoding
+* *119:5* (http_global) base36 encoding
+* *119:6* (http_global) UTF-8 encoding
+* *119:7* (http_global) IIS unicode codepoint encoding
+* *119:8* (http_global) multi_slash encoding
+* *119:9* (http_global) IIS backslash evasion
+* *119:10* (http_global) self directory traversal
+* *119:11* (http_global) directory traversal
+* *119:12* (http_global) apache whitespace (tab)
+* *119:13* (http_global) non-RFC http delimiter
+* *119:14* (http_global) non-RFC defined char
+* *119:15* (http_global) oversize request-URI directory
+* *119:16* (http_global) oversize chunk encoding
+* *119:17* (http_global) unauthorized proxy use detected
+* *119:18* (http_global) webroot directory traversal
+* *119:19* (http_global) long header
+* *119:20* (http_global) max header fields
+* *119:21* (http_global) multiple content length
+* *119:22* (http_global) chunk size mismatch detected
+* *119:23* (http_global) invalid ip in true-client-IP/XFF header
+* *119:24* (http_global) multiple host hdrs detected
+* *119:25* (http_global) hostname exceeds 255 characters
+* *119:26* (http_global) header parsing space saturation
+* *119:27* (http_global) client consecutive small chunk sizes
+* *119:28* (http_global) post w/o content-length or chunks
+* *119:29* (http_global) multiple true IPs in a session
+* *119:30* (http_global) both true-client-IP and XFF hdrs present
+* *119:31* (http_global) unknown method
+* *119:32* (http_global) simple request
+* *119:33* (http_global) unescaped space in http URI
+* *119:34* (http_global) too many pipelined requests
+* *120:1* (http_inspect) anomalous http server on undefined HTTP port
+* *120:2* (http_inspect) invalid status code in HTTP response
+* *120:3* (http_inspect) no content-length or transfer-encoding in HTTP response
+* *120:4* (http_inspect) HTTP response has UTF charset which failed to normalize
+* *120:5* (http_inspect) HTTP response has UTF-7 charset
+* *120:6* (http_inspect) HTTP response gzip decompression failed
+* *120:7* (http_inspect) server consecutive small chunk sizes
+* *120:8* (http_inspect) invalid content-length or chunk size
+* *120:9* (http_inspect) javascript obfuscation levels exceeds 1
+* *120:10* (http_inspect) javascript whitespaces exceeds max allowed
+* *120:11* (http_inspect) multiple encodings within javascript obfuscated data
+* *120:12* (http_inspect) HTTP response SWF file zlib decompression failure
+* *120:13* (http_inspect) HTTP response SWF file LZMA decompression failure
+* *120:14* (http_inspect) HTTP response PDF file deflate decompression failure
+* *120:15* (http_inspect) HTTP response PDF file unsupported compression type
+* *120:16* (http_inspect) HTTP response PDF file cascaded compression
+* *120:17* (http_inspect) HTTP response PDF file parse failure
+* *122:1* (port_scan) TCP portscan
+* *122:2* (port_scan) TCP decoy portscan
+* *122:3* (port_scan) TCP portsweep
+* *122:4* (port_scan) TCP distributed portscan
+* *122:5* (port_scan) TCP filtered portscan
+* *122:6* (port_scan) TCP filtered decoy portscan
+* *122:7* (port_scan) TCP filtered portsweep
+* *122:8* (port_scan) TCP filtered distributed portscan
+* *122:9* (port_scan) IP protocol scan
+* *122:10* (port_scan) IP decoy protocol scan
+* *122:11* (port_scan) IP protocol sweep
+* *122:12* (port_scan) IP distributed protocol scan
+* *122:13* (port_scan) IP filtered protocol scan
+* *122:14* (port_scan) IP filtered decoy protocol scan
+* *122:15* (port_scan) IP filtered protocol sweep
+* *122:16* (port_scan) IP filtered distributed protocol scan
+* *122:17* (port_scan) UDP portscan
+* *122:18* (port_scan) UDP decoy portscan
+* *122:19* (port_scan) UDP portsweep
+* *122:20* (port_scan) UDP distributed portscan
+* *122:21* (port_scan) UDP filtered portscan
+* *122:22* (port_scan) UDP filtered decoy portscan
+* *122:23* (port_scan) UDP filtered portsweep
+* *122:24* (port_scan) UDP filtered distributed portscan
+* *122:25* (port_scan) ICMP sweep
+* *122:26* (port_scan) ICMP filtered sweep
+* *122:27* (port_scan) open port
+* *123:1* (stream_ip) inconsistent IP options on fragmented packets
+* *123:2* (stream_ip) teardrop attack
+* *123:3* (stream_ip) short fragment, possible DOS attempt
+* *123:4* (stream_ip) fragment packet ends after defragmented packet
+* *123:5* (stream_ip) zero-byte fragment packet
+* *123:6* (stream_ip) bad fragment size, packet size is negative
+* *123:7* (stream_ip) bad fragment size, packet size is greater than 65536
+* *123:8* (stream_ip) fragmentation overlap
+* *123:11* (stream_ip) TTL value less than configured minimum, not using for reassembly
+* *123:12* (stream_ip) excessive fragment overlap
+* *123:13* (stream_ip) tiny fragment
+* *124:1* (smtp) Attempted command buffer overflow
+* *124:2* (smtp) Attempted data header buffer overflow
+* *124:3* (smtp) Attempted response buffer overflow
+* *124:4* (smtp) Attempted specific command buffer overflow
+* *124:5* (smtp) Unknown command
+* *124:6* (smtp) Illegal command
+* *124:7* (smtp) Attempted header name buffer overflow
+* *124:8* (smtp) Attempted X-Link2State command buffer overflow
+* *124:10* (smtp) Base64 Decoding failed.
+* *124:11* (smtp) Quoted-Printable Decoding failed.
+* *124:13* (smtp) Unix-to-Unix Decoding failed.
+* *124:14* (smtp) Cyrus SASL authentication attack.
+* *125:1* (ftp_server) TELNET cmd on FTP command channel
+* *125:2* (ftp_server) invalid FTP command
+* *125:3* (ftp_server) FTP command parameters were too long
+* *125:4* (ftp_server) FTP command parameters were malformed
+* *125:5* (ftp_server) FTP command parameters contained potential string format
+* *125:6* (ftp_server) FTP response message was too long
+* *125:7* (ftp_server) FTP traffic encrypted
+* *125:8* (ftp_server) FTP bounce attempt
+* *125:9* (ftp_server) evasive (incomplete) TELNET cmd on FTP command channel
+* *126:1* (telnet) consecutive telnet AYT commands beyond threshold
+* *126:2* (telnet) telnet traffic encrypted
+* *126:3* (telnet) telnet subnegotiation begin command without subnegotiation end
+* *128:1* (ssh) Challenge-Response Overflow exploit
+* *128:2* (ssh) SSH1 CRC32 exploit
+* *128:3* (ssh) Server version string overflow
+* *128:5* (ssh) Bad message direction
+* *128:6* (ssh) Payload size incorrect for the given payload
+* *128:7* (ssh) Failed to detect SSH version string
+* *129:1* (stream_tcp) SYN on established session
+* *129:2* (stream_tcp) data on SYN packet
+* *129:3* (stream_tcp) data sent on stream not accepting data
+* *129:4* (stream_tcp) TCP timestamp is outside of PAWS window
+* *129:5* (stream_tcp) bad segment, adjusted size <= 0
+* *129:6* (stream_tcp) window size (after scaling) larger than policy allows
+* *129:7* (stream_tcp) limit on number of overlapping TCP packets reached
+* *129:8* (stream_tcp) data sent on stream after TCP Reset sent
+* *129:9* (stream_tcp) TCP client possibly hijacked, different ethernet address
+* *129:10* (stream_tcp) TCP Server possibly hijacked, different ethernet address
+* *129:11* (stream_tcp) TCP data with no TCP flags set
+* *129:12* (stream_tcp) consecutive TCP small segments exceeding threshold
+* *129:13* (stream_tcp) 4-way handshake detected
+* *129:14* (stream_tcp) TCP timestamp is missing
+* *129:15* (stream_tcp) reset outside window
+* *129:16* (stream_tcp) FIN number is greater than prior FIN
+* *129:17* (stream_tcp) ACK number is greater than prior FIN
+* *129:18* (stream_tcp) data sent on stream after TCP Reset received
+* *129:19* (stream_tcp) TCP window closed before receiving data
+* *129:20* (stream_tcp) TCP session without 3-way handshake
+* *131:1* (dns) Obsolete DNS RR Types
+* *131:2* (dns) Experimental DNS RR Types
+* *131:3* (dns) DNS Client rdata txt Overflow
+* *134:1* (ppm) rule options disabled by rule latency
+* *134:2* (ppm) rule options re-enabled by rule latency
+* *134:3* (ppm) packet aborted due to latency
+* *137:1* (ssl) Invalid Client HELLO after Server HELLO Detected
+* *137:2* (ssl) Invalid Server HELLO without Client HELLO Detected
+* *137:3* (ssl) Heartbeat Read Overrun Attempt Detected
+* *137:4* (ssl) Large Heartbeat Response Detected
+* *140:1* (sip) Maximum sessions reached
+* *140:2* (sip) Empty request URI
+* *140:3* (sip) URI is too long
+* *140:4* (sip) Empty call-Id
+* *140:5* (sip) Call-Id is too long
+* *140:6* (sip) CSeq number is too large or negative
+* *140:7* (sip) Request name in CSeq is too long
+* *140:8* (sip) Empty From header
+* *140:9* (sip) From header is too long
+* *140:10* (sip) Empty To header
+* *140:11* (sip) To header is too long
+* *140:12* (sip) Empty Via header
+* *140:13* (sip) Via header is too long
+* *140:14* (sip) Empty Contact
+* *140:15* (sip) Contact is too long
+* *140:16* (sip) Content length is too large or negative
+* *140:17* (sip) Multiple SIP messages in a packet
+* *140:18* (sip) Content length mismatch
+* *140:19* (sip) Request name is invalid
+* *140:20* (sip) Invite replay attack
+* *140:21* (sip) Illegal session information modification
+* *140:22* (sip) Response status code is not a 3 digit number
+* *140:23* (sip) Empty Content-type header
+* *140:24* (sip) SIP version is invalid
+* *140:25* (sip) Mismatch in METHOD of request and the CSEQ header
+* *140:26* (sip) Method is unknown
+* *140:27* (sip) Maximum dialogs within a session reached
+* *141:1* (imap) Unknown IMAP3 command
+* *141:2* (imap) Unknown IMAP3 response
+* *141:4* (imap) Base64 Decoding failed.
+* *141:5* (imap) Quoted-Printable Decoding failed.
+* *141:7* (imap) Unix-to-Unix Decoding failed.
+* *142:1* (pop) Unknown POP3 command
+* *142:2* (pop) Unknown POP3 response
+* *142:4* (pop) Base64 Decoding failed.
+* *142:5* (pop) Quoted-Printable Decoding failed.
+* *142:7* (pop) Unix-to-Unix Decoding failed.
+* *219:1* (new_http_inspect) ascii encoding
+* *219:2* (new_http_inspect) double decoding attack
+* *219:3* (new_http_inspect) u encoding
+* *219:4* (new_http_inspect) bare byte unicode encoding
+* *219:5* (new_http_inspect) obsolete event--should not appear
+* *219:6* (new_http_inspect) UTF-8 encoding
+* *219:7* (new_http_inspect) IIS unicode codepoint encoding
+* *219:8* (new_http_inspect) multi_slash encoding
+* *219:9* (new_http_inspect) IIS backslash evasion
+* *219:10* (new_http_inspect) self directory traversal
+* *219:11* (new_http_inspect) directory traversal
+* *219:12* (new_http_inspect) apache whitespace (tab)
+* *219:13* (new_http_inspect) non-RFC http delimiter
+* *219:14* (new_http_inspect) non-RFC defined char
+* *219:15* (new_http_inspect) oversize request-uri directory
+* *219:16* (new_http_inspect) oversize chunk encoding
+* *219:17* (new_http_inspect) unauthorized proxy use detected
+* *219:18* (new_http_inspect) webroot directory traversal
+* *219:19* (new_http_inspect) long header
+* *219:20* (new_http_inspect) max header fields
+* *219:21* (new_http_inspect) multiple content length
+* *219:22* (new_http_inspect) chunk size mismatch detected
+* *219:23* (new_http_inspect) invalid IP in true-client-IP/XFF header
+* *219:24* (new_http_inspect) multiple host hdrs detected
+* *219:25* (new_http_inspect) hostname exceeds 255 characters
+* *219:26* (new_http_inspect) header parsing space saturation
+* *219:27* (new_http_inspect) client consecutive small chunk sizes
+* *219:28* (new_http_inspect) post w/o content-length or chunks
+* *219:29* (new_http_inspect) multiple true ips in a session
+* *219:30* (new_http_inspect) both true-client-IP and XFF hdrs present
+* *219:31* (new_http_inspect) unknown method
+* *219:32* (new_http_inspect) simple request
+* *219:33* (new_http_inspect) unescaped space in HTTP URI
+* *219:34* (new_http_inspect) too many pipelined requests
+* *219:35* (new_http_inspect) anomalous http server on undefined HTTP port
+* *219:36* (new_http_inspect) invalid status code in HTTP response
+* *219:37* (new_http_inspect) no content-length or transfer-encoding in HTTP response
+* *219:38* (new_http_inspect) HTTP response has UTF charset which failed to normalize
+* *219:39* (new_http_inspect) HTTP response has UTF-7 charset
+* *219:40* (new_http_inspect) HTTP response gzip decompression failed
+* *219:41* (new_http_inspect) server consecutive small chunk sizes
+* *219:42* (new_http_inspect) invalid content-length or chunk size
+* *219:43* (new_http_inspect) javascript obfuscation levels exceeds 1
+* *219:44* (new_http_inspect) javascript whitespaces exceeds max allowed
+* *219:45* (new_http_inspect) multiple encodings within javascript obfuscated data
+* *219:46* (new_http_inspect) SWF file zlib decompression failure
+* *219:47* (new_http_inspect) SWF file LZMA decompression failure
+* *219:48* (new_http_inspect) PDF file deflate decompression failure
+* *219:49* (new_http_inspect) PDF file unsupported compression type
+* *219:50* (new_http_inspect) PDF file cascaded compression
+* *219:51* (new_http_inspect) PDF file parse failure
+* *219:52* (new_http_inspect) HTTP misformatted or not really HTTP
+* *219:53* (new_http_inspect) Chunk length has excessive leading zeros
+* *219:54* (new_http_inspect) White space before or between messages
+* *219:55* (new_http_inspect) Request message without URI
+* *219:56* (new_http_inspect) Control character in reason phrase
+* *219:57* (new_http_inspect) Illegal extra whitespace in start line
+* *219:58* (new_http_inspect) Corrupted HTTP version
+* *219:59* (new_http_inspect) Unknown HTTP version
+* *219:60* (new_http_inspect) Format error in HTTP header
+* *219:61* (new_http_inspect) Chunk header options present
+* *219:62* (new_http_inspect) URI badly formatted
+* *219:63* (new_http_inspect) URI bad port number
+* *219:64* (new_http_inspect) HTTP chunk misformatted
+* *219:65* (new_http_inspect) White space following chunk length
+* *256:1* (dpx) too much data sent to port
