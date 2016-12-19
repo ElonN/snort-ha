@@ -75,7 +75,7 @@ typedef struct s_PS_ALERT_CONF
 static THREAD_LOCAL SFXHASH* portscan_hash = NULL;
 static THREAD_LOCAL time_t last_saved = 0;
 static THREAD_LOCAL char sfx_db_file[50];
-static THREAD_LOCAL memcached_st* memcache;
+static THREAD_LOCAL redisContext *redis_context;
 #define SAVE_INTERVAL 1
 /*
 **  Scanning configurations.  This is where we configure what the thresholds
@@ -221,23 +221,34 @@ void ps_init_hash(unsigned long memcap)
     if (portscan_hash == NULL)
         FatalError("Failed to initialize portscan hash table.\n");
 
-    char conf[100];
-    snprintf(conf, sizeof(conf), "--SERVER=127.0.0.1:11211 --NAMESPACE=%u", get_instance_id());
+    struct timeval timeout = { 1, 500000 }; // 1.5 seconds
+    char host[20];
+    int port = 6379;
+    snprintf(conf, sizeof(conf), "10.10.10.8");// --NAMESPACE=%u", get_instance_id());
 
-    memcache = memcached(conf, strlen(conf));
-
+    redis_context = redisConnectWithTimeout(host, port, timeout);
+    if (c == NULL || c->err) {
+        if (c) {
+            printf("portscan: Connection error: %s\n", c->errstr);
+            redisFree(c);
+        } else {
+            printf("portscan: Connection error: can't allocate redis context\n");
+        }
+        exit(1);
+    }
     //std::string name;
     //get_instance_file(name, "sfxdb");
     //strncpy(sfx_db_file, name.c_str(), sizeof(sfx_db_file));
 
-    printf("instance id: %d\n", get_instance_id());
-    printf("loading from memcache %s\n", conf);
+    printf("portscan: instance id: %d\n", get_instance_id());
+    printf("portscan: loading from memcache %s\n", conf);
+    printf("portscan: redis is %d\n", redis_context);
 
-    sfxhash_load_from_db(portscan_hash, memcache);
+    sfxhash_load_from_db(portscan_hash, redis_context);
 
-    printf("saving to cache %s\n", conf);
+    printf("portscan: saving to cache %s\n", conf);
 
-    sfxhash_save_to_db(portscan_hash, memcache);
+    sfxhash_save_to_db(portscan_hash, redis_context);
 
 }
 
@@ -1645,11 +1656,12 @@ int PortScan::ps_detect(PS_PKT* ps_pkt)
 
     time_t now = packet_time();
     if ( now > last_saved + SAVE_INTERVAL ) {
-        printf("saving db...%d\n", now);
-        printf("db has %d entries\n", portscan_hash->count);
+        printf("portscan: saving db...%d\n", now);
+        printf("portscan: db has %d entries\n", portscan_hash->count);
+        printf("portscan: redis is %p\n", redis_context);
 
         if (memcache) {
-            sfxhash_save_to_db(portscan_hash, memcache);    
+            sfxhash_save_to_db(portscan_hash, redis_context);    
         }
         
         last_saved = now;

@@ -1414,26 +1414,27 @@ int sfxhash_save_to_file(SFXHASH* t, const char* filename) {
 
 }
 
-int sfxhash_load_from_db(SFXHASH* t, memcached_st* cache) {
-
-    size_t val_len;
-    uint32_t flags;
-    memcached_return_t err;
-    char* repo_data;
+int sfxhash_load_from_db(SFXHASH* t, redisContext* context) {
+    redisReply *reply = 0;
     const static char key[5] = "port";
 
-    repo_data = memcached_get(cache, key, strlen(key), &val_len, &flags, &err);
+    reply = redisCommand(context, "GET %b", key, strlen(key));
 
-    if (repo_data) {
-        sfxhash_deserialize(t, repo_data, val_len);
-        free(repo_data);    
+    if ( !reply )
+        return -1;
+    if ( reply->type != REDIS_REPLY_STRING ) {
+        printf("sfxhash_load_from_db: ERROR: %s", reply->str);
+    } else {
+        sfxhash_deserialize(t, (char*)reply->str, reply->len);
     }
+    freeReplyObject(reply);
 }
 
-int sfxhash_save_to_db(SFXHASH* t, memcached_st* cache) {
+int sfxhash_save_to_db(SFXHASH* t, redisContext* context) {
     char* copy;
     int copy_size;
     const static char key[5] = "port";
+    redisReply *reply = 0;
 
     copy_size = sfxhash_calcsize(t);
     copy = (char*)malloc(copy_size);
@@ -1443,8 +1444,11 @@ int sfxhash_save_to_db(SFXHASH* t, memcached_st* cache) {
 
     sfxhash_serialize(t, copy, &copy_size);
 
-    memcached_set(cache, key, strlen(key), copy, copy_size, (time_t)0, (uint32_t)0);
-
+    reply = redisCommand(context, "SET %b %b", key, strlen(key), copy, copy_size);
+    if (!reply) {
+        return -1;
+    }
+    freeReplyObject(reply);
     free(copy);
 }
 
