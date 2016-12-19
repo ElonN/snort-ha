@@ -29,6 +29,11 @@
 #include "flow/flow_config.h"
 #include "utils/stats.h"
 
+
+#include <libmemcached/memcached.h>
+
+
+
 class FlowControl
 {
 public:
@@ -81,9 +86,18 @@ public:
 
     class Memcap& get_memcap(PktType);
 
+    memcached_st* memcache;
+
 private:
     class FlowCache* get_cache(PktType);
+    char* get_mem(PktType);
+	size_t get_cache_size(PktType);
+	
+	const char* get_memcache_key (PktType proto);
+	void update_memcache(PktType proto);
+	void load_memcache(PktType proto);
     void set_key(FlowKey*, Packet*);
+
 
     unsigned process(Flow*, Packet*);
 
@@ -102,6 +116,15 @@ private:
     Flow* udp_mem;
     Flow* user_mem;
     Flow* file_mem;
+
+	// sizes
+	size_t ip_mem_size;
+	size_t icmp_mem_size;
+	size_t tcp_mem_size;
+	size_t udp_mem_size;
+	size_t user_mem_size;
+	size_t file_mem_size;
+
 
     InspectSsnFunc get_ip;
     InspectSsnFunc get_icmp;

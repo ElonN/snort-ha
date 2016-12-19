@@ -223,6 +223,16 @@ void StreamBase::tinit()
 
     if ( max > 0 )
         flow_con->init_exp(max);
+
+	char conf[100];
+    snprintf(conf, sizeof(conf), "--SERVER=10.10.10.8:11211");// --NAMESPACE=%u", get_instance_id());
+
+    printf("flow: instance id: %d\n", get_instance_id());
+    printf("flow: loading from memcache %s\n", conf);
+
+    flow_con->memcache = memcached(conf, strlen(conf));
+
+    printf("flow: memcached id: %p\n", flow_con->memcache);
 }
 
 void StreamBase::tterm()

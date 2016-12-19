@@ -157,6 +157,85 @@ Memcap& FlowControl::get_memcap (PktType proto)
 //-------------------------------------------------------------------------
 // cache foo
 //-------------------------------------------------------------------------
+void FlowControl::update_memcache(PktType proto) 
+{
+	const char* memcache_key = get_memcache_key(proto);
+    size_t cache_size = get_cache_size(proto);
+    memcached_return_t mrt;
+
+    printf("update_memcache: memcache %p\n", memcache);
+    printf("update_memcache: key %s\n", memcache_key);
+	mrt = memcached_set(memcache, memcache_key, strlen(memcache_key), (char*)get_mem(proto), cache_size, (time_t)0, (uint32_t)0);
+    printf("update_memcache: set return %d\n", (int)mrt);
+}
+
+void FlowControl::load_memcache(PktType proto) 
+{
+	size_t cache_len;
+	size_t val_len;
+    uint32_t flags;
+    memcached_return_t err;
+	Flow* cache_data;
+	const char* memcache_key = get_memcache_key(proto);
+    printf("load_memcache: %s\n", memcache_key);
+	if (!memcache_key)
+	{
+		return;
+	}
+	
+	cache_data = (Flow*)memcached_get(memcache, memcache_key, strlen(memcache_key), &val_len, &flags, &err);
+	for ( unsigned i = 0; i < val_len / sizeof(Flow); i++ )
+	{
+		Flow* cached_flow = cache_data + i;
+		Flow::FlowState cached_fs = cached_flow->flow_state;
+		if (cached_flow->key && (cached_fs == Flow::BLOCK || cached_fs == Flow::ALLOW))
+		{
+			Flow* current_flow = (get_cache(proto))->get(cached_flow->key);
+			if (current_flow)
+			{
+				current_flow->set_state(cached_fs);
+				current_flow->new_from_cache = true;
+			}
+		}
+	}
+	
+	if (cache_data)
+	{
+		free(cache_data);
+	}
+
+}
+
+
+
+inline const char* FlowControl::get_memcache_key (PktType proto)
+{
+    switch ( proto )
+    {
+    case PktType::IP:   return "ip_cache";
+    case PktType::ICMP: return "icmp_cache";
+    case PktType::TCP:  return "tcp_cache";
+    case PktType::UDP:  return "udp_cache";
+    case PktType::PDU: return "user_cache";
+    case PktType::FILE: return "file_cache";
+    default:            return nullptr;
+    }
+}
+
+inline size_t FlowControl::get_cache_size (PktType proto)
+{
+    switch ( proto )
+    {
+    case PktType::IP:   return ip_mem_size;
+    case PktType::ICMP: return icmp_mem_size;
+    case PktType::TCP:  return tcp_mem_size;
+    case PktType::UDP:  return udp_mem_size;
+    case PktType::PDU: return user_mem_size;
+    case PktType::FILE: return file_mem_size;
+    default:            return 0;
+    }
+}
+
 
 inline FlowCache* FlowControl::get_cache (PktType proto)
 {
@@ -168,6 +247,20 @@ inline FlowCache* FlowControl::get_cache (PktType proto)
     case PktType::UDP:  return udp_cache;
     case PktType::PDU: return user_cache;
     case PktType::FILE: return file_cache;
+    default:            return nullptr;
+    }
+}
+
+inline char* FlowControl::get_mem (PktType proto)
+{
+    switch ( proto )
+    {
+    case PktType::IP:   return (char*)ip_mem;
+    case PktType::ICMP: return (char*)icmp_mem;
+    case PktType::TCP:  return (char*)tcp_mem;
+    case PktType::UDP:  return (char*)udp_mem;
+    case PktType::PDU: return (char*)user_mem;
+    case PktType::FILE: return (char*)file_mem;
     default:            return nullptr;
     }
 }
@@ -421,7 +514,7 @@ unsigned FlowControl::process(Flow* flow, Packet* p)
 
     p->flow = flow;
 
-    if ( flow->flow_state )
+    if ( flow->flow_state && !flow->new_from_cache)
         set_policies(snort_conf, flow->policy_id);
 
     else
@@ -434,8 +527,9 @@ unsigned FlowControl::process(Flow* flow, Packet* p)
 
         if ( !b || (flow->flow_state == Flow::INSPECT &&
             (!flow->ssn_client || !flow->session->setup(p))) )
-            flow->set_state(Flow::ALLOW);
-
+            if (!flow->new_from_cache)
+            	flow->set_state(Flow::ALLOW);
+		flow->new_from_cache = false;
         ++news;
     }
     flow->set_direction(p);
@@ -498,11 +592,15 @@ void FlowControl::init_ip(
 
     ip_mem = (Flow*)calloc(fc.max_sessions, sizeof(Flow));
 
+	ip_mem_size = fc.max_sessions * sizeof(Flow);
+	
     if ( !ip_mem )
         return;
 
     for ( unsigned i = 0; i < fc.max_sessions; ++i )
         ip_cache->push(ip_mem + i);
+
+	load_memcache(PktType::IP);
 
     get_ip = get_ssn;
 }
@@ -526,6 +624,11 @@ void FlowControl::process_ip(Packet* p)
     }
 
     ip_count += process(flow, p);
+	if (flow->fs_changed && ip_mem)
+	{
+		update_memcache(PktType::IP);
+		flow->fs_changed = false;
+	}
 
     if ( flow->next && is_bidirectional(flow) )
         ip_cache->unlink_uni(flow);
@@ -545,11 +648,16 @@ void FlowControl::init_icmp(
 
     icmp_mem = (Flow*)calloc(fc.max_sessions, sizeof(Flow));
 
+	icmp_mem_size = fc.max_sessions * sizeof(Flow);
+	
     if ( !icmp_mem )
         return;
 
     for ( unsigned i = 0; i < fc.max_sessions; ++i )
         icmp_cache->push(icmp_mem + i);
+
+	
+	load_memcache(PktType::ICMP);
 
     get_icmp = get_ssn;
 }
@@ -576,6 +684,11 @@ void FlowControl::process_icmp(Packet* p)
     }
 
     icmp_count += process(flow, p);
+	if (flow->fs_changed && icmp_mem)
+	{
+		update_memcache(PktType::ICMP);
+		flow->fs_changed = false;
+	}
 
     if ( flow->next && is_bidirectional(flow) )
         icmp_cache->unlink_uni(flow);
@@ -595,12 +708,17 @@ void FlowControl::init_tcp(
 
     tcp_mem = (Flow*)calloc(fc.max_sessions, sizeof(Flow));
 
+	tcp_mem_size = fc.max_sessions * sizeof(Flow);
+
+
     if ( !tcp_mem )
         return;
 
     for ( unsigned i = 0; i < fc.max_sessions; ++i )
         tcp_cache->push(tcp_mem + i);
 
+	load_memcache(PktType::TCP);
+	
     get_tcp = get_ssn;
 }
 
@@ -624,6 +742,11 @@ void FlowControl::process_tcp(Packet* p)
 
     tcp_count += process(flow, p);
 
+	if (flow->fs_changed && tcp_mem)
+	{
+		update_memcache(PktType::TCP);
+		flow->fs_changed = false;
+	}
     if ( flow->next && is_bidirectional(flow) )
         tcp_cache->unlink_uni(flow);
 }
@@ -642,11 +765,15 @@ void FlowControl::init_udp(
 
     udp_mem = (Flow*)calloc(fc.max_sessions, sizeof(Flow));
 
+	udp_mem_size = fc.max_sessions * sizeof(Flow);
+	
     if ( !udp_mem )
         return;
 
     for ( unsigned i = 0; i < fc.max_sessions; ++i )
         udp_cache->push(udp_mem + i);
+
+	load_memcache(PktType::UDP);
 
     get_udp = get_ssn;
 }
@@ -670,7 +797,11 @@ void FlowControl::process_udp(Packet* p)
     }
 
     udp_count += process(flow, p);
-
+	if (flow->fs_changed && udp_mem)
+	{
+		update_memcache(PktType::UDP);
+		flow->fs_changed = false;
+	}
     if ( flow->next && is_bidirectional(flow) )
         udp_cache->unlink_uni(flow);
 }
@@ -689,11 +820,15 @@ void FlowControl::init_user(
 
     user_mem = (Flow*)calloc(fc.max_sessions, sizeof(Flow));
 
+	user_mem_size = fc.max_sessions * sizeof(Flow);
+	
     if ( !user_mem )
         return;
 
     for ( unsigned i = 0; i < fc.max_sessions; ++i )
         user_cache->push(user_mem + i);
+
+	load_memcache(PktType::PDU);
 
     get_user = get_ssn;
 }
@@ -717,7 +852,11 @@ void FlowControl::process_user(Packet* p)
     }
 
     user_count += process(flow, p);
-
+	if (flow->fs_changed && user_mem)
+	{
+		update_memcache(PktType::PDU);
+		flow->fs_changed = false;
+	}
     if ( flow->next && is_bidirectional(flow) )
         user_cache->unlink_uni(flow);
 }
@@ -736,11 +875,15 @@ void FlowControl::init_file(
 
     file_mem = (Flow*)calloc(fc.max_sessions, sizeof(Flow));
 
+	file_mem_size = fc.max_sessions * sizeof(Flow);
+	
     if ( !file_mem )
         return;
 
     for ( unsigned i = 0; i < fc.max_sessions; ++i )
         file_cache->push(file_mem + i);
+
+	load_memcache(PktType::FILE);
 
     get_file = get_ssn;
 }
@@ -764,6 +907,11 @@ void FlowControl::process_file(Packet* p)
     }
 
     file_count += process(flow, p);
+	if (flow->fs_changed && file_mem)
+	{
+		update_memcache(PktType::FILE);
+		flow->fs_changed = false;
+	}
 }
 
 //-------------------------------------------------------------------------
