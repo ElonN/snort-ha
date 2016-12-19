@@ -22184,6 +22184,9 @@ fi
 ac_write_fail=0
 ac_clean_files_save=$ac_clean_files
 ac_clean_files="$ac_clean_files $CONFIG_STATUS"
+
+LIBS="${LIBS} -lmemcached"
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: creating $CONFIG_STATUS" >&5
 $as_echo "$as_me: creating $CONFIG_STATUS" >&6;}
 as_write_fail=0
@@ -24677,6 +24680,7 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unrecognized options: $ac_unrecognized_opts" >&5
 $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
+
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: result:
     $PACKAGE $VERSION
