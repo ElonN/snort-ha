@@ -72,7 +72,10 @@ imap = { }
 smtp = { }
 perf_monitor = { }
 pop = { }
-port_scan = { }
+port_scan = { 
+    sense_level = "high",
+    logfile = true,
+}
 rpc_decode = { }
 sip = { }
 ssh = { }
