@@ -30,7 +30,7 @@
 #include <time.h>
 
 //#include <libmemcached/memcached.h>
-#include <hiredis.h>
+#include <hiredis/hiredis.h>
 
 #include "utils/sfmemcap.h"
 #include "main/snort_types.h"

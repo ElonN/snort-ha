@@ -22185,7 +22185,7 @@ ac_write_fail=0
 ac_clean_files_save=$ac_clean_files
 ac_clean_files="$ac_clean_files $CONFIG_STATUS"
 
-LIBS="${LIBS} -lmemcached"
+LIBS="${LIBS} -lmemcached -lhiredis"
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: creating $CONFIG_STATUS" >&5
 $as_echo "$as_me: creating $CONFIG_STATUS" >&6;}

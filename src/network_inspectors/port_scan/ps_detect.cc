@@ -224,13 +224,13 @@ void ps_init_hash(unsigned long memcap)
     struct timeval timeout = { 1, 500000 }; // 1.5 seconds
     char host[20];
     int port = 6379;
-    snprintf(conf, sizeof(conf), "10.10.10.8");// --NAMESPACE=%u", get_instance_id());
+    snprintf(host, sizeof(host), "10.10.10.8");// --NAMESPACE=%u", get_instance_id());
 
     redis_context = redisConnectWithTimeout(host, port, timeout);
-    if (c == NULL || c->err) {
-        if (c) {
-            printf("portscan: Connection error: %s\n", c->errstr);
-            redisFree(c);
+    if (redis_context == NULL || redis_context->err) {
+        if (redis_context) {
+            printf("portscan: Connection error: %s\n", redis_context->errstr);
+            redisFree(redis_context);
         } else {
             printf("portscan: Connection error: can't allocate redis context\n");
         }
@@ -241,12 +241,12 @@ void ps_init_hash(unsigned long memcap)
     //strncpy(sfx_db_file, name.c_str(), sizeof(sfx_db_file));
 
     printf("portscan: instance id: %d\n", get_instance_id());
-    printf("portscan: loading from memcache %s\n", conf);
-    printf("portscan: redis is %d\n", redis_context);
+    printf("portscan: loading from memcache %s\n", host);
+    printf("portscan: redis is %p\n", redis_context);
 
     sfxhash_load_from_db(portscan_hash, redis_context);
 
-    printf("portscan: saving to cache %s\n", conf);
+    printf("portscan: saving to cache %s\n", host);
 
     sfxhash_save_to_db(portscan_hash, redis_context);
 
@@ -1660,7 +1660,7 @@ int PortScan::ps_detect(PS_PKT* ps_pkt)
         printf("portscan: db has %d entries\n", portscan_hash->count);
         printf("portscan: redis is %p\n", redis_context);
 
-        if (memcache) {
+        if (redis_context) {
             sfxhash_save_to_db(portscan_hash, redis_context);    
         }
         

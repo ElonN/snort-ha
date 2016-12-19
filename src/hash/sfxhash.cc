@@ -1418,12 +1418,12 @@ int sfxhash_load_from_db(SFXHASH* t, redisContext* context) {
     redisReply *reply = 0;
     const static char key[5] = "port";
 
-    reply = redisCommand(context, "GET %b", key, strlen(key));
+    reply = (redisReply*)redisCommand(context, "GET %b", key, strlen(key));
 
     if ( !reply )
         return -1;
     if ( reply->type != REDIS_REPLY_STRING ) {
-        printf("sfxhash_load_from_db: ERROR: %s", reply->str);
+        printf("sfxhash_load_from_db: ERROR: %s\n", reply->str);
     } else {
         sfxhash_deserialize(t, (char*)reply->str, reply->len);
     }
@@ -1444,7 +1444,7 @@ int sfxhash_save_to_db(SFXHASH* t, redisContext* context) {
 
     sfxhash_serialize(t, copy, &copy_size);
 
-    reply = redisCommand(context, "SET %b %b", key, strlen(key), copy, copy_size);
+    reply = (redisReply*)redisCommand(context, "SET %b %b", key, strlen(key), copy, copy_size);
     if (!reply) {
         return -1;
     }
