@@ -73,24 +73,24 @@ enum class TcpOptCode : std::uint8_t
 };
 
 /*  Associated lengths */
-const uint8_t TCPOLEN_EOL = 1;      /* Always one byte - [RFC793]*/
-const uint8_t TCPOLEN_NOP = 1;      /* Always one byte - [RFC793]*/
-const uint8_t TCPOLEN_MAXSEG = 4;   /* Always 4 bytes - [RFC793] */
-const uint8_t TCPOLEN_WSCALE = 3;   /* 1 byte with logarithmic values - [RFC1323]*/
-const uint8_t TCPOLEN_SACKOK = 2;   /* Experimental [RFC2018]*/
-const uint8_t TCPOLEN_ECHO = 6;     /* 6 bytes  - Echo (obsoleted by option 8)      [RFC1072] */
-const uint8_t TCPOLEN_ECHOREPLY = 6;    /* 6 bytes  - Echo Reply (obsoleted by option 8)[RFC1072]*/
-const uint8_t TCPOLEN_TIMESTAMP = 10;   /* Timestamp [RFC1323], 10 bytes */
-const uint8_t TCPOLEN_PARTIAL_PERM = 2; /* Partial Order Permitted/ Experimental [RFC1693] */
-const uint8_t TCPOLEN_PARTIAL_SVC = 3;  /*  3 bytes long -- Experimental - [RFC1693] */
+const uint8_t SNORT_TCPOLEN_EOL = 1;      /* Always one byte - [RFC793]*/
+const uint8_t SNORT_TCPOLEN_NOP = 1;      /* Always one byte - [RFC793]*/
+const uint8_t SNORT_TCPOLEN_MAXSEG = 4;   /* Always 4 bytes - [RFC793] */
+const uint8_t SNORT_TCPOLEN_WSCALE = 3;   /* 1 byte with logarithmic values - [RFC1323]*/
+const uint8_t SNORT_TCPOLEN_SACKOK = 2;   /* Experimental [RFC2018]*/
+const uint8_t SNORT_TCPOLEN_ECHO = 6;     /* 6 bytes  - Echo (obsoleted by option 8)      [RFC1072] */
+const uint8_t SNORT_TCPOLEN_ECHOREPLY = 6;    /* 6 bytes  - Echo Reply (obsoleted by option 8)[RFC1072]*/
+const uint8_t SNORT_TCPOLEN_TIMESTAMP = 10;   /* Timestamp [RFC1323], 10 bytes */
+const uint8_t SNORT_TCPOLEN_PARTIAL_PERM = 2; /* Partial Order Permitted/ Experimental [RFC1693] */
+const uint8_t SNORT_TCPOLEN_PARTIAL_SVC = 3;  /*  3 bytes long -- Experimental - [RFC1693] */
 
 /* atleast decode T/TCP options... */
-const uint8_t TCPOLEN_CC = 6;       /* page 17 of rfc1644 */
-const uint8_t TCPOLEN_CC_NEW = 6;   /* page 17 of rfc1644 */
-const uint8_t TCPOLEN_CC_ECHO = 6;  /* page 17 of rfc1644 */
+const uint8_t SNORT_TCPOLEN_CC = 6;       /* page 17 of rfc1644 */
+const uint8_t SNORT_TCPOLEN_CC_NEW = 6;   /* page 17 of rfc1644 */
+const uint8_t SNORT_TCPOLEN_CC_ECHO = 6;  /* page 17 of rfc1644 */
 
-const uint8_t TCPOLEN_TRAILER_CSUM = 3;
-const uint8_t TCPOLEN_MD5SIG = 18;
+const uint8_t SNORT_TCPOLEN_TRAILER_CSUM = 3;
+const uint8_t SNORT_TCPOLEN_MD5SIG = 18;
 
 struct TcpOption
 {

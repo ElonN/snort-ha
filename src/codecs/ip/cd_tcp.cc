@@ -371,15 +371,15 @@ void TcpCodec::DecodeTCPOptions(const uint8_t* start, uint32_t o_len, CodecData&
             break;
 
         case tcp::TcpOptCode::MAXSEG:
-            code = OptLenValidate(opt, end_ptr, TCPOLEN_MAXSEG);
+            code = OptLenValidate(opt, end_ptr, SNORT_TCPOLEN_MAXSEG);
             break;
 
         case tcp::TcpOptCode::SACKOK:
-            code = OptLenValidate(opt, end_ptr, TCPOLEN_SACKOK);
+            code = OptLenValidate(opt, end_ptr, SNORT_TCPOLEN_SACKOK);
             break;
 
         case tcp::TcpOptCode::WSCALE:
-            code = OptLenValidate(opt, end_ptr, TCPOLEN_WSCALE);
+            code = OptLenValidate(opt, end_ptr, SNORT_TCPOLEN_WSCALE);
             if (code == 0)
             {
                 if (((uint16_t)opt->data[0] > 14))
@@ -393,13 +393,13 @@ void TcpCodec::DecodeTCPOptions(const uint8_t* start, uint32_t o_len, CodecData&
         case tcp::TcpOptCode::ECHO: /* both use the same lengths */
         case tcp::TcpOptCode::ECHOREPLY:
             obsolete_option_found = true;
-            code = OptLenValidate(opt, end_ptr, TCPOLEN_ECHO);
+            code = OptLenValidate(opt, end_ptr, SNORT_TCPOLEN_ECHO);
             break;
 
         case tcp::TcpOptCode::MD5SIG:
             /* RFC 5925 obsoletes this option (see below) */
             obsolete_option_found = 1;
-            code = OptLenValidate(opt, end_ptr, TCPOLEN_MD5SIG);
+            code = OptLenValidate(opt, end_ptr, SNORT_TCPOLEN_MD5SIG);
             break;
 
         case tcp::TcpOptCode::AUTH:
@@ -422,16 +422,16 @@ void TcpCodec::DecodeTCPOptions(const uint8_t* start, uint32_t o_len, CodecData&
         /* fall through */
         case tcp::TcpOptCode::CC:  /* all 3 use the same lengths / T/TCP */
         case tcp::TcpOptCode::CC_NEW:
-            code = OptLenValidate(opt, end_ptr, TCPOLEN_CC);
+            code = OptLenValidate(opt, end_ptr, SNORT_TCPOLEN_CC);
             break;
 
         case tcp::TcpOptCode::TRAILER_CSUM:
             experimental_option_found = true;
-            code = OptLenValidate(opt, end_ptr, TCPOLEN_TRAILER_CSUM);
+            code = OptLenValidate(opt, end_ptr, SNORT_TCPOLEN_TRAILER_CSUM);
             break;
 
         case tcp::TcpOptCode::TIMESTAMP:
-            code = OptLenValidate(opt, end_ptr, TCPOLEN_TIMESTAMP);
+            code = OptLenValidate(opt, end_ptr, SNORT_TCPOLEN_TIMESTAMP);
             break;
 
         case tcp::TcpOptCode::SKEETER:

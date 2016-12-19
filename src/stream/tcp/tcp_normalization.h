@@ -95,7 +95,7 @@ static inline bool NormalStripTimeStamp(Packet* p, const tcp::TcpOption* opt, No
     if (mode == NORM_MODE_ON)
     {
         // set raw option bytes to nops
-        memset( ( void * ) opt, ( uint32_t ) tcp::TcpOptCode::NOP, tcp::TCPOLEN_TIMESTAMP);
+        memset( ( void * ) opt, ( uint32_t ) tcp::TcpOptCode::NOP, tcp::SNORT_TCPOLEN_TIMESTAMP);
         p->packet_flags |= PKT_MODIFIED;
         return true;
     }
