@@ -137,6 +137,7 @@ public:
         RESET,
         ALLOW
     };
+	bool fs_changed;
     Flow();
     ~Flow();
 
@@ -186,7 +187,15 @@ public:
     { return flow_state <= INSPECT; }
 
     void set_state(FlowState fs)
-    { flow_state = fs; }
+    {
+    	if (flow_state !=  fs)
+		{
+			fs_changed = true;
+    	}
+
+		flow_state = fs;
+		
+	}
 
     void set_client(Inspector* ins)
     {
@@ -261,6 +270,7 @@ public:  // FIXIT-M privatize if possible
 
     FlowState flow_state;
     LwState ssn_state;
+	bool new_from_cache;
 
     // FIXIT-L can client and server ip and port be removed from flow?
     sfip_t client_ip; // FIXIT-L family and bits should be changed to uint16_t
