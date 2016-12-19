@@ -30,8 +30,8 @@
 #include "utils/stats.h"
 
 
-#include <libmemcached/memcached.h>
-
+//#include <libmemcached/memcached.h>
+#include <hiredis/hiredis.h>
 
 
 class FlowControl
@@ -86,7 +86,8 @@ public:
 
     class Memcap& get_memcap(PktType);
 
-    memcached_st* memcache;
+    ///memcached_st* memcache;
+    redisContext* context;
 
 private:
     class FlowCache* get_cache(PktType);

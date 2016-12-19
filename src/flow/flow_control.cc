@@ -161,48 +161,55 @@ void FlowControl::update_memcache(PktType proto)
 {
 	const char* memcache_key = get_memcache_key(proto);
     size_t cache_size = get_cache_size(proto);
-    memcached_return_t mrt;
+    //memcached_return_t mrt;
+    redisReply *reply = 0;
 
-    printf("update_memcache: memcache %p\n", memcache);
-    printf("update_memcache: key %s\n", memcache_key);
-	mrt = memcached_set(memcache, memcache_key, strlen(memcache_key), (char*)get_mem(proto), cache_size, (time_t)0, (uint32_t)0);
-    printf("update_memcache: set return %d\n", (int)mrt);
+    printf("update_memcache: redis %p, key %s\n", memcache_key);
+	//mrt = memcached_set(memcache, memcache_key, strlen(memcache_key), (char*)get_mem(proto), cache_size, (time_t)0, (uint32_t)0);
+    reply = (redisReply*)redisCommand(context, "SET %b %b", memcache_key, strlen(memcache_key), (char*)get_mem(proto), cache_size);
+    if (!reply) {
+        return;
+    }
+    freeReplyObject(reply);
+    //printf("update_memcache: set return %d\n", (int)mrt);
 }
 
 void FlowControl::load_memcache(PktType proto) 
 {
-	size_t cache_len;
-	size_t val_len;
-    uint32_t flags;
-    memcached_return_t err;
-	Flow* cache_data;
 	const char* memcache_key = get_memcache_key(proto);
+    redisReply *reply = 0;
+
     printf("load_memcache: %s\n", memcache_key);
-	if (!memcache_key)
+	if (!memcache_key || !context)
 	{
 		return;
 	}
 	
-	cache_data = (Flow*)memcached_get(memcache, memcache_key, strlen(memcache_key), &val_len, &flags, &err);
-	for ( unsigned i = 0; i < val_len / sizeof(Flow); i++ )
-	{
-		Flow* cached_flow = cache_data + i;
-		Flow::FlowState cached_fs = cached_flow->flow_state;
-		if (cached_flow->key && (cached_fs == Flow::BLOCK || cached_fs == Flow::ALLOW))
-		{
-			Flow* current_flow = (get_cache(proto))->get(cached_flow->key);
-			if (current_flow)
-			{
-				current_flow->set_state(cached_fs);
-				current_flow->new_from_cache = true;
-			}
-		}
-	}
-	
-	if (cache_data)
-	{
-		free(cache_data);
-	}
+    reply = (redisReply*)redisCommand(context, "GET %b", memcache_key, strlen(memcache_key));
+
+    if ( !reply )
+        return;
+    if ( reply->type != REDIS_REPLY_STRING ) {
+        printf("load_memcache: ERROR: %s\n", reply->str);
+    } else {
+        printf("load_memcache: adding %d entries\n", reply->len / sizeof(Flow));
+        for ( unsigned i = 0; i < reply->len / sizeof(Flow); i++ )
+        {
+            Flow* cached_flow = ((Flow*)(reply->str)) + i;
+            Flow::FlowState cached_fs = cached_flow->flow_state;
+            if (cached_flow->key && (cached_fs == Flow::BLOCK || cached_fs == Flow::ALLOW))
+            {
+                printf("load_memcache: adding interesting entry\n");
+                Flow* current_flow = (get_cache(proto))->get(cached_flow->key);
+                if (current_flow)
+                {
+                    current_flow->set_state(cached_fs);
+                    current_flow->new_from_cache = true;
+                }
+            }
+        }
+    }
+    freeReplyObject(reply);
 
 }
 

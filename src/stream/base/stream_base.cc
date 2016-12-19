@@ -177,6 +177,28 @@ void StreamBase::tinit()
     flow_con = new FlowControl;
     InspectSsnFunc f;
 
+    struct timeval timeout = { 1, 500000 }; // 1.5 seconds
+    char host[20];
+    int port = 6379;
+
+    printf("flow: instance id: %d\n", get_instance_id());
+    printf("flow: loading from redis %s\n", host);
+
+    snprintf(host, sizeof(host), "10.10.10.8");// --NAMESPACE=%u", get_instance_id());
+
+    flow_con->context = redisConnectWithTimeout(host, port, timeout);
+    if (flow_con->context == NULL || flow_con->context->err) {
+        if (flow_con->context) {
+            printf("portscan: Connection error: %s\n", flow_con->context->errstr);
+            redisFree(flow_con->context);
+        } else {
+            printf("portscan: Connection error: can't allocate redis context\n");
+        }
+        exit(1);
+    }
+
+    printf("flow: redis: %p\n", flow_con->context);
+
     if ( config->ip_cfg.max_sessions )
     {
         if ( (f = InspectorManager::get_session((uint16_t)PktType::IP)) )
@@ -223,16 +245,6 @@ void StreamBase::tinit()
 
     if ( max > 0 )
         flow_con->init_exp(max);
-
-	char conf[100];
-    snprintf(conf, sizeof(conf), "--SERVER=10.10.10.8:11211");// --NAMESPACE=%u", get_instance_id());
-
-    printf("flow: instance id: %d\n", get_instance_id());
-    printf("flow: loading from memcache %s\n", conf);
-
-    flow_con->memcache = memcached(conf, strlen(conf));
-
-    printf("flow: memcached id: %p\n", flow_con->memcache);
 }
 
 void StreamBase::tterm()
