@@ -50,3 +50,32 @@ sfxhash hashtree can also hold the data within the tree (and not only a pointers
 The key size is constant, data size can be constant (for sfxhash) or pointers (zhash and sfxhash with datasize = 0)
 hashtrees have the regular api, including get/add/remove/erase_all - "get" in hashtree terminology also creates new node if doesnt exist, as apposed to "find"
 
+Stream handling
+
+1. PluginManager::load_plugins loads stream_inspectors, which is defined in stream_inspectors.cc and one of them is "nin_stream_tcp", which is actually tcp_api (stream_tcp.cc::EOF)
+2. FlowControl::process_tcp processes each TCP packet, gets its "flow" object from tcp_cache and calls FlowControl::process(flow, packet)
+3. FlowControl::process checks flow's flow_state if needed, and if it's Flow::INSPECT, it calls flow->session->process(packet) which is TcpSession::process (tcp_session.cc)
+4. tcp_cache: FlowControl::init_tcp allocates contingous memory for flow cache: tcp_mem = calloc(fc.max_sessions, sizeof(Flow)), then all Flow objects are puched into tcp_cache
+
+
+Inspector assignment
+1. on new tcp connection (NewTcpSession in tcp_session.cc) inoector is assiged according to flow->gadget
+2. flow->gadget is assigned on binder::eval() --> binder::apply() --> stuff.apply_service() [binder.cc] accordinng to get_gadget(flow)
+3. get_gadget(flow) uses s=get_protocol_name() and then InspectorManager::get_inspector(s)
+
+1. snort_protocols.cc has get_protocol_name(uint16 port) which lookups id_map which has 
+
+1. class StreamBase is an inspector (class StreamBase : public Inspector)
+2. StreamBase has a member called flow_con (which is class FlowControl)
+3. On StreamBase tinit, flow_con is initialized, and each type of stream is initialized (TCP, UDP, ICMP, FILE, PDU)
+4. StreamBase tinit populates flow_con tcp (/udp/ucmp/...) calling flow_con.init_tcp() with TcpSession factory function from InspectorManager::get_session((uint16_t)PktType::TCP)
+
+
+How does InspectorManager know TcpSession? through StreamTcp
+1. StreamTcp inherits from Inspector, but it looks like nothing happens there. instead, the only interesting thing that happens is that StreamTcp refers TcpSession.
+2. StreamTcp has a common inspect_api like all inspectors, and StreamTcp.ssn return a the function tcp_ssn(flow), that when called, initializes a TcpSession instance.
+3. InspectorManager::get_session((uint16_t)PktType::TCP) finds StreamTcp using the enum PktType::TCP, and then returns StreamTcp.ssn 
+
+packet p has p->flow
+Session object is initialized with flow
+flow has pointer to sesion object
