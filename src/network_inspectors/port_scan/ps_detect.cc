@@ -41,6 +41,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include "ipobj.h"
 #include "main/snort_config.h"
@@ -74,9 +76,10 @@ typedef struct s_PS_ALERT_CONF
 
 static THREAD_LOCAL SFXHASH* portscan_hash = NULL;
 static THREAD_LOCAL time_t last_saved = 0;
+static THREAD_LOCAL char last_active_state = '0';
 static THREAD_LOCAL char sfx_db_file[50];
 static THREAD_LOCAL redisContext *redis_context;
-#define SAVE_INTERVAL 1
+static THREAD_LOCAL int save_interval = 1;
 /*
 **  Scanning configurations.  This is where we configure what the thresholds
 **  are for the different types of scans, protocols, and sense levels.  If
@@ -236,12 +239,10 @@ void ps_init_hash(unsigned long memcap)
         }
         exit(1);
     }
-    //std::string name;
-    //get_instance_file(name, "sfxdb");
-    //strncpy(sfx_db_file, name.c_str(), sizeof(sfx_db_file));
+
 
     printf("portscan: instance id: %d\n", get_instance_id());
-    printf("portscan: loading from memcache %s\n", host);
+    printf("portscan: loading from redis %s\n", host);
     printf("portscan: redis is %p\n", redis_context);
 
     sfxhash_load_from_db(portscan_hash, redis_context);
@@ -1655,15 +1656,36 @@ int PortScan::ps_detect(PS_PKT* ps_pkt)
         return -1;
 
     time_t now = packet_time();
-    if ( now > last_saved + SAVE_INTERVAL ) {
-        printf("portscan: saving db...%d\n", now);
-        printf("portscan: db has %d entries\n", portscan_hash->count);
-        printf("portscan: redis is %p\n", redis_context);
+    if ( now > last_saved + save_interval ) {
 
         if (redis_context) {
-            sfxhash_save_to_db(portscan_hash, redis_context);    
+            char active_state;
+            int flag_fd;
+
+            if ((flag_fd = open("/tmp/master", O_RDONLY)) == -1 ||
+                 read(flag_fd, &active_state, sizeof(active_state)) != sizeof(active_state)) {
+                active_state = '0';
+            }
+            close(flag_fd);
+            if (active_state == '1') {
+                if (last_active_state == '0') {
+                    printf("portscan: from PASSIVE to ACTIVE! loading db...%d\n", now);
+                    sfxhash_load_from_db(portscan_hash, redis_context); 
+                }
+                printf("portscan: ACTIVE! saving db...%d\n", now);
+                printf("portscan: db has %d entries\n", portscan_hash->count);
+                printf("portscan: redis is %p\n", redis_context);
+                sfxhash_save_to_db(portscan_hash, redis_context);    
+            } else {
+
+                printf("portscan: PASSIVE! loading db...%d\n", now);
+                printf("portscan: db has %d entries\n", portscan_hash->count);
+                printf("portscan: redis is %p\n", redis_context);
+                sfxhash_load_from_db(portscan_hash, redis_context); 
+            }
+                
+            last_active_state = active_state;
         }
-        
         last_saved = now;
     }
 

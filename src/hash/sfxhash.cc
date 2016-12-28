@@ -96,6 +96,8 @@
 #include <string.h>
 
 #include <sys/stat.h>
+#include <sys/mman.h> 
+#include <fcntl.h>
 
 #include "sfxhash.h"
 #include "sfprimetable.h"
@@ -197,11 +199,14 @@ SFXHASH* sfxhash_new(int nrows, int keysize, int datasize, unsigned long maxmem,
 
     /* Allocate the table structure from general memory */
     h = (SFXHASH*)calloc(1, sizeof(SFXHASH));
+
     if ( !h )
     {
         return 0;
     }
 
+    mlock(h, sizeof(SFXHASH));
+    
     /* this has a default hashing function */
     h->sfhashfcn = sfhashfcn_new(nrows);
 
@@ -215,12 +220,15 @@ SFXHASH* sfxhash_new(int nrows, int keysize, int datasize, unsigned long maxmem,
 
     /* Allocate the array of node ptrs */
     h->table = (SFXHASH_NODE**)s_alloc(h, sizeof(SFXHASH_NODE*) * nrows);
+
     if ( !h->table )
     {
         free(h->sfhashfcn);
         free(h);
         return 0;
     }
+
+    mlock(h->table, sizeof(SFXHASH_NODE*) * nrows);
 
     for ( i=0; i<nrows; i++ )
     {
@@ -1322,7 +1330,12 @@ int sfxhash_deserialize(SFXHASH* t, void* buf, int buf_size) {
     unsigned int i;
     SFXHASH* tmp_tree = (SFXHASH*) buf;
     unsigned char* cur = (unsigned char*) buf + sizeof(SFXHASH);
-
+    
+    // cant deserialize if user manages data
+    if (!t->datasize || t->datasize != tmp_tree->datasize || t->keysize != tmp_tree->keysize) {
+        printf("sfxhash_deserialize: ERROR: trees dont match!\n");
+        return -1;
+    }
     if (check_blob(t, buf, buf_size)) {
         return -1;
     }
@@ -1331,8 +1344,11 @@ int sfxhash_deserialize(SFXHASH* t, void* buf, int buf_size) {
     printf("blob has %d entries..\n", tmp_tree->count);
 
     for (i=0; i < tmp_tree->count; i++) {
+        SFXHASH_NODE* node = sfxhash_get_node(t, cur);
         printf("adding %d..\n", i);
-        sfxhash_add(t, cur, cur + tmp_tree->keysize);
+        if(node) {
+            memcpy(node->data, cur + tmp_tree->keysize, tmp_tree->datasize);
+        }
         cur += tmp_tree->keysize + tmp_tree->datasize;
     }
 
@@ -1417,6 +1433,10 @@ int sfxhash_save_to_file(SFXHASH* t, const char* filename) {
 int sfxhash_load_from_db(SFXHASH* t, redisContext* context) {
     redisReply *reply = 0;
     const static char key[5] = "port";
+    
+    if(!context) {
+        return 0;
+    }
 
     reply = (redisReply*)redisCommand(context, "GET %b", key, strlen(key));
 
@@ -1428,6 +1448,7 @@ int sfxhash_load_from_db(SFXHASH* t, redisContext* context) {
         sfxhash_deserialize(t, (char*)reply->str, reply->len);
     }
     freeReplyObject(reply);
+    return 0;
 }
 
 int sfxhash_save_to_db(SFXHASH* t, redisContext* context) {
@@ -1435,6 +1456,10 @@ int sfxhash_save_to_db(SFXHASH* t, redisContext* context) {
     int copy_size;
     const static char key[5] = "port";
     redisReply *reply = 0;
+ 
+    if(!context) {
+        return 0;
+    }
 
     copy_size = sfxhash_calcsize(t);
     copy = (char*)malloc(copy_size);
@@ -1450,6 +1475,7 @@ int sfxhash_save_to_db(SFXHASH* t, redisContext* context) {
     }
     freeReplyObject(reply);
     free(copy);
+    return 0;
 }
 
 /*
