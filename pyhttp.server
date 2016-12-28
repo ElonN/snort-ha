@@ -1,0 +1,12 @@
+[Unit]
+Description=Power on/off snort
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -c "mount -a && cd /mnt/proj && . snort_env.sh && cd snort-3.0.0-a2 && stdbuf -oL src/snort -c lua/snort.lua --daq afpacket -Q -i 'ens38:ens39' &> /tmp/snort_log 2>&1"
+ExecStop=/bin/sh -c "for i in `pgrep snort`; do kill $i; done"
+Restart=always
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target

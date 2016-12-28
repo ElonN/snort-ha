@@ -1,0 +1,25 @@
+kali
+    eth0 NAT
+    eth1 outer
+    
+lubuntu
+    ens33 NAT
+    ens38 mng
+
+victim
+    ens33 NAT
+    ens38 inner
+
+r1
+    ens33 NAT
+    ens38 inner
+    ens39 outer
+    ens40 mng
+    
+r2
+    ens33 NAT
+    ens38 inner
+    ens39 outer
+    ens40 mng    
+
+    

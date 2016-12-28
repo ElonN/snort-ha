@@ -1,0 +1,2 @@
+# add this line to /etc/fstab on all instances
+//192.168.170.1/proj /mnt/proj cifs nounix,noserverino,username=share,password=share,rw,file_mode=0777,dir_mode=0777,uid=1000,gid=1000

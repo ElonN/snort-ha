@@ -1,0 +1,19 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+# The loopback network interface
+auto lo
+iface lo inet loopback
+# The primary network interface
+auto ens33
+iface ens33 inet dhcp
+auto ens38
+iface ens38 inet manual
+up ifconfig ens38 up
+auto ens39
+iface ens39 inet manual
+up ifconfig ens39 up
+auto ens40
+iface ens40 inet static
+ address 10.10.10.102
+ netmask 255.255.255.0
+

@@ -1,0 +1,10 @@
+[Unit]
+Description=get state
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -c "while true; do wget http://10.10.10.1:8888/master -O /tmp/master || echo -n 0 > /tmp/master; sleep 1; done" 
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

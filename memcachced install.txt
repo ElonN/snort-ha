@@ -1,0 +1,3 @@
+sudo apt-get install memcached
+
+# now open /etc/memcached.conf and comment out the line with "-l 127.0.0.1"

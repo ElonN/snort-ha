@@ -1,0 +1,26 @@
+# describe virtual service ip
+vrrp_instance VI_2 {
+  # initial state
+  state SLAVE
+  interface ens41
+  # arbitary unique number 0..255
+  # used to differentiate multiple instances of vrrpd
+  virtual_router_id 13
+  # for electing MASTER, highest priority wins.
+  # to be MASTER, make 50 more than other machines.
+  priority 100
+  authentication {
+    auth_type PASS
+    auth_pass xxx
+  }
+  unicast_src_ip 10.10.10.3
+    unicast_peer {
+        10.10.10.1
+    }
+  # Invoked to master transition
+  notify_master "/sbin/route del -net 192.168.9.0/24 gw 10.1.1.1 & /sbin/route add -net 192.168.9.0/24 gw 10.2.2.2"
+  # Invoked to slave transition
+  notify_backup "/sbin/route del -net 192.168.9.0/24 gw 10.2.2.2 & /sbin/route add -net 192.168.9.0/24 gw 10.1.1.1"
+  # Invoked to fault transition
+  notify_backup "/sbin/route del -net 192.168.9.0/24 gw 10.2.2.2 & /sbin/route add -net 192.168.9.0/24 gw 10.1.1.1"
+}

@@ -1,0 +1,52 @@
+How do packets get through snort?
+The flow from a packet on the network until portscan detection
+
+- main -> snort_main -> main_loop -> pig.start()
+- pig.start inits new analyzer and calls it's function call operator() in a new thread like this:
+	"
+	analyzer = new Analyzer(source);
+    athread = new std::thread(std::ref(*analyzer), idx, ps); // calls (*analyzer)(idx, ps) in a new thread
+    "
+- Analyzer implements the function call operator () and there it calls analyze()
+- in function analyze - "DAQ_Acquire(0, main_func, NULL)" - main_func is passed as callback to DAQ (if pcap is the DAQ module - pcap_dispatch)
+- main_func is Snort::packet_callback, which calls process_packet, which calls main_hook
+- main_hook can be set to be one of snort_ignore, snort_inspect, snort_log - for us it is snort_inspect
+- snort_inspect calls InspectorManager::execute
+- InspectorManager::execute calls all "eval" funtions of the inspectors in the framework_policy
+- Each inspector has a function named "eval", which is passed a Packet* as its only argument
+
+PORT SCAN:
+- port_scan inspector "eval" performs a lookup in a hashtable and updates the table
+- if "port_scan" inspector detects port scanning over a certain threshold, it alerts
+
+FLOW CONTROL:
+- StreamBase is the inspector, it holds an instance of FlowControl (member StreamBase::flow_con), and it's eval calls flow_con->process_X for packet of protocol X (== TCP/UDP/ICMP/etc..)  
+- FlowControl::process_tcp processes each TCP packet, gets its "flow" object from tcp_cache. 
+  and calls FlowControl::process(flow, packet)
+- FlowControl::process checks flow's flow_state if needed, and if it's Flow::INSPECT, it calls flow->session->process(packet) which is TcpSession::process (tcp_session.cc)
+- tcp_cache: FlowControl::init_tcp allocates contingous memory for flow cache: tcp_mem = calloc(fc.max_sessions, sizeof(Flow)), then all Flow objects are puched into tcp_cache
+
+Inspector assignment
+1. on new tcp connection (NewTcpSession in tcp_session.cc) inpector is assiged according to flow->gadget
+2. flow->gadget is assigned on binder::eval() --> binder::apply() --> stuff.apply_service() [binder.cc] accordinng to get_gadget(flow)
+3. get_gadget(flow) uses s=get_protocol_name() and then InspectorManager::get_inspector(s)
+
+TCP Stream Pattern Searching
+
+1. noticed http requests/responses are validated (e.g checked that they start with "HTTP/") in validate() function
+2. validate() is called by NHttpStartCutter::cut() (nhttp_cutter.cc) [which is common to all classes inheriting NHttpStartCutter - e.g NHttpRequestCutter, NHttpStatusCutter]
+3. cut() is called by NHttpStreamSplitter::scan (nhttp_stream_splitter.cc) which is a common interface to all StreamSplitter (inhreting StreamSplitter)
+4. StreamSplitter::scan() is called by paf_callback (paf.cc) <-- paf_check (paf.cc) <-- flush_pdu_ackd, flush_pdu_ips(tcp_reassembly.cc)
+5. flush_pdu_ackd, flush_pdu_ips is responsible for iterating all tcp segments from seglist and scanning the reassembled buffer
+
+TCP Tracker (defined in tcp_reassembly)
+1. tracker has all segments that were received on a specific connection in seglist
+
+HASHTREES IN SNORT
+
+Many plugins use hashtrees as the structures that hold the plugin's data. There are two common hashtree implementatiuon in the code - sfxhash and zhash.
+The differences between them are unclear - but in docs it is stated that zhash is based on sfxhash.
+sfxhash hashtree can also hold the data within the tree (and not only a pointers to data) - zhash holds only pointers to user-managed data.
+The key size is constant, data size can be constant (for sfxhash) or pointers (zhash and sfxhash with datasize = 0)
+hashtrees have the regular api, including get/add/remove/erase_all - "get" in hashtree terminology also creates new node if doesnt exist, as apposed to "find"
+

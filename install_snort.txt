@@ -1,0 +1,48 @@
+# source: http://sublimerobots.com/2015/11/installing-snort-in-ubuntu-14-version-3-0-alpha-2/
+
+sudo apt-get install -y binutils gcc
+
+sudo apt-get install -y build-essential libpcap-dev libpcre3-dev libdumbnet-dev bison flex zlib1g-dev
+sudo apt-get install -y libluajit-5.1-dev pkg-config
+
+# install libmemcached
+sudo apt-get install -y libhiredis-dev
+
+# turn off device features
+sudo ethtool -K ens38 gro off
+sudo ethtool -K ens38 lro off
+sudo ethtool -K ens39 gro off
+sudo ethtool -K ens39 lro off
+
+# install daq
+mkdir ~/snort_src
+cd ~/snort_src
+wget https://www.snort.org/downloads/snort/daq-2.0.6.tar.gz
+tar -xvzf daq-2.0.6.tar.gz  
+cd daq-2.0.6
+./configure
+make
+sudo make install
+
+# install libevent
+cd ~/snort_src
+wget https://github.com/libevent/libevent/releases/download/release-2.0.22-stable/libevent-2.0.22-stable.tar.gz
+tar -xvzf libevent-2.0.22-stable.tar.gz
+cd libevent-2.0.22-stable
+./configure
+make
+sudo make install
+
+
+
+# create symbolic link for snort dir
+sudo ln -s /usr/local/bin/snort /usr/sbin/snort
+
+# refresh dynamic libraries
+sudo ldconfig
+
+# create env vars for snort
+export LUA_PATH=/usr/local/include/snort/lua/\?.lua\;\;
+export SNORT_LUA_PATH=/usr/local/etc/snort
+sudo sh -c "echo 'LUA_PATH=/usr/local/include/snort/lua/\?.lua\;\;' >> /etc/environment"
+sudo sh -c "echo 'SNORT_LUA_PATH=/usr/local/etc/snort' >> /etc/environment"

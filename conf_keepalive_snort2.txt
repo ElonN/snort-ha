@@ -1,0 +1,27 @@
+# describe virtual service ip
+vrrp_instance VI_1 {
+  # initial state
+  state SLAVE
+  interface ens40
+  # arbitary unique number 0..255
+  # used to differentiate multiple instances of vrrpd
+  virtual_router_id 52
+  # for electing MASTER, highest priority wins.
+  # to be MASTER, make 50 more than other machines.
+  priority 40
+  authentication {
+    auth_type PASS
+    auth_pass xxx
+  }
+  unicast_src_ip 10.10.10.102
+    unicast_peer {
+        10.10.10.2
+    }
+    
+  # Invoked to master transition
+  notify_master "/bin/bash -c 'rm /tmp/snort_active'"
+  # Invoked to slave transition
+  notify_backup "/bin/bash -c 'touch /tmp/snort_active'"
+  # Invoked to fault transition
+  notify_fault "/bin/bash -c 'rm /tmp/snort_active'"
+}

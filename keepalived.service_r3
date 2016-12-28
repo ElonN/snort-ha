@@ -1,0 +1,11 @@
+[Unit]
+Description=Power on/off keepalived
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c "/usr/sbin/keepalived"
+ExecStop=/bin/sh -c "for i in `pgrep keepalived`; do kill $i; done"
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

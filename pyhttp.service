@@ -1,0 +1,12 @@
+[Unit]
+Description=HTTP sharing on/off snort
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -c "cd /tmp && python -m SimpleHTTPServer 8888" 
+ExecStop=/bin/sh -c "for i in `pgrep SimpleHTTPServer`; do kill $i; done"
+Restart=always
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target
