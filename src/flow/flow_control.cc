@@ -190,7 +190,7 @@ void FlowControl::save_cache(PktType proto)
     }
 
     time_t now = packet_time();
-
+    // check that i will be there on time
     if ( now > *get_last_saved(proto) + update_interval ) {
         
         reply = (redisReply*)redisCommand(context, "SET %b %b", cache_key, strlen(cache_key), (char*)get_mem(proto), cache_size);
@@ -224,20 +224,26 @@ void FlowControl::load_cache(PktType proto)
     if ( reply->type != REDIS_REPLY_STRING ) {
         printf("load_cache: ERROR: %s\n", reply->str);
     } else {
+        // At last - this is the intersting part 
         printf("load_cache: adding %d entries\n", reply->len / sizeof(Flow));
         for ( unsigned i = 0; i < reply->len / sizeof(Flow); i++ )
         {
+            // Cache structure is contiguous array of "Flow"s
             Flow* cached_flow = ((Flow*)(reply->str)) + i;
             Flow::FlowState cached_fs = cached_flow->flow_state;
+            // We want to update only flows that had been analyzed as ALLOW or BLOCK
             if (cached_flow->key && (cached_fs == Flow::BLOCK || cached_fs == Flow::ALLOW))
             {
                 printf("load_cache: adding interesting entry\n");
+                // Do we have this flow already?
                 Flow* current_flow = (get_cache(proto))->find(cached_flow->key);
                 if (!current_flow)
                 {
+                    // No, this is a completely new flow, so perform "get" to create one
                     current_flow = (get_cache(proto))->get(cached_flow->key);
                     current_flow->new_from_cache = true;
                 }
+                // This is the moneytime
                 current_flow->set_state(cached_fs);
                 current_flow->last_data_seen = cached_flow->last_data_seen;
             }
@@ -266,7 +272,7 @@ void FlowControl::load_if_interval() {
         if (context) {
             char active_state;
             int flag_fd;
-
+            // see ps_detect:1665
             if ((flag_fd = open("/tmp/master", O_RDONLY)) == -1 ||
                  read(flag_fd, &active_state, sizeof(active_state)) != sizeof(active_state)) {
                 active_state = '0';
@@ -707,7 +713,8 @@ void FlowControl::process_ip(Packet* p)
 
     ip_count += process(flow, p);
 	if (flow->fs_changed && ip_mem)
-	{
+    {
+        // Each time flowstate changed (e.g from INSPECT to BLOCK) save cache
 		save_cache(PktType::IP);
 		flow->fs_changed = false;
 	}
@@ -727,7 +734,7 @@ void FlowControl::init_icmp(
         return;
 
     icmp_cache = new FlowCache(fc, 5, 0);
-
+    // Each time flowstate changed (e.g from INSPECT to BLOCK) save cache
     icmp_mem = (Flow*)calloc(fc.max_sessions, sizeof(Flow));
 
 	icmp_mem_size = fc.max_sessions * sizeof(Flow);
@@ -767,6 +774,7 @@ void FlowControl::process_icmp(Packet* p)
     icmp_count += process(flow, p);
 	if (flow->fs_changed && icmp_mem)
 	{
+        // Each time flowstate changed (e.g from INSPECT to BLOCK) save cache
 		save_cache(PktType::ICMP);
 		flow->fs_changed = false;
 	}
@@ -824,6 +832,7 @@ void FlowControl::process_tcp(Packet* p)
 
 	if (flow->fs_changed && tcp_mem)
 	{
+        // Each time flowstate changed (e.g from INSPECT to BLOCK) save cache
 		save_cache(PktType::TCP);
 		flow->fs_changed = false;
 	}
@@ -878,6 +887,7 @@ void FlowControl::process_udp(Packet* p)
     udp_count += process(flow, p);
 	if (flow->fs_changed && udp_mem)
 	{
+        // Each time flowstate changed (e.g from INSPECT to BLOCK) save cache
 		save_cache(PktType::UDP);
 		flow->fs_changed = false;
 	}
@@ -933,6 +943,7 @@ void FlowControl::process_user(Packet* p)
     user_count += process(flow, p);
 	if (flow->fs_changed && user_mem)
 	{
+        // Each time flowstate changed (e.g from INSPECT to BLOCK) save cache
 		save_cache(PktType::PDU);
 		flow->fs_changed = false;
 	}
@@ -988,6 +999,7 @@ void FlowControl::process_file(Packet* p)
     file_count += process(flow, p);
 	if (flow->fs_changed && file_mem)
 	{
+        // Each time flowstate changed (e.g from INSPECT to BLOCK) save cache
 		save_cache(PktType::FILE);
 		flow->fs_changed = false;
 	}

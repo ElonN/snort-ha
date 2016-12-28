@@ -1656,19 +1656,22 @@ int PortScan::ps_detect(PS_PKT* ps_pkt)
         return -1;
 
     time_t now = packet_time();
+    // only if interval passed
     if ( now > last_saved + save_interval ) {
-
+        // only if redis succeeded
         if (redis_context) {
             char active_state;
             int flag_fd;
-
+            // /tmp/master is in ram_fs and is not really on disk, it is our flag that marks us if we are master or not
             if ((flag_fd = open("/tmp/master", O_RDONLY)) == -1 ||
                  read(flag_fd, &active_state, sizeof(active_state)) != sizeof(active_state)) {
+                // if fails - in passive state
                 active_state = '0';
             }
             close(flag_fd);
             if (active_state == '1') {
                 if (last_active_state == '0') {
+                    // in first time after becoming active, load db 
                     printf("portscan: from PASSIVE to ACTIVE! loading db...%d\n", now);
                     sfxhash_load_from_db(portscan_hash, redis_context); 
                 }

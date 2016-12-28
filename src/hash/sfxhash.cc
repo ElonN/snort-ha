@@ -1256,6 +1256,10 @@ int sfxhash_calcsize(SFXHASH* t) {
     return sizeof(SFXHASH) + t->count * (t->keysize + t->datasize);
 }
 
+/*
+ * Serializes from tree to blob of bytes, typically before storing
+ * Serialization struct is |SFXHASH header|key_n|data_n|....|key_1|data_1|
+ */
 int sfxhash_serialize(SFXHASH* t, void* buf, int* buf_size) {
     unsigned i = 0;
     unsigned char *pos = (unsigned char*) buf;
@@ -1326,6 +1330,10 @@ int check_blob(SFXHASH* t, void* buf, int buf_size) {
 
 }
 
+
+/*
+ * turns blob of bytes to meaningful tree
+ */
 int sfxhash_deserialize(SFXHASH* t, void* buf, int buf_size) {
     unsigned int i;
     SFXHASH* tmp_tree = (SFXHASH*) buf;
@@ -1430,6 +1438,10 @@ int sfxhash_save_to_file(SFXHASH* t, const char* filename) {
 
 }
 
+/*
+ *  Loads tree from redis cache.
+ *  This function receives a connected redis context, retrieves the DB from cache and loads it the tree.
+ */
 int sfxhash_load_from_db(SFXHASH* t, redisContext* context) {
     redisReply *reply = 0;
     const static char key[5] = "port";
@@ -1451,6 +1463,10 @@ int sfxhash_load_from_db(SFXHASH* t, redisContext* context) {
     return 0;
 }
 
+/*
+ *  Loads tree from redis cache.
+ *  This function receives a connected redis context, retrieves the DB from cache and loads it the tree.
+ */
 int sfxhash_save_to_db(SFXHASH* t, redisContext* context) {
     char* copy;
     int copy_size;
