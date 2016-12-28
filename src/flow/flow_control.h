@@ -30,7 +30,6 @@
 #include "utils/stats.h"
 
 
-//#include <libmemcached/memcached.h>
 #include <hiredis/hiredis.h>
 
 
@@ -86,17 +85,19 @@ public:
 
     class Memcap& get_memcap(PktType);
 
-    ///memcached_st* memcache;
     redisContext* context;
+    void load_caches(void);
 
 private:
     class FlowCache* get_cache(PktType);
     char* get_mem(PktType);
 	size_t get_cache_size(PktType);
+    time_t* get_last_saved(PktType);
 	
-	const char* get_memcache_key (PktType proto);
-	void update_memcache(PktType proto);
-	void load_memcache(PktType proto);
+	const char* get_cache_key (PktType proto);
+    void save_cache(PktType proto);
+    void load_cache(PktType proto);
+    void load_if_interval(void);
     void set_key(FlowKey*, Packet*);
 
 
@@ -125,6 +126,15 @@ private:
 	size_t udp_mem_size;
 	size_t user_mem_size;
 	size_t file_mem_size;
+
+    char last_active_state;
+    time_t last_loaded;
+    time_t last_saved_ip;
+    time_t last_saved_icmp;
+    time_t last_saved_tcp;
+    time_t last_saved_udp;
+    time_t last_saved_user;
+    time_t last_saved_file;
 
 
     InspectSsnFunc get_ip;

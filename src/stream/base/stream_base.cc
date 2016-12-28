@@ -186,6 +186,7 @@ void StreamBase::tinit()
 
     snprintf(host, sizeof(host), "10.10.10.8");// --NAMESPACE=%u", get_instance_id());
 
+    //flow_con->context = NULL;
     flow_con->context = redisConnectWithTimeout(host, port, timeout);
     if (flow_con->context == NULL || flow_con->context->err) {
         if (flow_con->context) {
@@ -245,6 +246,8 @@ void StreamBase::tinit()
 
     if ( max > 0 )
         flow_con->init_exp(max);
+
+    flow_con->load_caches();
 }
 
 void StreamBase::tterm()

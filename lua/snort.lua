@@ -72,8 +72,7 @@ imap = { }
 smtp = { }
 perf_monitor = { }
 pop = { }
-port_scan = { 
-    sense_level = "high",
+port_scan = {
     logfile = true,
 }
 rpc_decode = { }

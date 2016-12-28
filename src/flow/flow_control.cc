@@ -25,6 +25,11 @@
 #include <assert.h>
 #include <arpa/inet.h>
 
+#include "time/packet_time.h"
+#include <sys/mman.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+
 #include "flow/flow_cache.h"
 #include "flow/expect_cache.h"
 #include "flow/session.h"
@@ -89,6 +94,9 @@ static THREAD_LOCAL PegCount udp_count = 0;
 static THREAD_LOCAL PegCount user_count = 0;
 static THREAD_LOCAL PegCount file_count = 0;
 
+static time_t update_interval = 1;
+
+
 uint32_t FlowControl::max_flows(PktType proto)
 {
     FlowCache* cache = get_cache(proto);
@@ -115,6 +123,20 @@ PegCount FlowControl::get_flows(PktType proto)
     case PktType::UDP:  return udp_count;
     case PktType::PDU: return user_count;
     case PktType::FILE: return file_count;
+    default:            return 0;
+    }
+}
+
+time_t* FlowControl::get_last_saved(PktType proto)
+{
+    switch ( proto )
+    {
+    case PktType::IP:   return &last_saved_ip;
+    case PktType::ICMP: return &last_saved_icmp;
+    case PktType::TCP:  return &last_saved_tcp;
+    case PktType::UDP:  return &last_saved_udp;
+    case PktType::PDU: return &last_saved_user;
+    case PktType::FILE: return &last_saved_file;
     default:            return 0;
     }
 }
@@ -157,55 +179,67 @@ Memcap& FlowControl::get_memcap (PktType proto)
 //-------------------------------------------------------------------------
 // cache foo
 //-------------------------------------------------------------------------
-void FlowControl::update_memcache(PktType proto) 
+void FlowControl::save_cache(PktType proto) 
 {
-	const char* memcache_key = get_memcache_key(proto);
+    const char* cache_key = get_cache_key(proto);
     size_t cache_size = get_cache_size(proto);
-    //memcached_return_t mrt;
     redisReply *reply = 0;
 
-    printf("update_memcache: redis %p, key %s\n", memcache_key);
-	//mrt = memcached_set(memcache, memcache_key, strlen(memcache_key), (char*)get_mem(proto), cache_size, (time_t)0, (uint32_t)0);
-    reply = (redisReply*)redisCommand(context, "SET %b %b", memcache_key, strlen(memcache_key), (char*)get_mem(proto), cache_size);
-    if (!reply) {
+    if(!context) {
         return;
     }
-    freeReplyObject(reply);
-    //printf("update_memcache: set return %d\n", (int)mrt);
+
+    time_t now = packet_time();
+
+    if ( now > *get_last_saved(proto) + update_interval ) {
+        
+        reply = (redisReply*)redisCommand(context, "SET %b %b", cache_key, strlen(cache_key), (char*)get_mem(proto), cache_size);
+        if (!reply) {
+            return;
+        }
+        freeReplyObject(reply);
+        *get_last_saved(proto) = now;
+    }
 }
 
-void FlowControl::load_memcache(PktType proto) 
+void FlowControl::load_cache(PktType proto) 
 {
-	const char* memcache_key = get_memcache_key(proto);
+	const char* cache_key = get_cache_key(proto);
     redisReply *reply = 0;
 
-    printf("load_memcache: %s\n", memcache_key);
-	if (!memcache_key || !context)
+    if(!context) {
+        return;
+    }
+
+    printf("load_cache: %s\n", cache_key);
+	if (!cache_key)
 	{
 		return;
 	}
 	
-    reply = (redisReply*)redisCommand(context, "GET %b", memcache_key, strlen(memcache_key));
+    reply = (redisReply*)redisCommand(context, "GET %b", cache_key, strlen(cache_key));
 
     if ( !reply )
         return;
     if ( reply->type != REDIS_REPLY_STRING ) {
-        printf("load_memcache: ERROR: %s\n", reply->str);
+        printf("load_cache: ERROR: %s\n", reply->str);
     } else {
-        printf("load_memcache: adding %d entries\n", reply->len / sizeof(Flow));
+        printf("load_cache: adding %d entries\n", reply->len / sizeof(Flow));
         for ( unsigned i = 0; i < reply->len / sizeof(Flow); i++ )
         {
             Flow* cached_flow = ((Flow*)(reply->str)) + i;
             Flow::FlowState cached_fs = cached_flow->flow_state;
             if (cached_flow->key && (cached_fs == Flow::BLOCK || cached_fs == Flow::ALLOW))
             {
-                printf("load_memcache: adding interesting entry\n");
-                Flow* current_flow = (get_cache(proto))->get(cached_flow->key);
-                if (current_flow)
+                printf("load_cache: adding interesting entry\n");
+                Flow* current_flow = (get_cache(proto))->find(cached_flow->key);
+                if (!current_flow)
                 {
-                    current_flow->set_state(cached_fs);
+                    current_flow = (get_cache(proto))->get(cached_flow->key);
                     current_flow->new_from_cache = true;
                 }
+                current_flow->set_state(cached_fs);
+                current_flow->last_data_seen = cached_flow->last_data_seen;
             }
         }
     }
@@ -213,9 +247,48 @@ void FlowControl::load_memcache(PktType proto)
 
 }
 
+void FlowControl::load_caches() 
+{
+    load_cache(PktType::IP);
+    load_cache(PktType::ICMP);
+    load_cache(PktType::TCP);
+    load_cache(PktType::UDP);
+    load_cache(PktType::PDU);
+    load_cache(PktType::FILE);
 
+}
 
-inline const char* FlowControl::get_memcache_key (PktType proto)
+void FlowControl::load_if_interval() {
+    time_t now = packet_time();
+
+    if ( now > last_loaded + update_interval ) {
+
+        if (context) {
+            char active_state;
+            int flag_fd;
+
+            if ((flag_fd = open("/tmp/master", O_RDONLY)) == -1 ||
+                 read(flag_fd, &active_state, sizeof(active_state)) != sizeof(active_state)) {
+                active_state = '0';
+            }
+            close(flag_fd);
+            if (active_state == '1') {
+                if (last_active_state == '0') {
+                    printf("load_if_interval: from PASSIVE to ACTIVE! loading db...%d\n", now);
+                    load_caches();
+                } 
+            } else {
+                printf("load_if_interval: PASSIVE! loading db...%d\n", now);
+                load_caches();
+            }
+                
+            last_active_state = active_state;
+        }
+        last_loaded = now;
+    }
+}
+
+inline const char* FlowControl::get_cache_key (PktType proto)
 {
     switch ( proto )
     {
@@ -519,6 +592,8 @@ unsigned FlowControl::process(Flow* flow, Packet* p)
 {
     unsigned news = 0;
 
+    load_if_interval();
+
     p->flow = flow;
 
     if ( flow->flow_state && !flow->new_from_cache)
@@ -600,14 +675,14 @@ void FlowControl::init_ip(
     ip_mem = (Flow*)calloc(fc.max_sessions, sizeof(Flow));
 
 	ip_mem_size = fc.max_sessions * sizeof(Flow);
-	
+	mlock(ip_mem, ip_mem_size);
+
+
     if ( !ip_mem )
         return;
 
     for ( unsigned i = 0; i < fc.max_sessions; ++i )
         ip_cache->push(ip_mem + i);
-
-	load_memcache(PktType::IP);
 
     get_ip = get_ssn;
 }
@@ -633,7 +708,7 @@ void FlowControl::process_ip(Packet* p)
     ip_count += process(flow, p);
 	if (flow->fs_changed && ip_mem)
 	{
-		update_memcache(PktType::IP);
+		save_cache(PktType::IP);
 		flow->fs_changed = false;
 	}
 
@@ -656,15 +731,14 @@ void FlowControl::init_icmp(
     icmp_mem = (Flow*)calloc(fc.max_sessions, sizeof(Flow));
 
 	icmp_mem_size = fc.max_sessions * sizeof(Flow);
-	
+	mlock(icmp_mem, icmp_mem_size);
+
+
     if ( !icmp_mem )
         return;
 
     for ( unsigned i = 0; i < fc.max_sessions; ++i )
         icmp_cache->push(icmp_mem + i);
-
-	
-	load_memcache(PktType::ICMP);
 
     get_icmp = get_ssn;
 }
@@ -693,7 +767,7 @@ void FlowControl::process_icmp(Packet* p)
     icmp_count += process(flow, p);
 	if (flow->fs_changed && icmp_mem)
 	{
-		update_memcache(PktType::ICMP);
+		save_cache(PktType::ICMP);
 		flow->fs_changed = false;
 	}
 
@@ -716,6 +790,7 @@ void FlowControl::init_tcp(
     tcp_mem = (Flow*)calloc(fc.max_sessions, sizeof(Flow));
 
 	tcp_mem_size = fc.max_sessions * sizeof(Flow);
+    mlock(tcp_mem, tcp_mem_size);
 
 
     if ( !tcp_mem )
@@ -723,8 +798,6 @@ void FlowControl::init_tcp(
 
     for ( unsigned i = 0; i < fc.max_sessions; ++i )
         tcp_cache->push(tcp_mem + i);
-
-	load_memcache(PktType::TCP);
 	
     get_tcp = get_ssn;
 }
@@ -751,7 +824,7 @@ void FlowControl::process_tcp(Packet* p)
 
 	if (flow->fs_changed && tcp_mem)
 	{
-		update_memcache(PktType::TCP);
+		save_cache(PktType::TCP);
 		flow->fs_changed = false;
 	}
     if ( flow->next && is_bidirectional(flow) )
@@ -773,14 +846,13 @@ void FlowControl::init_udp(
     udp_mem = (Flow*)calloc(fc.max_sessions, sizeof(Flow));
 
 	udp_mem_size = fc.max_sessions * sizeof(Flow);
+    mlock(udp_mem, udp_mem_size);
 	
     if ( !udp_mem )
         return;
 
     for ( unsigned i = 0; i < fc.max_sessions; ++i )
         udp_cache->push(udp_mem + i);
-
-	load_memcache(PktType::UDP);
 
     get_udp = get_ssn;
 }
@@ -806,7 +878,7 @@ void FlowControl::process_udp(Packet* p)
     udp_count += process(flow, p);
 	if (flow->fs_changed && udp_mem)
 	{
-		update_memcache(PktType::UDP);
+		save_cache(PktType::UDP);
 		flow->fs_changed = false;
 	}
     if ( flow->next && is_bidirectional(flow) )
@@ -828,14 +900,14 @@ void FlowControl::init_user(
     user_mem = (Flow*)calloc(fc.max_sessions, sizeof(Flow));
 
 	user_mem_size = fc.max_sessions * sizeof(Flow);
-	
+	mlock(user_mem, user_mem_size);
+
+
     if ( !user_mem )
         return;
 
     for ( unsigned i = 0; i < fc.max_sessions; ++i )
         user_cache->push(user_mem + i);
-
-	load_memcache(PktType::PDU);
 
     get_user = get_ssn;
 }
@@ -861,7 +933,7 @@ void FlowControl::process_user(Packet* p)
     user_count += process(flow, p);
 	if (flow->fs_changed && user_mem)
 	{
-		update_memcache(PktType::PDU);
+		save_cache(PktType::PDU);
 		flow->fs_changed = false;
 	}
     if ( flow->next && is_bidirectional(flow) )
@@ -883,14 +955,14 @@ void FlowControl::init_file(
     file_mem = (Flow*)calloc(fc.max_sessions, sizeof(Flow));
 
 	file_mem_size = fc.max_sessions * sizeof(Flow);
-	
+	mlock(file_mem, file_mem_size);
+
+
     if ( !file_mem )
         return;
 
     for ( unsigned i = 0; i < fc.max_sessions; ++i )
         file_cache->push(file_mem + i);
-
-	load_memcache(PktType::FILE);
 
     get_file = get_ssn;
 }
@@ -916,7 +988,7 @@ void FlowControl::process_file(Packet* p)
     file_count += process(flow, p);
 	if (flow->fs_changed && file_mem)
 	{
-		update_memcache(PktType::FILE);
+		save_cache(PktType::FILE);
 		flow->fs_changed = false;
 	}
 }

@@ -29,7 +29,6 @@
 #include <string.h>
 #include <time.h>
 
-//#include <libmemcached/memcached.h>
 #include <hiredis/hiredis.h>
 
 #include "utils/sfmemcap.h"
